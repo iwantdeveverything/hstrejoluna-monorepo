@@ -1,0 +1,46 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-salmon: #FF7E67;
+  --color-brand-salmon-dark: #E5624D;
+  --color-brand-marine: #0A192F;
+  --color-brand-marine-light: #112240;
+  --color-brand-sand: #F9F6F0;
+  
+  --font-sans: "Inter", "system-ui", "sans-serif";
+}
+
+:root {
+  background-color: #050a14;
+  color: #e2e8f0;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  background: radial-gradient(circle at 50% 0%, #0a192f 0%, #050a14 100%);
+  min-height: 100vh;
+}
+
+/* Texture overlay for that premium feel */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("https://www.transparenttextures.com/patterns/asfalt-dark.png");
+  opacity: 0.03;
+  pointer-events: none;
+  z-index: 50;
+}
+
+.bento-card {
+  @apply bg-white/5 backdrop-blur-xl border border-white/10 rounded-[2.5rem] shadow-2xl transition-all duration-500;
+}
+
+.bento-card:hover {
+  @apply border-brand-salmon/40 bg-white/10 shadow-brand-salmon/5;
+}

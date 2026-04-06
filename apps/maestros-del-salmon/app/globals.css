@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  /* Asegurar smooth scrolling si hace falta */
+  scroll-behavior: smooth;
+}

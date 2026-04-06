@@ -1,0 +1,22 @@
+{
+  "name": "studio",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "sanity dev -p 3333",
+    "build": "sanity build",
+    "start": "sanity start",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "sanity": "latest",
+    "styled-components": "^6.0.0",
+    "react": "latest",
+    "react-dom": "latest"
+  },
+  "devDependencies": {
+    "@sanity/eslint-config-studio": "latest",
+    "eslint": "^8.0.0",
+    "typescript": "^5.0.0"
+  }
+}
