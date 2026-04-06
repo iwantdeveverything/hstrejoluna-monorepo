@@ -28,6 +28,17 @@ const getProjectUrl = (project: Project) => {
   return project.externalLink || "#";
 };
 
+// Simple helper to extract text from Sanity block content
+const blockContentToText = (blocks: any[]): string => {
+  if (!blocks || !Array.isArray(blocks)) return typeof blocks === 'string' ? blocks : "";
+  return blocks
+    .map((block) => {
+      if (block._type !== "block" || !block.children) return "";
+      return block.children.map((child: any) => child.text).join("");
+    })
+    .join("\n");
+};
+
 interface PortfolioGridProps {
   profile: Profile | null;
   projects: Project[];
@@ -106,7 +117,7 @@ export const PortfolioGrid = ({ profile, projects, skills }: PortfolioGridProps)
                 {featuredProject.title}
               </h3>
               <p className="text-white/80 text-lg font-medium max-w-xs">
-                {featuredProject.description}
+                {blockContentToText(featuredProject.description)}
               </p>
             </div>
             <Link
@@ -134,7 +145,7 @@ export const PortfolioGrid = ({ profile, projects, skills }: PortfolioGridProps)
                 {project.title}
               </h3>
               <p className="text-gray-400 text-lg font-light leading-snug">
-                {project.description}
+                {blockContentToText(project.description)}
               </p>
             </div>
             <Link

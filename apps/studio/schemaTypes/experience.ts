@@ -25,7 +25,16 @@ export default defineType({
       name: 'endDate',
       title: 'End Date',
       type: 'date',
-      options: { dateFormat: 'YYYY-MM' }
+      options: { dateFormat: 'YYYY-MM' },
+      hidden: ({ document }) => !!document?.isCurrent,
+      validation: (Rule) =>
+        Rule.custom((endDate, context) => {
+          const { document } = context
+          if (!endDate || !document?.startDate) return true
+          return new Date(endDate) >= new Date(document.startDate as string)
+            ? true
+            : 'End date must be after start date'
+        }),
     }),
     defineField({
       name: 'isCurrent',

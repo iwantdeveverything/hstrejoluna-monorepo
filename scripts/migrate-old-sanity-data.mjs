@@ -52,7 +52,6 @@ async function migrateImage(assetRef) {
     return null;
   }
 }
-
 async function migrateProjects() {
   if (!process.env.SANITY_WRITE_TOKEN) {
     console.error("❌ Error: SANITY_WRITE_TOKEN is missing.");
@@ -60,28 +59,34 @@ async function migrateProjects() {
   }
 
   try {
-    console.log("🔍 Fetching projects from old Sanity...");
-    const oldProjects = await oldClient.fetch('*[_type == "project"]');
-    console.log(`📦 Found ${oldProjects.length} projects to migrate.`);
+    console.log("🔍 Fetching documents from old Sanity (projects and works)...");
+    const oldDocs = await oldClient.fetch('*[_type in ["project", "works"]]');
+    console.log(`📦 Found ${oldDocs.length} documents to migrate.`);
 
-    for (const oldProj of oldProjects) {
-      console.log(`🚀 Migrating: ${oldProj.title}`);
+    for (const oldDoc of oldDocs) {
+      console.log(`🚀 Migrating: ${oldDoc.title}`);
 
-      // 1. Map basic fields
+      // 1. Map fields based on document type
+      const isWorksType = oldDoc._type === "works";
+
       const newProj = {
         _type: "project",
-        _id: `migrated-project-${oldProj._id}`, // Stable ID to prevent duplicates
-        title: oldProj.title,
-        slug: oldProj.slug,
-        description: oldProj.description, // Now matches (array of blocks)
-        techStack: oldProj.tags || [],
-        externalLink: oldProj.site,
-        isFeatured: false, // Default to false
+        _id: `migrated-${oldDoc._type}-${oldDoc._id}`, 
+        title: oldDoc.title,
+        slug: oldDoc.slug || { _type: 'slug', current: oldDoc.title.toLowerCase().replace(/[^a-z0-9]+/g, '-') },
+        // If it's a string, wrap it in a block for Portable Text
+        description: typeof oldDoc.description === 'string' 
+          ? [{ _type: 'block', children: [{ _type: 'span', text: oldDoc.description }], markDefs: [], style: 'normal' }]
+          : oldDoc.description,
+        techStack: oldDoc.tags || [],
+        externalLink: isWorksType ? oldDoc.projectLink : oldDoc.site,
+        isFeatured: false,
       };
 
-      // 2. Migrate cover image if it exists
-      if (oldProj.coverImage && oldProj.coverImage.asset) {
-        const migratedImg = await migrateImage(oldProj.coverImage.asset._ref);
+      // 2. Migrate image if it exists (coverImage or imgUrl)
+      const imageAsset = isWorksType ? oldDoc.imgUrl : oldDoc.coverImage;
+      if (imageAsset && imageAsset.asset) {
+        const migratedImg = await migrateImage(imageAsset.asset._ref);
         if (migratedImg) {
           newProj.image = migratedImg;
         }
@@ -89,10 +94,10 @@ async function migrateProjects() {
 
       // 3. Upsert to new Sanity
       await newClient.createOrReplace(newProj);
-      console.log(`✅ Project "${oldProj.title}" migrated successfully.`);
+      console.log(`✅ Document "${oldDoc.title}" migrated successfully.`);
     }
 
-    console.log("🎊 Migration completed! All projects are now in the new monorepo.");
+    console.log("🎊 Full migration completed! All works and projects are now in the new monorepo.");
   } catch (err) {
     console.error("❌ Migration failed:", err.message);
   }

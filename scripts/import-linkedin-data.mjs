@@ -27,10 +27,16 @@ const data = {
   skills: [
     { _type: "skill", name: "React JS", proficiency: 95, category: "frontend" },
     { _type: "skill", name: "JavaScript", proficiency: 90, category: "frontend" },
+    { _type: "skill", name: "Next.js", proficiency: 92, category: "frontend" },
+    { _type: "skill", name: "Tailwind CSS", proficiency: 88, category: "frontend" },
+    { _type: "skill", name: "TypeScript", proficiency: 90, category: "frontend" },
     { _type: "skill", name: "Generative AI", proficiency: 92, category: "analytics" },
     { _type: "skill", name: "Python 3", proficiency: 85, category: "backend" },
-    { _type: "skill", name: "GTM Tracking", proficiency: 88, category: "analytics" },
-    { _type: "skill", name: "Flutter", proficiency: 75, category: "frontend" }
+    { _type: "skill", name: "GTM", proficiency: 88, category: "analytics" },
+    { _type: "skill", name: "Flutter", proficiency: 75, category: "frontend" },
+    { _type: "skill", name: "PHP", proficiency: 70, category: "backend" },
+    { _type: "skill", name: "Moodle", proficiency: 85, category: "backend" },
+    { _type: "skill", name: "Web Development", proficiency: 95, category: "frontend" }
   ].map(skill => ({ ...skill, _id: generateId("skill", skill.name) })),
   
   projects: [
@@ -38,19 +44,44 @@ const data = {
       _type: "project",
       title: "Maestros del Salmón",
       slug: { _type: "slug", current: "maestros-del-salmon" },
-      description: "Premium Salmon Ecommerce with GTM tracking and Meta Pixel integration.",
+      description: [
+        {
+          _type: 'block',
+          _key: generateId('block', 'salmon-desc'),
+          style: 'normal',
+          markDefs: [],
+          children: [{ _type: 'span', marks: [], text: 'Premium Salmon Ecommerce with GTM tracking and Meta Pixel integration.' }]
+        }
+      ],
       micrositePath: "/maestros-del-salmon",
       isFeatured: true,
-      techStack: ["Next.js", "Tailwind CSS", "TypeScript", "GTM"]
+      techStack: [
+        { _type: "reference", _ref: generateId("skill", "Next.js"), _key: generateId("ref", "Next.js") },
+        { _type: "reference", _ref: generateId("skill", "Tailwind CSS"), _key: generateId("ref", "Tailwind CSS") },
+        { _type: "reference", _ref: generateId("skill", "TypeScript"), _key: generateId("ref", "TypeScript") },
+        { _type: "reference", _ref: generateId("skill", "GTM"), _key: generateId("ref", "GTM") }
+      ]
     },
     {
       _type: "project",
       title: "Moodle Platform Development",
       slug: { _type: "slug", current: "moodle-platform-development" },
-      description: "Full-scale educational platform development for Escuela Superior de Leyes.",
+      description: [
+        {
+          _type: 'block',
+          _key: generateId('block', 'moodle-desc'),
+          style: 'normal',
+          markDefs: [],
+          children: [{ _type: 'span', marks: [], text: 'Full-scale educational platform development for Escuela Superior de Leyes.' }]
+        }
+      ],
       externalLink: "https://www.esl.edu.mx",
       isFeatured: false,
-      techStack: ["Moodle", "PHP", "Web Development"]
+      techStack: [
+        { _type: "reference", _ref: generateId("skill", "Moodle"), _key: generateId("ref", "Moodle") },
+        { _type: "reference", _ref: generateId("skill", "PHP"), _key: generateId("ref", "PHP") },
+        { _type: "reference", _ref: generateId("skill", "Web Development"), _key: generateId("ref", "Web Development") }
+      ]
     }
   ].map(proj => ({ ...proj, _id: generateId("project", proj.title) })),
 
@@ -88,7 +119,7 @@ const data = {
         }
       ]
     }
-  ].map(exp => ({ ...exp, _id: generateId("experience", `${exp.company}-${exp.role}`) }))
+  ].map(exp => ({ ...exp, _id: generateId("experience", `${exp.company}-${exp.role}-${exp.startDate}`) }))
 };
 
 async function importData() {

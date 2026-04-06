@@ -6,7 +6,7 @@ export default async function PortfolioPage() {
   // Fetch data on the server with strict typing
   const [profile, projects, skills] = await Promise.all([
     client.fetch<Profile | null>('*[_type == "profile"][0]'),
-    client.fetch<Project[]>('*[_type == "project"] | order(isFeatured desc, _createdAt desc)'),
+    client.fetch<Project[]>('*[_type == "project"] | order(isFeatured desc, _createdAt desc) { ..., techStack[]-> }'),
     client.fetch<Skill[]>('*[_type == "skill"] | order(proficiency desc)'),
   ]);
 

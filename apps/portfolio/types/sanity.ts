@@ -16,9 +16,9 @@ export interface Project {
   _id: string;
   title: string;
   slug?: { current: string };
-  description: string;
+  description: any; // Block content
   image?: SanityImage;
-  techStack?: string[];
+  techStack?: Skill[];
   micrositePath?: string;
   externalLink?: string;
   isFeatured?: boolean;
