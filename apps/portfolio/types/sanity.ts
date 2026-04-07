@@ -24,6 +24,16 @@ export interface Project {
   isFeatured?: boolean;
 }
 
+export interface Experience {
+  _id: string;
+  company: string;
+  role: string;
+  startDate: string;
+  endDate?: string;
+  isCurrent?: boolean;
+  description: any; // Block content
+}
+
 export interface Skill {
   _id: string;
   name: string;
