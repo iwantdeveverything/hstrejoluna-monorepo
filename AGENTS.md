@@ -17,3 +17,18 @@ This project uses **Gentleman Guardian Angel** to ensure high code quality and c
 - **Be Concise:** Provide brief, actionable feedback.
 - **Be Constructive:** Explain the "why" behind suggested changes.
 - **Check for Performance:** Flag inefficient loops or memory-intensive operations.
+
+## Installed Skills & Tools
+| Skill/Tool | Description | Trigger/Usage |
+|------------|-------------|---------------|
+| `upstash-docs` | Fresh documentation via Context7 | Asking for library docs or troubleshooting APIs |
+| `github-mcp` | GitHub API integration | Managing issues, PRs, and repository search |
+| `branch-pr` | PR creation workflow | When preparing a pull request |
+| `issue-creation` | Issue creation workflow | When reporting bugs or requesting features |
+| `judgment-day` | Adversarial code review | When a deep review is needed |
+| `skill-creator` | Create new AI skills | When a new pattern needs documenting |
+
+## Project Strategies
+| Strategy | Location | Scope |
+|----------|----------|-------|
+| **Semantic & SEO Master Plan** | `docs/strategies/semantic-seo.md` | Landmarking, JSON-LD, Metadata API, A11y standards |
