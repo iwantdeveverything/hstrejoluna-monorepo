@@ -4,6 +4,7 @@ import React, { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Profile, Project, Skill, Experience } from "@/types/sanity";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { useKeyboardNav } from "@/hooks/useKeyboardNav";
 import { HeroFragment } from "./fragments/HeroFragment";
 import { ProjectFragment } from "./fragments/ProjectFragment";
 import { ExperienceFragment } from "./fragments/ExperienceFragment";
@@ -29,6 +30,9 @@ export const ObsidianStream = ({ profile, projects, skills, experiences }: Obsid
   const { scrollXProgress } = useScroll({
     container: containerRef,
   });
+
+  // Enable keyboard navigation
+  useKeyboardNav(containerRef);
 
   // Disable parallax if reduced motion is requested
   const backgroundX = useTransform(
@@ -80,34 +84,49 @@ export const ObsidianStream = ({ profile, projects, skills, experiences }: Obsid
         <SkillsFragment skills={skills} />
         
         {/* SECTION 05: SYSTEM DISCONNECT (Footer) */}
-        <section className="stream-fragment flex flex-col items-center justify-center p-6 bg-void relative">
+        <footer aria-label="Site Footer" className="stream-fragment flex flex-col items-center justify-center p-6 bg-void relative">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,42,0,0.03)_0%,transparent_70%)] pointer-events-none" />
           
-          <div className="text-center z-10">
+          <div className="text-center z-10 w-full max-w-sm">
             <div className="font-mono text-[10px] md:text-xs tracking-[0.6em] text-ember mb-12 uppercase opacity-50">
               [EOF]: END_OF_STREAM_TRANSMISSION
             </div>
-            <h2 className="text-6xl md:text-[12rem] font-black uppercase tracking-tighter mb-16 leading-none italic text-white/10 hover:text-white transition-colors duration-1000 cursor-default">
+            <h2 className="text-6xl md:text-[var(--text-fluid-hero)] font-black uppercase tracking-tighter mb-16 leading-none italic text-white/10 hover:text-white transition-colors duration-1000 cursor-default">
               EXIT_SYS
             </h2>
-            <div className="flex flex-col md:flex-row gap-8 items-center justify-center">
+            <div className="flex flex-col md:flex-row gap-6 md:gap-8 items-center justify-center">
               <button 
-                onClick={() => containerRef.current?.scrollTo({ left: 0, behavior: 'smooth' })}
-                className="px-12 py-5 border border-white/5 text-white/30 font-mono tracking-[0.3em] uppercase text-[10px] hover:border-ember hover:text-ember transition-all duration-300 bg-white/[0.01]"
+                onClick={() => containerRef.current?.scrollTo({ left: 0, top: 0, behavior: 'smooth' })}
+                className="w-full md:w-auto px-8 md:px-12 py-4 md:py-5 border border-white/5 text-white/50 font-mono tracking-[0.3em] uppercase text-[10px] hover:border-ember hover:text-ember transition-all duration-300 bg-white/[0.01]"
                 aria-label="Back to top"
               >
                 [REBOOT_STREAM]
               </button>
               <a 
                 href={`mailto:${profile?.socials?.find(s => s.platform.toLowerCase() === 'email')?.url || ''}`}
-                className="px-12 py-5 bg-ember text-void font-mono tracking-[0.3em] uppercase text-[10px] font-bold hover:bg-white transition-all duration-300 shadow-[0_0_30px_rgba(255,42,0,0.3)]"
+                className="w-full md:w-auto px-8 md:px-12 py-4 md:py-5 bg-ember text-void font-mono tracking-[0.3em] uppercase text-[10px] font-bold hover:bg-white transition-all duration-300 shadow-[0_0_30px_rgba(255,42,0,0.3)]"
                 aria-label="Send an email to contact"
               >
                 [SEND_SIGNAL]
               </a>
             </div>
+            
+            {/* Mobile Footer Socials */}
+            <nav className="mt-16 flex gap-6 items-center justify-center md:hidden font-mono text-[10px] text-white/50 tracking-[0.2em] uppercase" aria-label="Mobile Social Uplinks">
+              {profile?.socials?.map(s => (
+                <a 
+                  key={s.url} 
+                  href={s.url} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="hover:text-ember p-2 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-ember"
+                >
+                  {s.platform}
+                </a>
+              ))}
+            </nav>
           </div>
-        </section>
+        </footer>
       </main>
 
       {/* Persistent Global HUD Overlays */}
@@ -138,13 +157,21 @@ export const ObsidianStream = ({ profile, projects, skills, experiences }: Obsid
               href={s.url} 
               target="_blank" 
               rel="noopener noreferrer"
-              className="hover:text-ember pointer-events-auto transition-colors"
+              className="hover:text-ember pointer-events-auto transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-ember focus-visible:outline-offset-4"
             >
               {s.platform}
             </a>
           ))}
         </nav>
       </footer>
+
+      {/* Global Scroll Progress Bar */}
+      <div className="fixed top-0 left-0 w-full h-[2px] z-[100] bg-white/5 hidden md:block">
+        <motion.div 
+          className="h-full bg-ember origin-left"
+          style={{ scaleX: scrollXProgress }} 
+        />
+      </div>
     </div>
   );
 };

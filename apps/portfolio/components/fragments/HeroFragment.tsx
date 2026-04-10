@@ -17,7 +17,7 @@ export const HeroFragment = ({ profile }: HeroFragmentProps) => {
   const nameParts = profile?.name?.split(" ") || ["SEBASTIÁN", "TREJO"];
 
   return (
-    <section className="stream-fragment flex flex-col justify-center px-6 md:px-24 relative bg-void overflow-hidden">
+    <section className="stream-fragment flex flex-col justify-center px-4 sm:px-6 md:px-24 relative bg-void overflow-hidden min-h-[100svh]">
       {/* Background Decorative Layer */}
       <div className="absolute inset-0 z-0 pointer-events-none opacity-20">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150%] h-[150%] bg-[radial-gradient(circle_at_center,rgba(255,42,0,0.05)_0%,transparent_70%)]" />
@@ -37,7 +37,7 @@ export const HeroFragment = ({ profile }: HeroFragmentProps) => {
         </div>
 
         {/* Massive Typography Name */}
-        <h1 className="text-6xl sm:text-8xl md:text-[13rem] font-black tracking-tighter leading-[0.85] uppercase flex flex-col items-start italic">
+        <h1 className="text-[var(--text-fluid-hero)] font-black tracking-tighter leading-[0.85] uppercase flex flex-col items-start italic">
           {nameParts.map((part, i) => (
             <GlitchText 
               key={i} 
@@ -58,7 +58,7 @@ export const HeroFragment = ({ profile }: HeroFragmentProps) => {
           <motion.button
             whileHover={{ scale: 1.02, backgroundColor: "#FF2A00", color: "#000000" }}
             whileTap={{ scale: 0.98 }}
-            className="px-12 py-5 border border-ember text-ember font-mono tracking-[0.3em] uppercase text-xs font-bold transition-all duration-300 shadow-[0_0_20px_rgba(255,42,0,0.15)] hover:shadow-[0_0_40px_rgba(255,42,0,0.4)]"
+            className="w-full sm:w-auto px-8 md:px-12 py-4 md:py-5 border border-ember text-ember font-mono tracking-[0.3em] uppercase text-[10px] md:text-xs font-bold transition-all duration-300 shadow-[0_0_20px_rgba(255,42,0,0.15)] hover:shadow-[0_0_40px_rgba(255,42,0,0.4)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-ember focus-visible:outline-offset-8"
           >
             INITIATE CONNECTION
           </motion.button>

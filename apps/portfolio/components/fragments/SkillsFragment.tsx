@@ -35,7 +35,7 @@ export const SkillsFragment = ({ skills }: SkillsFragmentProps) => {
               <span className="w-8 h-[1px] bg-ember/30" />
               [NEURAL_MAPPING_V4.2]
             </div>
-            <h2 className="text-5xl md:text-[9rem] font-black uppercase tracking-tighter mb-10 leading-[0.8] italic">
+            <h2 className="text-[var(--text-fluid-hero)] font-black uppercase tracking-tighter mb-8 md:mb-10 leading-[0.8] italic">
               <GlitchText text="Skill" className="text-white" />
               <br />
               <GlitchText text="Map" className="text-white/10" />

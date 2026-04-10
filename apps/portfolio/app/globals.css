@@ -5,10 +5,25 @@
   --color-ember: #FF2A00;
   --color-glitch-cyan: #00FFFF;
   --color-glitch-magenta: #FF00FF;
-  
-  --font-sans: "Inter", "system-ui", "sans-serif";
-  --font-display: "Space Grotesk", "system-ui", "sans-serif";
-  --font-mono: "JetBrains Mono", "monospace";
+
+  --color-brand-salmon: #FF7E67;
+  --color-brand-salmonDark: #E5624D;
+  --color-brand-marine: #0A192F;
+  --color-brand-marineLight: #112240;
+  --color-brand-sand: #F9F6F0;
+  --font-sans: var(--font-sans), "system-ui", "sans-serif";
+  --font-display: var(--font-display), "system-ui", "sans-serif";
+  --font-mono: var(--font-mono), "monospace";
+
+  --text-fluid-hero: clamp(3.5rem, 15vw, 13rem);
+  --text-fluid-h2: clamp(2.5rem, 8vw, 7rem);
+  --text-fluid-h3: clamp(2rem, 5vw, 5rem);
+  --text-fluid-h4: clamp(1.2rem, 3vw, 2.5rem);
+}
+
+*:focus-visible {
+  outline: 2px solid var(--color-ember);
+  outline-offset: 4px;
 }
 
 :root {

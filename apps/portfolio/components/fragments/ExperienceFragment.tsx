@@ -5,10 +5,13 @@ import { motion } from "framer-motion";
 import { Experience } from "@/types/sanity";
 import { GlitchText } from "@/components/ui/GlitchText";
 import { TelemetryHUD } from "@/components/ui/TelemetryHUD";
+import { blockToPlainText } from "@/lib/utils";
 
 interface ExperienceFragmentProps {
   experience: Experience;
 }
+
+
 
 /**
  * ExperienceFragment Component
@@ -19,11 +22,17 @@ export const ExperienceFragment = ({ experience }: ExperienceFragmentProps) => {
     <section className="stream-fragment flex items-center justify-center p-6 md:p-24 relative overflow-hidden bg-void">
       {/* Background Code Stream Decoration */}
       <div className="absolute top-0 right-0 h-full w-1/2 opacity-[0.03] font-mono text-[8px] md:text-[10px] text-white overflow-hidden pointer-events-none select-none leading-none z-0">
-        {Array.from({ length: 100 }).map((_, i) => (
-          <div key={i} className="whitespace-nowrap mb-1">
-            {Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)}
-          </div>
-        ))}
+        {Array.from({ length: 100 }).map((_, i) => {
+          // Deterministic LCG pseudo-random — same output on server & client
+          let seed = (i + 1) * 9301 + 49297;
+          const chars = '0123456789abcdefghijklmnopqrstuvwxyz';
+          let str = '';
+          for (let j = 0; j < 45; j++) {
+            seed = (seed * 9301 + 49297) % 233280;
+            str += chars[seed % chars.length];
+          }
+          return <div key={i} className="whitespace-nowrap mb-1">{str}</div>;
+        })}
       </div>
 
       <div className="w-full max-w-5xl z-10">
@@ -41,7 +50,7 @@ export const ExperienceFragment = ({ experience }: ExperienceFragmentProps) => {
           <TelemetryHUD data={experience} className="mb-10" />
           
           {/* Main Role Title */}
-          <h3 className="text-4xl md:text-8xl font-black uppercase tracking-tighter mb-4 leading-[0.85] italic">
+          <h3 className="text-[var(--text-fluid-h2)] font-black uppercase tracking-tighter mb-4 leading-[0.85] italic">
             <GlitchText text={experience.role} className="text-white" />
           </h3>
           
@@ -56,7 +65,7 @@ export const ExperienceFragment = ({ experience }: ExperienceFragmentProps) => {
           {/* Description / Log Entry */}
           <div className="text-white/40 text-lg md:text-xl font-light leading-relaxed max-w-3xl border-t border-white/5 pt-10">
             <span className="text-white/60 font-mono text-xs block mb-4 uppercase tracking-widest">[LOG_ENTRY_DECRYPTED]</span>
-            SECTOR_ANALYSIS: Strategic implementation of high-scale architectural protocols. Orchestrated complex data streams and optimized system-wide latency for mission-critical deployments.
+            {blockToPlainText(experience.description) || 'SECTOR_ANALYSIS: Log entry pending decryption clearance.'}
           </div>
         </motion.div>
       </div>

@@ -32,14 +32,15 @@ export const TelemetryHUD = ({ data, className = "" }: TelemetryHUDProps) => {
 
       {/* Conditional Stack or Date Line */}
       {isProject(data) ? (
-        data.techStack && data.techStack.length > 0 && (
-          <div className="flex items-center gap-2">
-            <span className="text-ember shrink-0 font-bold">[STK_VAL]</span>
-            <span className="truncate border-b border-white/5 pb-0.5">
-              {data.techStack.map(s => s.name).join(" / ")}
-            </span>
-          </div>
-        )
+        <div className="flex items-center gap-2">
+          <span className="text-ember shrink-0 font-bold">[STK_VAL]</span>
+          <span className="truncate border-b border-white/5 pb-0.5 w-full max-w-[200px]">
+             {data.techStack && data.techStack.length > 0 
+                ? data.techStack.filter(Boolean).map(s => s.name).join(" / ")
+                : "N/A_STACK_PENDING"
+             }
+          </span>
+        </div>
       ) : (
         <div className="flex items-center gap-2">
           <span className="text-ember shrink-0 font-bold">[T-MINUS]</span>

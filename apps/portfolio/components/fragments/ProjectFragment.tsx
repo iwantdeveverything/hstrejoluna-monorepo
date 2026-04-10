@@ -8,6 +8,7 @@ import { Project } from "@/types/sanity";
 import { urlFor } from "@/lib/sanity";
 import { GlitchText } from "@/components/ui/GlitchText";
 import { TelemetryHUD } from "@/components/ui/TelemetryHUD";
+import { blockToPlainText } from "@/lib/utils";
 
 interface ProjectFragmentProps {
   project: Project;
@@ -40,23 +41,22 @@ export const ProjectFragment = ({ project, index }: ProjectFragmentProps) => {
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            <TelemetryHUD data={project} className="mb-10" />
+            <TelemetryHUD data={project} className="mb-6 md:mb-10" />
             
-            <h2 className="text-4xl md:text-7xl font-black uppercase tracking-tighter mb-8 leading-[0.9] italic">
+            <h2 className="text-[var(--text-fluid-h2)] font-black uppercase tracking-tighter mb-6 md:mb-8 leading-[0.9] italic">
               <GlitchText text={project.title} className="text-white" />
             </h2>
 
             <div className="text-white/30 text-base md:text-lg font-light leading-relaxed max-w-md mb-12 border-l-2 border-ember/10 pl-6">
-              {/* Description fallback if block content extraction is not simple here */}
-              DATA_EXTRACT: Analysis of architectural patterns and implementation strategies for high-performance scalable systems.
+              {blockToPlainText(project.description) || 'DATA_EXTRACT: Classified project documentation pending decryption.'}
             </div>
 
             <Link 
               href={getProjectUrl()} 
               target={project.externalLink ? "_blank" : "_self"}
-              className="group inline-flex items-center gap-6"
+              className="group inline-flex items-center gap-4 md:gap-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-ember focus-visible:outline-offset-4"
             >
-              <span className="font-mono text-xs tracking-[0.4em] uppercase text-ember border-b border-ember/20 pb-2 group-hover:border-ember group-hover:text-white transition-all duration-300">
+              <span className="font-mono text-[10px] md:text-xs tracking-[0.3em] md:tracking-[0.4em] uppercase text-ember border-b border-ember/20 pb-2 group-hover:border-ember group-hover:text-white transition-all duration-300">
                 [EXEC_UPLINK_PROJ]
               </span>
               <motion.span 
