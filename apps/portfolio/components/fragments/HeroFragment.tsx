@@ -37,13 +37,13 @@ export const HeroFragment = ({ profile }: HeroFragmentProps) => {
         </div>
 
         {/* Massive Typography Name */}
-        <h1 className="text-[var(--text-fluid-hero)] font-black tracking-tighter leading-[0.85] uppercase flex flex-col items-start italic">
+        <h1 className="text-fluid-hero font-black tracking-tighter leading-[0.8] uppercase italic break-words w-full">
           {nameParts.map((part, i) => (
             <GlitchText 
               key={i} 
               text={part} 
               active={i === 0} 
-              className={i === 1 ? "text-white/10 -mt-2 md:-mt-8" : "text-white"}
+              className={i === 1 ? "text-white/10 block w-full" : "text-white block w-full"}
             />
           ))}
         </h1>
@@ -56,9 +56,9 @@ export const HeroFragment = ({ profile }: HeroFragmentProps) => {
           
           {/* Main CTA */}
           <motion.button
-            whileHover={{ scale: 1.02, backgroundColor: "#FF2A00", color: "#000000" }}
+            whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className="w-full sm:w-auto px-8 md:px-12 py-4 md:py-5 border border-ember text-ember font-mono tracking-[0.3em] uppercase text-[10px] md:text-xs font-bold transition-all duration-300 shadow-[0_0_20px_rgba(255,42,0,0.15)] hover:shadow-[0_0_40px_rgba(255,42,0,0.4)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-ember focus-visible:outline-offset-8"
+            className="w-full sm:w-auto px-8 md:px-12 py-4 md:py-5 bg-gradient-to-r from-primary to-primary_container text-on_primary font-mono tracking-[0.3em] uppercase text-[10px] md:text-xs font-bold transition-all duration-300 shadow-[0_0_20px_var(--color-primary)] hover:shadow-[0_0_40px_var(--color-primary)] rounded-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-8"
           >
             INITIATE CONNECTION
           </motion.button>

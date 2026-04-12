@@ -1,16 +1,39 @@
 @import "tailwindcss";
 
 @theme {
-  --color-void: #000000;
-  --color-ember: #FF2A00;
-  --color-glitch-cyan: #00FFFF;
-  --color-glitch-magenta: #FF00FF;
+  --color-background: #131313;
+  --color-surface: #131313;
+  --color-surface-container-lowest: #0e0e0e;
+  --color-surface-container-low: #1b1b1b;
+  --color-surface-container: #1f1f1f;
+  --color-surface-container-high: #2a2a2a;
+  --color-surface-container-highest: #353535;
+  --color-surface-bright: #393939;
+
+  --color-primary: #ffb4a5;
+  --color-on-primary: #650a00;
+  --color-primary-container: #ff5637;
+  --color-on-primary-container: #590800;
+
+  --color-tertiary: #ffb693;
+
+  --color-outline-variant: #5f3f38;
+  
+  --color-on-background: #e2e2e2;
+  --color-on-surface: #e2e2e2;
+  --color-on-surface-variant: #e9bcb3;
+  
+  --color-error: #ffb4ab;
 
   --color-brand-salmon: #FF7E67;
   --color-brand-salmonDark: #E5624D;
   --color-brand-marine: #0A192F;
   --color-brand-marineLight: #112240;
   --color-brand-sand: #F9F6F0;
+  
+  --color-void: #131313;
+  --color-ember: #ffb4a5;
+
   --font-sans: var(--font-sans), "system-ui", "sans-serif";
   --font-display: var(--font-display), "system-ui", "sans-serif";
   --font-mono: var(--font-mono), "monospace";
@@ -19,23 +42,25 @@
   --text-fluid-h2: clamp(2.5rem, 8vw, 7rem);
   --text-fluid-h3: clamp(2rem, 5vw, 5rem);
   --text-fluid-h4: clamp(1.2rem, 3vw, 2.5rem);
+  
+  --text-label-sm: 0.75rem;
 }
 
 *:focus-visible {
-  outline: 2px solid var(--color-ember);
+  outline: 2px solid var(--color-primary);
   outline-offset: 4px;
 }
 
 :root {
-  background-color: var(--color-void);
-  color: #f9f9fd;
+  background-color: var(--color-background);
+  color: var(--color-on-background);
 }
 
 body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
-  background-color: var(--color-void);
+  background-color: var(--color-background);
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
 }

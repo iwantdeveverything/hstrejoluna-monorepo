@@ -17,7 +17,7 @@ export const SkillsFragment = ({ skills }: SkillsFragmentProps) => {
   const categories = Array.from(new Set(skills.map(s => s.category)));
 
   return (
-    <section className="stream-fragment flex items-center justify-center p-6 md:p-24 relative overflow-hidden bg-void">
+    <section className="stream-fragment flex items-center justify-center p-6 md:p-24 relative overflow-hidden bg-background">
       {/* Background HUD Grid Decoration */}
       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[length:100px_100px] [mask-image:radial-gradient(ellipse_at_center,black,transparent_80%)]" />
 
@@ -35,7 +35,7 @@ export const SkillsFragment = ({ skills }: SkillsFragmentProps) => {
               <span className="w-8 h-[1px] bg-ember/30" />
               [NEURAL_MAPPING_V4.2]
             </div>
-            <h2 className="text-[var(--text-fluid-hero)] font-black uppercase tracking-tighter mb-8 md:mb-10 leading-[0.8] italic">
+            <h2 className="text-fluid-hero font-black uppercase tracking-tighter mb-8 md:mb-10 leading-[0.8] italic">
               <GlitchText text="Skill" className="text-white" />
               <br />
               <GlitchText text="Map" className="text-white/10" />

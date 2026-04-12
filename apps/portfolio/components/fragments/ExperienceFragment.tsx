@@ -41,23 +41,23 @@ export const ExperienceFragment = ({ experience }: ExperienceFragmentProps) => {
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className="border-l-4 border-ember pl-8 md:pl-20 py-16 relative"
+          className="border-l-4 border-primary pl-8 md:pl-20 py-16 relative"
         >
           {/* Timeline Node Glow Indicator */}
-          <div className="absolute top-0 left-0 -translate-x-[10px] w-4 h-4 bg-ember rounded-none shadow-[0_0_20px_rgba(255,42,0,1)]" />
+          <div className="absolute top-0 left-0 -translate-x-[10px] w-4 h-4 bg-primary rounded-none shadow-[0_0_20px_rgba(255,42,0,1)]" />
           
           {/* HUD Metadata */}
           <TelemetryHUD data={experience} className="mb-10" />
           
           {/* Main Role Title */}
-          <h3 className="text-[var(--text-fluid-h2)] font-black uppercase tracking-tighter mb-4 leading-[0.85] italic">
+          <h3 className="text-fluid-h2 font-black uppercase tracking-tighter mb-4 leading-[0.85] italic">
             <GlitchText text={experience.role} className="text-white" />
           </h3>
           
           {/* Company Context */}
           <div className="flex items-center gap-4 mb-12">
-            <span className="w-12 h-[1px] bg-ember/40" />
-            <div className="text-ember font-mono text-sm md:text-base tracking-[0.4em] uppercase font-bold">
+            <span className="w-12 h-[1px] bg-primary/40" />
+            <div className="text-primary font-mono text-sm md:text-base tracking-[0.4em] uppercase font-bold">
               SYS_NODE: {experience.company}
             </div>
           </div>

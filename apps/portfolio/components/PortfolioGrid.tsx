@@ -58,7 +58,7 @@ export const PortfolioGrid = ({ profile, projects, skills }: PortfolioGridProps)
     >
       {/* Header with high-impact typography */}
       <motion.header variants={itemVariants} className="mb-20 space-y-4">
-        <div className="inline-block px-4 py-1.5 rounded-full bg-brand-salmon/10 border border-brand-salmon/20 text-brand-salmon text-sm font-bold tracking-widest uppercase mb-4">
+        <div className="inline-block px-4 py-1.5 rounded-none bg-primary/10 border border-outline_variant/10 text-primary font-mono text-label-sm uppercase tracking-widest mb-4">
           Available for new challenges
         </div>
         <h1 className="text-6xl md:text-9xl font-black tracking-tighter leading-[0.9] text-white">
@@ -107,22 +107,22 @@ export const PortfolioGrid = ({ profile, projects, skills }: PortfolioGridProps)
         {featuredProject && (
           <motion.div
             variants={itemVariants}
-            whileHover={{ y: -5 }}
-            className="md:col-span-2 lg:col-span-3 row-span-2 bg-brand-salmon rounded-[2.5rem] p-10 flex flex-col justify-between shadow-2xl shadow-brand-salmon/20 relative overflow-hidden group"
+            whileHover={{ y: 0 }}
+            className="md:col-span-2 lg:col-span-3 row-span-2 bg-surface_container_low rounded-none p-10 flex flex-col justify-between relative overflow-hidden group hover:bg-surface_container_high transition-colors"
           >
             <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity" />
             <div className="relative z-10">
-              <span className="text-black/60 text-sm font-bold uppercase tracking-widest mb-2 block">Latest Work</span>
-              <h3 className="text-4xl md:text-5xl font-black text-white tracking-tighter leading-none mb-6">
+              <span className="text-on_surface_variant text-label-sm font-mono uppercase tracking-widest mb-2 block">Latest Work</span>
+              <h3 className="text-4xl md:text-5xl font-black text-on_surface tracking-tighter leading-none mb-6">
                 {featuredProject.title}
               </h3>
-              <p className="text-white/80 text-lg font-medium max-w-xs">
+              <p className="text-on_surface/80 text-lg font-medium max-w-xs">
                 {blockContentToText(featuredProject.description)}
               </p>
             </div>
             <Link
               href={getProjectUrl(featuredProject)}
-              className="relative z-10 w-fit px-8 py-4 bg-white text-brand-salmon rounded-full font-bold hover:scale-105 transition-transform"
+              className="relative z-10 w-fit px-8 py-4 bg-gradient-to-r from-primary to-primary_container text-on_primary shadow-[0_0_20px_var(--color-primary)] rounded-none font-bold hover:shadow-[0_0_40px_var(--color-primary)] transition-shadow"
             >
               Explore Project
             </Link>

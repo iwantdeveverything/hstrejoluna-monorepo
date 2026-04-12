@@ -26,7 +26,7 @@ export const ProjectFragment = ({ project, index }: ProjectFragmentProps) => {
   };
 
   return (
-    <section className="stream-fragment flex items-center justify-center p-6 md:p-24 relative overflow-hidden bg-void">
+    <section className="stream-fragment flex items-center justify-center p-6 md:p-24 relative overflow-hidden bg-background">
       {/* Massive Background Index Number (Watermark) */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-black text-[20rem] md:text-[40rem] text-white/[0.01] select-none z-0 pointer-events-none italic">
         {String(index + 1).padStart(2, '0')}
@@ -43,24 +43,24 @@ export const ProjectFragment = ({ project, index }: ProjectFragmentProps) => {
           >
             <TelemetryHUD data={project} className="mb-6 md:mb-10" />
             
-            <h2 className="text-[var(--text-fluid-h2)] font-black uppercase tracking-tighter mb-6 md:mb-8 leading-[0.9] italic">
+            <h2 className="text-fluid-h2 font-black uppercase tracking-tighter mb-6 md:mb-8 leading-[0.9] italic">
               <GlitchText text={project.title} className="text-white" />
             </h2>
 
-            <div className="text-white/30 text-base md:text-lg font-light leading-relaxed max-w-md mb-12 border-l-2 border-ember/10 pl-6">
+            <div className="text-white/30 text-base md:text-lg font-light leading-relaxed max-w-md mb-12 border-l-2 border-primary/10 pl-6">
               {blockToPlainText(project.description) || 'DATA_EXTRACT: Classified project documentation pending decryption.'}
             </div>
 
             <Link 
               href={getProjectUrl()} 
               target={project.externalLink ? "_blank" : "_self"}
-              className="group inline-flex items-center gap-4 md:gap-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-ember focus-visible:outline-offset-4"
+              className="group inline-flex items-center gap-4 md:gap-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-4"
             >
-              <span className="font-mono text-[10px] md:text-xs tracking-[0.3em] md:tracking-[0.4em] uppercase text-ember border-b border-ember/20 pb-2 group-hover:border-ember group-hover:text-white transition-all duration-300">
+              <span className="font-mono text-[10px] md:text-xs tracking-[0.3em] md:tracking-[0.4em] uppercase text-primary border-b border-primary/20 pb-2 group-hover:border-primary group-hover:text-white transition-all duration-300">
                 [EXEC_UPLINK_PROJ]
               </span>
               <motion.span 
-                className="text-ember text-2xl"
+                className="text-primary text-2xl"
                 animate={{ x: [0, 8, 0] }}
                 transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
               >
@@ -81,13 +81,13 @@ export const ProjectFragment = ({ project, index }: ProjectFragmentProps) => {
           >
             {/* Glow/Shadow Offset */}
             <div 
-              className="absolute inset-0 bg-ember/5 z-0 translate-x-6 translate-y-6 transition-transform duration-700 group-hover:translate-x-8 group-hover:translate-y-8"
+              className="absolute inset-0 bg-primary/5 z-0 translate-x-6 translate-y-6 transition-transform duration-700 group-hover:translate-x-8 group-hover:translate-y-8"
               style={{ clipPath: "polygon(15% 0, 100% 0, 85% 100%, 0 100%)" }}
             />
             
             {/* Image Container with Custom Clip Path */}
             <div 
-              className="relative z-10 w-full h-full overflow-hidden border border-white/5 bg-white/5 backdrop-blur-sm transition-all duration-700 grayscale group-hover:grayscale-0 group-hover:border-ember/30"
+              className="relative z-10 w-full h-full overflow-hidden border border-white/5 bg-white/5 backdrop-blur-sm transition-all duration-700 grayscale group-hover:grayscale-0 group-hover:border-primary/30"
               style={{ clipPath: "polygon(15% 0, 100% 0, 85% 100%, 0 100%)" }}
             >
               {project.image && (
