@@ -80,40 +80,9 @@ body::before {
   mix-blend-mode: soft-light;
 }
 
-/* Scroll Snap Utilities */
-.stream-container {
-  display: flex;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scroll-behavior: smooth;
-  height: 100vh;
-  width: 100vw;
-  scrollbar-width: none;
-}
-
-.stream-container::-webkit-scrollbar {
-  display: none;
-}
-
-.stream-fragment {
-  flex: 0 0 100vw;
-  scroll-snap-align: start;
-  height: 100vh;
-  width: 100vw;
-  overflow: hidden;
-  position: relative;
-}
-
-@media (max-width: 768px) {
-  .stream-container {
-    flex-direction: column;
-    overflow-x: hidden;
-    overflow-y: auto;
-    scroll-snap-type: y mandatory;
-  }
-  
-  .stream-fragment {
-    flex: 0 0 100vh;
+@layer utilities {
+  .stream-section {
+    @apply min-h-screen w-full;
   }
 }
 
