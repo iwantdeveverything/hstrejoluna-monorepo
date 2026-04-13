@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Profile } from "@/types/sanity";
 import { GlitchText } from "@/components/ui/GlitchText";
@@ -9,73 +9,160 @@ interface HeroFragmentProps {
   profile: Profile | null;
 }
 
-/**
- * HeroFragment Component
- * The high-impact cinematic entry section of the portfolio.
- */
 export const HeroFragment = ({ profile }: HeroFragmentProps) => {
-  const nameParts = profile?.name?.split(" ") || ["SEBASTIÁN", "TREJO"];
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [isHovering, setIsHovering] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!containerRef.current) return;
+      const rect = containerRef.current.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      setMousePosition({ x, y });
+    };
+
+    const handleMouseEnter = () => setIsHovering(true);
+    const handleMouseLeave = () => setIsHovering(false);
+
+    const container = containerRef.current;
+    if (container) {
+      container.addEventListener("mousemove", handleMouseMove);
+      container.addEventListener("mouseenter", handleMouseEnter);
+      container.addEventListener("mouseleave", handleMouseLeave);
+    }
+    return () => {
+      if (container) {
+        container.removeEventListener("mousemove", handleMouseMove);
+        container.removeEventListener("mouseenter", handleMouseEnter);
+        container.removeEventListener("mouseleave", handleMouseLeave);
+      }
+    };
+  }, []);
+
+  const handleCTA = () => {
+    // Scroll down one viewport height smoothly
+    window.scrollTo({
+      top: window.innerHeight,
+      behavior: "smooth"
+    });
+  };
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: { opacity: 1, transition: { staggerChildren: 0.15, delayChildren: 0.2 } },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 40 },
+    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 50, damping: 20 } },
+  };
+
+  // Cambio Disruptivo de título: Usamos palabras clave crudas en lugar del nombre
+  const titleLines = ["SYSTEM", "ARCHITECT"];
 
   return (
-    <section className="stream-fragment flex flex-col justify-center px-4 sm:px-6 md:px-24 relative bg-void overflow-hidden min-h-[100svh]">
-      {/* Background Decorative Layer */}
-      <div className="absolute inset-0 z-0 pointer-events-none opacity-20">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150%] h-[150%] bg-[radial-gradient(circle_at_center,rgba(255,42,0,0.05)_0%,transparent_70%)]" />
-      </div>
+    <section 
+      ref={containerRef}
+      // Cambiamos justify-center a justify-end con padding-bottom para asegurar que el contenido crítico suba en laptops pequeñas
+      className="stream-fragment flex flex-col justify-end lg:justify-center pb-24 md:pb-32 px-4 sm:px-6 md:px-24 relative bg-void overflow-hidden min-h-[100svh]"
+    >
+      {/* Spotlight Effect */}
+      <div 
+        className="pointer-events-none absolute inset-0 z-0 transition-opacity duration-500 hidden md:block"
+        style={{
+          opacity: isHovering ? 0.6 : 0,
+          background: `radial-gradient(800px circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(255, 86, 55, 0.08), transparent 50%)`
+        }}
+      />
       
+      {/* Grid Pattern overlay for depth */}
+      <div className="absolute inset-0 z-0 pointer-events-none opacity-[0.02] bg-[linear-gradient(to_right,#ffffff_1px,transparent_1px),linear-gradient(to_bottom,#ffffff_1px,transparent_1px)] bg-[size:32px_32px] mix-blend-overlay" />
+
       <motion.div
-        initial={{ opacity: 0, x: -30 }}
-        whileInView={{ opacity: 1, x: 0 }}
+        variants={containerVariants}
+        initial="hidden"
+        whileInView="show"
         viewport={{ once: true }}
-        transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-        className="z-10 relative"
+        className="z-10 relative flex flex-col items-start w-full max-w-7xl mx-auto"
       >
         {/* System Status Header */}
-        <div className="font-mono text-[10px] md:text-xs tracking-[0.5em] text-ember mb-8 uppercase flex items-center gap-4">
-          <span className="w-8 h-[1px] bg-ember/30" />
-          [SYSTEM_READY]: INITIALIZING_INTERFACE_V2.0
-        </div>
+        <motion.div variants={itemVariants} className="font-mono text-[10px] md:text-xs tracking-[0.5em] text-ember mb-6 w-full uppercase flex items-center gap-4">
+          <span className="w-8 h-[1px] bg-ember/40 relative">
+            <span className="absolute right-0 top-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-ember shadow-[0_0_10px_var(--color-ember)] rounded-full animate-pulse" />
+          </span>
+          [SYSTEM_READY]: INITIALIZING_NEURAL_UPLINK
+        </motion.div>
 
-        {/* Massive Typography Name */}
-        <h1 className="text-fluid-hero font-black tracking-tighter leading-[0.8] uppercase italic break-words w-full">
-          {nameParts.map((part, i) => (
-            <GlitchText 
-              key={i} 
-              text={part} 
-              active={i === 0} 
-              className={i === 1 ? "text-white/10 block w-full" : "text-white block w-full"}
-            />
+        {/* Disruptive Typography Name */}
+        <motion.div variants={itemVariants} className="flex flex-col gap-0 lg:gap-2 mb-8 md:mb-12">
+          {titleLines.map((part, i) => (
+            <div key={i} className="relative w-max overflow-visible">
+              <GlitchText 
+                text={part} 
+                active={i === 0} 
+                // Ajustamos el tamaño fuente directo aquí para evitar que clamp gigantesco rompa laptops (ej 1440x900)
+                className={`text-[clamp(3.5rem,10vw,8.5rem)] font-black tracking-tighter leading-[0.85] uppercase italic group-hover:text-white/20 transition-colors duration-700 block w-full ${i === 1 ? 'text-white/10' : 'text-white'}`}
+              />
+            </div>
           ))}
-        </h1>
+        </motion.div>
 
-        {/* Headline / Bio */}
-        <div className="mt-12 md:mt-16 flex flex-col md:flex-row gap-12 items-start">
-          <p className="text-lg md:text-2xl text-white/50 max-w-xl font-light leading-relaxed border-l border-ember/20 pl-6">
-            {profile?.headline || "Software Architect specializing in Generative AI and Scalable Ecosystems."}
-          </p>
+        {/* Headline / Bio - Glassmorphic Panel */}
+        <motion.div variants={itemVariants} className="flex flex-col lg:flex-row gap-6 lg:gap-12 items-start lg:items-end w-full max-w-5xl">
+          <div className="relative p-5 md:p-8 rounded-tr-[40px] rounded-bl-[40px] border border-white/5 bg-white/[0.02] backdrop-blur-xl overflow-hidden group w-full lg:w-auto flex-1">
+            <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/5 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+            <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-gradient-to-b from-ember to-transparent" />
+            
+            <p className="text-sm md:text-lg text-white/70 font-light leading-relaxed">
+              Architecting zero-latency ecosystems and immersive digital voids.<br/>
+              <span className="text-white/90 font-medium">I transform complex constraints into pure, kinetic functional art.</span>
+            </p>
+          </div>
           
           {/* Main CTA */}
           <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className="w-full sm:w-auto px-8 md:px-12 py-4 md:py-5 bg-gradient-to-r from-primary to-primary_container text-on_primary font-mono tracking-[0.3em] uppercase text-[10px] md:text-xs font-bold transition-all duration-300 shadow-[0_0_20px_var(--color-primary)] hover:shadow-[0_0_40px_var(--color-primary)] rounded-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-8"
+            onClick={handleCTA}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="group relative overflow-hidden shrink-0 px-8 md:px-12 py-4 md:py-6 bg-transparent border border-ember/30 text-ember font-mono tracking-[0.3em] uppercase text-[10px] md:text-sm font-bold transition-all duration-300 hover:border-ember hover:text-white hover:shadow-[0_0_40px_rgba(255,86,55,0.2)] rounded-tl-[16px] rounded-br-[16px]"
           >
-            INITIATE CONNECTION
+            <span className="relative z-10 transition-colors duration-300">INITIATE SEQUENCE</span>
+            <div className="absolute inset-0 bg-ember translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out z-0" />
           </motion.button>
-        </div>
+        </motion.div>
       </motion.div>
 
-      {/* Floating System Telemetry Corners */}
-      <div className="absolute top-12 right-12 hidden lg:block font-mono text-[9px] text-white/20 tracking-[0.3em] text-right uppercase">
-        <div className="mb-1">UPLINK_STATUS: OPTIMAL</div>
-        <div className="mb-1">LATENCY: 0.0004MS</div>
-        <div>ENCRYPTION: AES_256_ACTIVE</div>
+      {/* Telemetry */}
+      <div className="absolute top-12 right-12 hidden xl:flex flex-col items-end font-mono text-[9px] text-white/30 tracking-[0.3em] uppercase">
+        <div className="mb-1 flex items-center gap-2"><span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.5)]"/> UPLINK_STATUS: OPTIMAL</div>
+        <div className="mb-1">LATENCY: 0.00MS</div>
+        <div>FRAMEWORK: KINETIC_V2</div>
       </div>
 
-      <div className="absolute bottom-12 right-12 hidden lg:block font-mono text-[9px] text-white/20 tracking-[0.3em] text-right uppercase">
-        <div className="mb-1">COORDS: 19.4326° N, 99.1332° W</div>
-        <div>OS: OBSIDIAN_KERNEL_V4</div>
+      <div className="absolute bottom-6 right-6 md:bottom-12 md:right-12 font-mono text-[8px] md:text-[9px] text-white/20 tracking-[0.3em] text-right uppercase z-0">
+        <div className="mb-1">COORDS: 0.00.00° ALPHA</div>
+        <div>OS: THE_VOID</div>
       </div>
+
+      {/* Majestic Scroll Indicator */}
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 2, duration: 1.5 }}
+        className="absolute bottom-6 left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-3 opacity-50 hover:opacity-100 transition-opacity cursor-pointer z-20"
+        onClick={handleCTA}
+      >
+        <span className="font-mono text-[8px] tracking-[0.5em] text-white/40 uppercase [writing-mode:vertical-lr] rotate-180">DESCENT</span>
+        <div className="w-[1px] h-12 md:h-16 bg-white/10 relative overflow-hidden">
+          <motion.div 
+            animate={{ y: [-48, 64] }}
+            transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
+            className="absolute top-0 w-full h-8 bg-gradient-to-b from-transparent via-ember to-transparent"
+          />
+        </div>
+      </motion.div>
     </section>
   );
 };

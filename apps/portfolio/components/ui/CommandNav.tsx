@@ -1,11 +1,28 @@
 import { motion, AnimatePresence } from "framer-motion";
+import { navSectionIds } from "@/lib/sections";
+import type { StreamSectionId } from "@/lib/sections";
 
-export const CommandNav = ({ activeId, counts }: { activeId: string, counts: Record<string, number> }) => {
-  let label = "INITIALIZING...";
-  if (activeId === 'hero') label = "SYSTEM ONLINE";
-  if (activeId === 'projects') label = `PROJECTS [0${counts.projects || 0}]`;
-  if (activeId === 'experience') label = `EXPERIENCE [0${counts.experience || 0}]`;
-  if (activeId === 'skills') label = `NEURAL MAP`;
+interface CommandNavCounts {
+  projects: number;
+  experience: number;
+  certificates: number;
+}
+
+interface CommandNavProps {
+  activeId: StreamSectionId | "";
+  counts: CommandNavCounts;
+}
+
+export const CommandNav = ({ activeId, counts }: CommandNavProps) => {
+  const labelMap: Record<StreamSectionId | "", string> = {
+    "": "INITIALIZING...",
+    hero: "SYSTEM ONLINE",
+    projects: `PROJECTS [0${counts.projects}]`,
+    experience: `EXPERIENCE [0${counts.experience}]`,
+    skills: "NEURAL MAP",
+    certificates: `CERTIFICATES [0${counts.certificates}]`,
+  };
+  const label = labelMap[activeId];
 
   return (
     <motion.div 
@@ -35,12 +52,14 @@ export const CommandNav = ({ activeId, counts }: { activeId: string, counts: Rec
       </div>
 
       <div className="relative z-10 flex items-center gap-6">
-        {['projects', 'experience', 'skills'].map((id) => (
+        {navSectionIds.map((id) => (
           <a
             key={id}
             href={`#${id}`}
             className={`text-xs font-mono uppercase transition-colors hover:text-primary ${
-              activeId === id ? 'text-primary border-b-2 border-primary pb-1' : 'text-on_surface_variant'
+              activeId === id
+                ? "text-primary border-b-2 border-primary pb-1"
+                : "text-on_surface_variant"
             }`}
           >
             {id}

@@ -1,16 +1,32 @@
 import { createClient } from "next-sanity";
 import imageUrlBuilder from "@sanity/image-url";
+import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
+
+const projectId = "73v5iufs";
+const dataset = "production";
+const apiVersion = "2024-04-05";
+const serverReadToken =
+  typeof window === "undefined"
+    ? process.env.SANITY_API_READ_TOKEN ?? process.env.SANITY_API_WRITE_TOKEN
+    : undefined;
 
 export const client = createClient({
-  projectId: "73v5iufs",
-  dataset: "production",
-  apiVersion: "2024-04-05", // Use today's date
-  useCdn: false, // Set to true if you want to use edge CDN (cached, faster)
+  projectId,
+  dataset,
+  apiVersion,
+  useCdn: false,
+  token: serverReadToken,
+});
+
+export const writeClient = createClient({
+  projectId,
+  dataset,
+  apiVersion,
+  useCdn: false,
+  token: process.env.SANITY_API_WRITE_TOKEN,
 });
 
 const builder = imageUrlBuilder(client);
-
-import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
 
 export function urlFor(source: SanityImageSource) {
   return builder.image(source);
