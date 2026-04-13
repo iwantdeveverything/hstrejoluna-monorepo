@@ -1,0 +1,533 @@
+[
+  {
+    "formId": "1145661399",
+    "name": "EF SET English Certificate 73/100 (C2 Proficient)",
+    "issuer": "EF SET",
+    "issueDateRaw": "oct. 2025",
+    "issueDate": "2025-10-01",
+    "credentialUrl": "https://cert.efset.org/en/aAn5iA",
+    "source": "linkedin"
+  },
+  {
+    "formId": "491561677",
+    "name": "Gen AI Agents: Transform Your Organization",
+    "issuer": "Google",
+    "issueDateRaw": "jun. 2025",
+    "issueDate": "2025-06-01",
+    "credentialUrl": "https://www.cloudskillsboost.google/public_profiles/443afa56-1f19-4366-afcf-d7d2a74c1621/badges/16646988?utm_medium=social&utm_source=linkedin&utm_campaign=ql-social-share",
+    "source": "linkedin"
+  },
+  {
+    "formId": "393582469",
+    "name": "Certificate of Achievement The MCP Course: Unit 1",
+    "issuer": "Hugging Face",
+    "issueDateRaw": "may. 2025",
+    "issueDate": "2025-05-01",
+    "credentialUrl": "https://huggingface.co/learn/mcp-course/unit1/introduction",
+    "source": "linkedin"
+  },
+  {
+    "formId": "1778493013",
+    "name": "Gen AI: Navigate the Landscape",
+    "issuer": "Google",
+    "issueDateRaw": "may. 2025",
+    "issueDate": "2025-05-01",
+    "credentialUrl": "https://www.cloudskillsboost.google/public_profiles/443afa56-1f19-4366-afcf-d7d2a74c1621/badges/15899909?utm_medium=social&utm_source=linkedin&utm_campaign=ql-social-share",
+    "source": "linkedin"
+  },
+  {
+    "formId": "1283487781",
+    "name": "AWS Educate Introduction to Cloud 101",
+    "issuer": "Amazon Web Services (AWS)",
+    "issueDateRaw": "may. 2025",
+    "issueDate": "2025-05-01",
+    "credentialUrl": "https://www.credly.com/badges/30dbe88d-a9bf-442e-b907-a6e5335d9e07/linked_in_profile",
+    "source": "linkedin"
+  },
+  {
+    "formId": "897611328",
+    "name": "Gen AI: Unlock Foundational Concepts Completion Badge",
+    "issuer": "Google",
+    "issueDateRaw": "may. 2025",
+    "issueDate": "2025-05-01",
+    "credentialUrl": "https://www.cloudskillsboost.google/public_profiles/443afa56-1f19-4366-afcf-d7d2a74c1621/badges/15626372?utm_medium=social&utm_source=linkedin&utm_campaign=ql-social-share",
+    "source": "linkedin"
+  },
+  {
+    "formId": "38768493",
+    "name": "Gen AI: Beyond the Chatbot",
+    "issuer": null,
+    "issueDateRaw": "abr. 2025",
+    "issueDate": "2025-04-01",
+    "credentialUrl": "https://www.cloudskillsboost.google/public_profiles/443afa56-1f19-4366-afcf-d7d2a74c1621/badges/15386847?utm_medium=social&utm_source=linkedin&utm_campaign=ql-social-share",
+    "source": "linkedin"
+  },
+  {
+    "formId": "2098822686",
+    "name": "Gemini for Application Developers",
+    "issuer": null,
+    "issueDateRaw": "abr. 2025",
+    "issueDate": "2025-04-01",
+    "credentialUrl": "https://www.cloudskillsboost.google/public_profiles/443afa56-1f19-4366-afcf-d7d2a74c1621/badges/15351310?locale=en",
+    "source": "linkedin"
+  },
+  {
+    "formId": "1229735842",
+    "name": "AWS Educate Introduction to Generative AI",
+    "issuer": "Amazon Web Services (AWS)",
+    "issueDateRaw": "mar. 2025",
+    "issueDate": "2025-03-01",
+    "credentialUrl": "https://www.credly.com/badges/8b6a55d5-1b04-4314-8aa1-268eb9f64bfc/linked_in_profile",
+    "source": "linkedin"
+  },
+  {
+    "formId": "1669963761",
+    "name": "Musixmatch Graduate of Writing Guidelines",
+    "issuer": "Musixmatch",
+    "issueDateRaw": "oct. 2024",
+    "issueDate": "2024-10-01",
+    "credentialUrl": null,
+    "source": "linkedin"
+  },
+  {
+    "formId": "1180043812",
+    "name": "Manage Kubernetes in Google Cloud Skill Badge",
+    "issuer": "Google",
+    "issueDateRaw": "oct. 2024",
+    "issueDate": "2024-10-01",
+    "credentialUrl": "https://www.credly.com/badges/5df730c9-6abd-492d-8fae-b2b8e456b77d/linked_in_profile",
+    "source": "linkedin"
+  },
+  {
+    "formId": "995223990",
+    "name": "Protect Cloud Traffic with BeyondCorp Enterprise (BCE) Security Skill Badge",
+    "issuer": "Google",
+    "issueDateRaw": "oct. 2024",
+    "issueDate": "2024-10-01",
+    "credentialUrl": "https://www.credly.com/badges/fe0d799a-60d5-474d-b254-e7ee7dfaeea9/linked_in_profile",
+    "source": "linkedin"
+  },
+  {
+    "formId": "1438059036",
+    "name": "Build a Secure Google Cloud Network Skill Badge",
+    "issuer": "Google",
+    "issueDateRaw": "oct. 2024",
+    "issueDate": "2024-10-01",
+    "credentialUrl": "https://www.credly.com/badges/cfa771ad-4b4a-413f-8bcb-c24a6c976235/linked_in_profile",
+    "source": "linkedin"
+  },
+  {
+    "formId": "741016235",
+    "name": "Implement Cloud Security Fundamentals on Google Cloud Skill Badge",
+    "issuer": "Google",
+    "issueDateRaw": "sept. 2024",
+    "issueDate": "2024-09-01",
+    "credentialUrl": "https://www.credly.com/badges/03b272b0-8e98-445c-bd2e-9698a5deeb20/linked_in_profile",
+    "source": "linkedin"
+  },
+  {
+    "formId": "2007590861",
+    "name": "Implement Load Balancing on Compute Engine Skill Badge",
+    "issuer": "Google",
+    "issueDateRaw": "sept. 2024",
+    "issueDate": "2024-09-01",
+    "credentialUrl": "https://www.credly.com/badges/a1f1051b-0dbc-4f58-bb55-8a81e3533baa/linked_in_profile",
+    "source": "linkedin"
+  },
+  {
+    "formId": "1656521452",
+    "name": "Copyright en la Música",
+    "issuer": "Seed",
+    "issueDateRaw": "sept. 2024",
+    "issueDate": "2024-09-01",
+    "credentialUrl": "https://www.seedcademy.io/dashboard/certificado?id=recl2Y4ezzC4EuZSj",
+    "source": "linkedin"
+  },
+  {
+    "formId": "374765859",
+    "name": "Regalías Musicales 101",
+    "issuer": "Seed",
+    "issueDateRaw": "feb. 2024",
+    "issueDate": "2024-02-01",
+    "credentialUrl": "https://www.seedcademy.io/dashboard/certificado?id=recfamsEpX9g2J9U6",
+    "source": "linkedin"
+  },
+  {
+    "formId": "368180427",
+    "name": "Contratos Musicales 101",
+    "issuer": "Seed",
+    "issueDateRaw": "dic. 2023",
+    "issueDate": "2023-12-01",
+    "credentialUrl": "https://www.seedcademy.io/dashboard/certificado?id=recNPxQRFH9YyHRYH",
+    "source": "linkedin"
+  },
+  {
+    "formId": "1902417311",
+    "name": "Audiocurso de Filosofía para Managers",
+    "issuer": "Platzi",
+    "issueDateRaw": "ago. 2023",
+    "issueDate": "2023-08-01",
+    "credentialUrl": "https://platzi.com/p/hstrejoluna/curso/2462-filosofia-managers/diploma/detalle/",
+    "source": "linkedin"
+  },
+  {
+    "formId": "584125540",
+    "name": "Curso de Introducción a los Negocios Online en Ecommerce",
+    "issuer": "Platzi",
+    "issueDateRaw": "jul. 2023",
+    "issueDate": "2023-07-01",
+    "credentialUrl": "https://platzi.com/p/hstrejoluna/curso/1346-negocios-online/diploma/detalle/",
+    "source": "linkedin"
+  },
+  {
+    "formId": "1869783505",
+    "name": "Curso de Introducción al Despliegue de Aplicaciones",
+    "issuer": "Platzi",
+    "issueDateRaw": "jun. 2023",
+    "issueDate": "2023-06-01",
+    "credentialUrl": "https://platzi.com/p/hstrejoluna/curso/2011-despliegue-apps/diploma/detalle/",
+    "source": "linkedin"
+  },
+  {
+    "formId": "1452500784",
+    "name": "Curso de Responsive Design: Maquetación Mobile First",
+    "issuer": "Platzi",
+    "issueDateRaw": "ene. 2023",
+    "issueDate": "2023-01-01",
+    "credentialUrl": "https://platzi.com/p/hstrejoluna/curso/2030-mobile-first/diploma/detalle/",
+    "source": "linkedin"
+  },
+  {
+    "formId": "482754260",
+    "name": "Curso de Introducción a Google Tag Manager 📃",
+    "issuer": "Platzi",
+    "issueDateRaw": "nov. 2022",
+    "issueDate": "2022-11-01",
+    "credentialUrl": "https://platzi.com/p/hstrejoluna/curso/1916-gtm/diploma/detalle/",
+    "source": "linkedin"
+  },
+  {
+    "formId": "1670480486",
+    "name": "Curso de Frontend Developer",
+    "issuer": "Platzi",
+    "issueDateRaw": "dic. 2022",
+    "issueDate": "2022-12-01",
+    "credentialUrl": "https://platzi.com/p/hstrejoluna/curso/2467-frontend-developer/diploma/detalle/",
+    "source": "linkedin"
+  },
+  {
+    "formId": "969468736",
+    "name": "Curso de Introducción a la Terminal y Línea de Comandos",
+    "issuer": "Platzi",
+    "issueDateRaw": "nov. 2022",
+    "issueDate": "2022-11-01",
+    "credentialUrl": "https://platzi.com/p/hstrejoluna/curso/2292-terminal/diploma/detalle/",
+    "source": "linkedin"
+  },
+  {
+    "formId": "407187310",
+    "name": "Fundamentos de Ingeniería de Software",
+    "issuer": "Platzi",
+    "issueDateRaw": "nov. 2022",
+    "issueDate": "2022-11-01",
+    "credentialUrl": "https://platzi.com/p/hstrejoluna/curso/1098-ingenieria/diploma/detalle/",
+    "source": "linkedin"
+  },
+  {
+    "formId": "400994837",
+    "name": "Curso de  Prework: Configuración de Entorno de Desarrollo en Linux",
+    "issuer": "Platzi",
+    "issueDateRaw": "nov. 2022",
+    "issueDate": "2022-11-01",
+    "credentialUrl": "https://platzi.com/p/hstrejoluna/curso/2383-prework-linux/diploma/detalle/",
+    "source": "linkedin"
+  },
+  {
+    "formId": "1409272176",
+    "name": "Curso de Google Tag Manager para Marketing",
+    "issuer": "Platzi",
+    "issueDateRaw": "nov. 2022",
+    "issueDate": "2022-11-01",
+    "credentialUrl": "https://platzi.com/p/hstrejoluna/curso/2191-gtm-marketing/diploma/detalle/",
+    "source": "linkedin"
+  },
+  {
+    "formId": "1384081688",
+    "name": "Curso de Inglés Básico A1: Tus Primeras Conversaciones",
+    "issuer": "Platzi",
+    "issueDateRaw": "nov. 2022",
+    "issueDate": "2022-11-01",
+    "credentialUrl": "https://platzi.com/p/hstrejoluna/curso/1945-ingles-principiantes/diploma/detalle/",
+    "source": "linkedin"
+  },
+  {
+    "formId": "1382630858",
+    "name": "Curso de Next.js",
+    "issuer": "Platzi",
+    "issueDateRaw": "nov. 2022",
+    "issueDate": "2022-11-01",
+    "credentialUrl": "https://platzi.com/p/hstrejoluna/curso/1991-next/diploma/detalle/",
+    "source": "linkedin"
+  },
+  {
+    "formId": "1573527524",
+    "name": "EF SET English Certificate 73/100 (C2 Proficient)",
+    "issuer": "EF SET",
+    "issueDateRaw": "jun. 2021",
+    "issueDate": "2021-06-01",
+    "credentialUrl": "https://www.efset.org/cert/NvbLcm",
+    "source": "linkedin"
+  },
+  {
+    "formId": "1486750453",
+    "name": "Curso de Frontend Developer",
+    "issuer": "Platzi",
+    "issueDateRaw": "ene. 2021",
+    "issueDate": "2021-01-01",
+    "credentialUrl": "https://platzi.com/p/hstrejoluna/curso/1640-frontend-developer/diploma/detalle/",
+    "source": "linkedin"
+  },
+  {
+    "formId": "1412884038",
+    "name": "Basic English Course: Conversation",
+    "issuer": "Platzi",
+    "issueDateRaw": "jun. 2020",
+    "issueDate": "2020-06-01",
+    "credentialUrl": "https://platzi.com/@hstrejoluna/curso/1371-ingles-conversacion/diploma/detalle/",
+    "source": "linkedin"
+  },
+  {
+    "formId": "1237578162",
+    "name": "Prework: Buenas prácticas y entorno de desarrollo",
+    "issuer": "Platzi",
+    "issueDateRaw": "jun. 2020",
+    "issueDate": "2020-06-01",
+    "credentialUrl": "https://platzi.com/clases/frontend-developer/",
+    "source": "linkedin"
+  },
+  {
+    "formId": "799027577",
+    "name": "SQL y mySQL",
+    "issuer": "Platzi",
+    "issueDateRaw": "jun. 2020",
+    "issueDate": "2020-06-01",
+    "credentialUrl": "https://platzi.com/@hstrejoluna/curso/1272-sql-mysql/diploma/detalle/",
+    "source": "linkedin"
+  },
+  {
+    "formId": "746697187",
+    "name": "SQL Azure",
+    "issuer": "Platzi",
+    "issueDateRaw": "jun. 2020",
+    "issueDate": "2020-06-01",
+    "credentialUrl": "https://platzi.com/@hstrejoluna/curso/1706-sql-azure/diploma/detalle/",
+    "source": "linkedin"
+  },
+  {
+    "formId": "644163556",
+    "name": "Fundamentos de Diseño de Interfaces UI y UX",
+    "issuer": "Platzi",
+    "issueDateRaw": "jun. 2020",
+    "issueDate": "2020-06-01",
+    "credentialUrl": "https://platzi.com/@hstrejoluna/curso/1754-diseno-interfaces-ux/diploma/detalle/",
+    "source": "linkedin"
+  },
+  {
+    "formId": "448402103",
+    "name": "Introducción al Pensamiento Probabilístico",
+    "issuer": "Platzi",
+    "issueDateRaw": "jun. 2020",
+    "issueDate": "2020-06-01",
+    "credentialUrl": "https://platzi.com/@hstrejoluna/curso/1841-probabilistica/diploma/detalle/",
+    "source": "linkedin"
+  },
+  {
+    "formId": "273586047",
+    "name": "Basic English Course: Fundamentals",
+    "issuer": "Platzi",
+    "issueDateRaw": "jun. 2020",
+    "issueDate": "2020-06-01",
+    "credentialUrl": "https://platzi.com/@hstrejoluna/curso/1358-ingles-basico/diploma/detalle/",
+    "source": "linkedin"
+  },
+  {
+    "formId": "271865810",
+    "name": "Curso de SCRUM",
+    "issuer": "Platzi",
+    "issueDateRaw": "jun. 2020",
+    "issueDate": "2020-06-01",
+    "credentialUrl": "https://platzi.com/@hstrejoluna/curso/1750-scrum/diploma/detalle/",
+    "source": "linkedin"
+  },
+  {
+    "formId": "231310633",
+    "name": "Cómo Conseguir Trabajo en Programación",
+    "issuer": "Platzi",
+    "issueDateRaw": "jun. 2020",
+    "issueDate": "2020-06-01",
+    "credentialUrl": "https://platzi.com/@hstrejoluna/curso/1227-developer/diploma/detalle/",
+    "source": "linkedin"
+  },
+  {
+    "formId": "213291306",
+    "name": "Programación Dinámica y Estocástica con Python",
+    "issuer": "Platzi",
+    "issueDateRaw": "jun. 2020",
+    "issueDate": "2020-06-01",
+    "credentialUrl": "https://platzi.com/@hstrejoluna/curso/1835-programacion-estocastica/diploma/detalle/",
+    "source": "linkedin"
+  },
+  {
+    "formId": "24031701",
+    "name": "Curso Profesional de Git y GitHub",
+    "issuer": "Platzi",
+    "issueDateRaw": "jun. 2020",
+    "issueDate": "2020-06-01",
+    "credentialUrl": "https://platzi.com/@hstrejoluna/curso/1557-git-github/diploma/detalle/",
+    "source": "linkedin"
+  },
+  {
+    "formId": "1943879918",
+    "name": "Estrategias para Aprender en Linea Efectivamente",
+    "issuer": "Platzi",
+    "issueDateRaw": "jun. 2020",
+    "issueDate": "2020-06-01",
+    "credentialUrl": "https://platzi.com/@hstrejoluna/curso/1608-aprender/diploma/detalle/",
+    "source": "linkedin"
+  },
+  {
+    "formId": "1936896244",
+    "name": "Fundamentos de Bases de Datos",
+    "issuer": "Platzi",
+    "issueDateRaw": "jun. 2020",
+    "issueDate": "2020-06-01",
+    "credentialUrl": "https://platzi.com/@hstrejoluna/curso/1566-bd/diploma/detalle/",
+    "source": "linkedin"
+  },
+  {
+    "formId": "1895107635",
+    "name": "Introducción a Terminal y Línea de Comandos",
+    "issuer": "Platzi",
+    "issueDateRaw": "jun. 2020",
+    "issueDate": "2020-06-01",
+    "credentialUrl": "https://platzi.com/@hstrejoluna/curso/1748-terminal/diploma/detalle/",
+    "source": "linkedin"
+  },
+  {
+    "formId": "1893976794",
+    "name": "POO y Algoritmos en Python",
+    "issuer": "Platzi",
+    "issueDateRaw": "jun. 2020",
+    "issueDate": "2020-06-01",
+    "credentialUrl": "https://platzi.com/@hstrejoluna/curso/1775-poo-python/diploma/detalle/",
+    "source": "linkedin"
+  },
+  {
+    "formId": "1760829590",
+    "name": "Introducción al Pensamiento Computacional con Python",
+    "issuer": "Platzi",
+    "issueDateRaw": "may. 2020",
+    "issueDate": "2020-05-01",
+    "credentialUrl": "https://platzi.com/@hstrejoluna/curso/1764-python-cs/diploma/detalle/",
+    "source": "linkedin"
+  },
+  {
+    "formId": "1754049633",
+    "name": "Creación y Optimización de Sitios Web con WordPress",
+    "issuer": "Platzi",
+    "issueDateRaw": "may. 2020",
+    "issueDate": "2020-05-01",
+    "credentialUrl": "https://platzi.com/@hstrejoluna/curso/1433-seo-wordpress/diploma/detalle/",
+    "source": "linkedin"
+  },
+  {
+    "formId": "1250168909",
+    "name": "Bootstrap",
+    "issuer": "Platzi",
+    "issueDateRaw": "may. 2020",
+    "issueDate": "2020-05-01",
+    "credentialUrl": "https://platzi.com/@hstrejoluna/curso/1331-course/diploma/detalle/",
+    "source": "linkedin"
+  },
+  {
+    "formId": "1038755144",
+    "name": "Copywriting para Plataformas Digitales",
+    "issuer": "Platzi",
+    "issueDateRaw": "may. 2020",
+    "issueDate": "2020-05-01",
+    "credentialUrl": "https://platzi.com/@hstrejoluna/curso/1476-copywriting-digital/diploma/detalle/",
+    "source": "linkedin"
+  },
+  {
+    "formId": "785879772",
+    "name": "Flutter",
+    "issuer": "Platzi",
+    "issueDateRaw": "may. 2020",
+    "issueDate": "2020-05-01",
+    "credentialUrl": "https://platzi.com/@hstrejoluna/curso/1386-flutter/diploma/detalle/",
+    "source": "linkedin"
+  },
+  {
+    "formId": "782456576",
+    "name": "desarrollo de habilidades blandas para equipos de trabajo",
+    "issuer": "Platzi",
+    "issueDateRaw": "may. 2020",
+    "issueDate": "2020-05-01",
+    "credentialUrl": "https://platzi.com/@hstrejoluna/curso/1830-course/diploma/detalle/",
+    "source": "linkedin"
+  },
+  {
+    "formId": "616672748",
+    "name": "Análisis de Malware para Dispositivos Móviles",
+    "issuer": "Platzi",
+    "issueDateRaw": "may. 2020",
+    "issueDate": "2020-05-01",
+    "credentialUrl": "https://platzi.com/@hstrejoluna/curso/1864-malware-moviles/diploma/detalle/",
+    "source": "linkedin"
+  },
+  {
+    "formId": "175899023",
+    "name": "Gestión Efectiva del Tiempo",
+    "issuer": "Platzi",
+    "issueDateRaw": "may. 2020",
+    "issueDate": "2020-05-01",
+    "credentialUrl": "https://platzi.com/@hstrejoluna/curso/1749-gestion-tiempo/diploma/detalle/?fbclid=IwAR1BIAt1T5qOFMHULWf31_QcnV4y1x85Q8NDQiJHHCSV4UgE9LNS0u7g14E",
+    "source": "linkedin"
+  },
+  {
+    "formId": "152494010",
+    "name": "Digishock 1.0",
+    "issuer": "Udemy",
+    "issueDateRaw": "abr. 2019",
+    "issueDate": "2019-04-01",
+    "credentialUrl": "https://www.udemy.com/certificate/UC-YSRXMNTF/",
+    "source": "linkedin"
+  },
+  {
+    "formId": "152385690",
+    "name": "React JS Web Development",
+    "issuer": "Udemy",
+    "issueDateRaw": "sept. 2019",
+    "issueDate": "2019-09-01",
+    "credentialUrl": "https://www.udemy.com/certificate/UC-SVEMAGXD/",
+    "source": "linkedin"
+  },
+  {
+    "formId": "1030545143",
+    "name": "Certificate of Completion: HTML Fundamentals",
+    "issuer": "Sololearn",
+    "issueDateRaw": "dic. 2016",
+    "issueDate": "2016-12-01",
+    "credentialUrl": "https://www.sololearn.com/Profile/398851/",
+    "source": "linkedin"
+  },
+  {
+    "formId": "1028616902",
+    "name": "Certificate of Completion: Python 3 Course",
+    "issuer": "Sololearn",
+    "issueDateRaw": "nov. 2016",
+    "issueDate": "2016-11-01",
+    "credentialUrl": "https://www.sololearn.com/Profile/398851/",
+    "source": "linkedin"
+  }
+]

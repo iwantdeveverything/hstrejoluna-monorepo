@@ -1,34 +1,80 @@
 "use client";
 
-import React, { useRef, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { useActiveSection } from "@/hooks/useActiveSection";
-import { Profile, Project, Skill, Experience } from "@/types/sanity";
+import {
+  Profile,
+  Project,
+  Skill,
+  Experience,
+  Certificate,
+} from "@/types/sanity";
 import { HeroFragment } from "./fragments/HeroFragment";
 import { ProjectsOverview } from "./fragments/ProjectsOverview";
 import { ExperienceOverview } from "./fragments/ExperienceOverview";
 import { SkillsOverview } from "./fragments/SkillsOverview";
+import { CertificatesOverview } from "./fragments/CertificatesOverview";
 import { SectionDock } from "./ui/SectionDock";
 import { CommandNav } from "./ui/CommandNav";
 import { BootSequence } from "./ui/BootSequence";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import { streamSectionIds } from "@/lib/sections";
+import type { NavSectionId, StreamSectionId } from "@/lib/sections";
 
 interface ObsidianStreamProps {
   profile: Profile | null;
   projects: Project[];
   skills: Skill[];
   experiences: Experience[];
+  certificates: Certificate[];
 }
 
-export const ObsidianStream = ({ profile, projects, skills, experiences }: ObsidianStreamProps) => {
+interface StreamSectionProps {
+  id: NavSectionId;
+  sectionClassName: string;
+  wrapperClassName: string;
+  title: string;
+  countLabel: string;
+  children: React.ReactNode;
+}
+
+const StreamSection = ({
+  id,
+  sectionClassName,
+  wrapperClassName,
+  title,
+  countLabel,
+  children,
+}: StreamSectionProps) => (
+  <section id={id} className={sectionClassName}>
+    <div className={wrapperClassName}>
+      <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tighter mb-12 italic text-on_surface border-b border-surface_container_highest pb-4">
+        {title} <span className="text-primary text-sm tracking-widest align-top ml-4">{countLabel}</span>
+      </h2>
+      {children}
+    </div>
+  </section>
+);
+
+export const ObsidianStream = ({
+  profile,
+  projects,
+  skills,
+  experiences,
+  certificates,
+}: ObsidianStreamProps) => {
   const [isBooted, setIsBooted] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
   const isReducedMotion = useReducedMotion();
-  const sectionIds = ['hero', 'projects', 'experience', 'skills'];
+  const sectionIds: StreamSectionId[] = [...streamSectionIds];
   
-  const activeId = useActiveSection(sectionIds, 0.4);
+  const activeId = useActiveSection<StreamSectionId>(sectionIds, 0.4);
 
   const { scrollYProgress } = useScroll();
+  const sectionBaseWrapperClass =
+    "pt-24 md:pt-32 px-4 md:px-12 max-w-7xl mx-auto w-full";
+  const compactSectionWrapperClass = `${sectionBaseWrapperClass} pb-12`;
+  const fullSectionWrapperClass = `${sectionBaseWrapperClass} pb-32`;
 
   const backgroundY = useTransform(
     scrollYProgress, 
@@ -36,7 +82,6 @@ export const ObsidianStream = ({ profile, projects, skills, experiences }: Obsid
     isReducedMotion ? ["0%", "0%"] : ["5%", "-30%"]
   );
 
-  // Bloqueamos el scroll hasta que la secuencia haya terminado
   useEffect(() => {
     if (!isBooted) {
       document.body.style.overflow = "hidden";
@@ -61,7 +106,6 @@ export const ObsidianStream = ({ profile, projects, skills, experiences }: Obsid
       >
         {isBooted && (
           <>
-            {/* Background layer */}
             <motion.div 
               style={{ y: backgroundY }}
               className="fixed inset-0 z-0 flex flex-col justify-center items-center pointer-events-none select-none opacity-5 md:opacity-10"
@@ -71,50 +115,62 @@ export const ObsidianStream = ({ profile, projects, skills, experiences }: Obsid
               </span>
             </motion.div>
 
-            {/* Navigation HUDs */}
             <SectionDock sections={sectionIds} activeId={activeId} />
             <CommandNav 
               activeId={activeId} 
-              counts={{ projects: projects.length, experience: experiences.length }} 
+              counts={{
+                projects: projects.length,
+                experience: experiences.length,
+                certificates: certificates.length,
+              }}
             />
 
-            <main 
-              ref={containerRef}
-              className="relative z-10 flex flex-col w-full"
-            >
+            <main className="relative z-10 flex flex-col w-full">
               <section id="hero" className="stream-section">
                 <HeroFragment profile={profile} />
               </section>
 
-              <section id="projects" className="stream-section bg-surface_container_lowest">
-                <div className="pt-24 md:pt-32 pb-12 px-4 md:px-12 max-w-7xl mx-auto w-full">
-                  <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tighter mb-12 italic text-on_surface border-b border-surface_container_highest pb-4">
-                    PROJECTS <span className="text-primary text-sm tracking-widest align-top ml-4">[0{projects.length}]</span>
-                  </h2>
-                  <ProjectsOverview projects={projects} />
-                </div>
-              </section>
+              <StreamSection
+                id="projects"
+                sectionClassName="stream-section bg-surface_container_lowest"
+                wrapperClassName={compactSectionWrapperClass}
+                title="PROJECTS"
+                countLabel={`[0${projects.length}]`}
+              >
+                <ProjectsOverview projects={projects} />
+              </StreamSection>
 
-              <section id="experience" className="stream-section relative bg-background">
-                <div className="pt-24 md:pt-32 pb-12 px-4 md:px-12 max-w-7xl mx-auto w-full">
-                  <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tighter mb-12 italic text-on_surface border-b border-surface_container_highest pb-4">
-                    EXPERIENCE_LOG <span className="text-primary text-sm tracking-widest align-top ml-4">[0{experiences.length}]</span>
-                  </h2>
-                  <ExperienceOverview experiences={experiences} />
-                </div>
-              </section>
+              <StreamSection
+                id="experience"
+                sectionClassName="stream-section relative bg-background"
+                wrapperClassName={compactSectionWrapperClass}
+                title="EXPERIENCE_LOG"
+                countLabel={`[0${experiences.length}]`}
+              >
+                <ExperienceOverview experiences={experiences} />
+              </StreamSection>
 
-              <section id="skills" className="stream-section bg-surface_container_lowest">
-                <div className="pt-24 md:pt-32 pb-32 px-4 md:px-12 max-w-7xl mx-auto w-full">
-                  <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tighter mb-12 italic text-on_surface border-b border-surface_container_highest pb-4">
-                    NEURAL_MAP <span className="text-primary text-sm tracking-widest align-top ml-4">[ACTIVE_NODES: {skills.length}]</span>
-                  </h2>
-                  <SkillsOverview skills={skills} />
-                </div>
-              </section>
+              <StreamSection
+                id="skills"
+                sectionClassName="stream-section bg-surface_container_lowest"
+                wrapperClassName={fullSectionWrapperClass}
+                title="NEURAL_MAP"
+                countLabel={`[ACTIVE_NODES: ${skills.length}]`}
+              >
+                <SkillsOverview skills={skills} />
+              </StreamSection>
+
+              <StreamSection
+                id="certificates"
+                sectionClassName="stream-section relative bg-background"
+                wrapperClassName={fullSectionWrapperClass}
+                title="CERTIFICATES"
+                countLabel={`[0${certificates.length}]`}
+              >
+                <CertificatesOverview certificates={certificates} />
+              </StreamSection>
             </main>
 
-            {/* Global Scroll Progress Bar */}
             <div className="fixed top-0 left-0 w-full h-[2px] z-[100] bg-white/5 pointer-events-none">
               <motion.div 
                 className="h-full bg-primary origin-left"

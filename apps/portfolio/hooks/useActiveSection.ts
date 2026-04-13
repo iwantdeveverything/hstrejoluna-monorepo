@@ -1,25 +1,29 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
-export function useActiveSection(sectionIds: string[], threshold: number = 0.5) {
-  const [activeId, setActiveId] = useState<string>('');
+export function useActiveSection<T extends string>(
+  sectionIds: readonly T[],
+  threshold: number = 0.5
+) {
+  const [activeId, setActiveId] = useState<T | "">("");
 
   useEffect(() => {
-    // Determine thresholds dynamically based on element heights if needed, 
-    // but 0.5 works natively well for sections min h-screen 
     const options = {
       root: null,
-      rootMargin: '0px',
+      rootMargin: "0px",
       threshold,
     };
 
     const observer = new IntersectionObserver((entries) => {
-      // Find the entry that is highest on the screen but adequately visible.
-      // Easiest is just iterating through intersecting ones for the latest intersecting threshold hit.
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          setActiveId(entry.target.id);
-        }
-      });
+      const nextEntry = entries
+        .filter((entry) => entry.isIntersecting)
+        .sort(
+          (a, b) => a.boundingClientRect.top - b.boundingClientRect.top
+        )
+        .at(0);
+
+      if (nextEntry) {
+        setActiveId(nextEntry.target.id as T);
+      }
     }, options);
 
     sectionIds.forEach((id) => {

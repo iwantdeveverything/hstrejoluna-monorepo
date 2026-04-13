@@ -12,11 +12,29 @@ export interface SanityImage {
   };
 }
 
+export interface PortableTextSpan {
+  _type: "span";
+  text: string;
+  marks?: string[];
+}
+
+export interface PortableTextMarkDef {
+  _key: string;
+  _type: string;
+}
+
+export interface PortableTextBlock {
+  _type: "block";
+  children?: PortableTextSpan[];
+  markDefs?: PortableTextMarkDef[];
+  style?: string;
+}
+
 export interface Project {
   _id: string;
   title: string;
   slug?: { current: string };
-  description: any; // Block content
+  description: string | PortableTextBlock[];
   image?: SanityImage;
   techStack?: Skill[];
   micrositePath?: string;
@@ -31,7 +49,7 @@ export interface Experience {
   startDate: string;
   endDate?: string;
   isCurrent?: boolean;
-  description: any; // Block content
+  description: string | PortableTextBlock[];
 }
 
 export interface Skill {
@@ -39,4 +57,22 @@ export interface Skill {
   name: string;
   proficiency: number;
   category: string;
+}
+
+export interface Certificate {
+  _id: string;
+  name: string;
+  issuer?: string;
+  issueDate?: string;
+  expiryDate?: string;
+  credentialId?: string;
+  credentialUrl?: string;
+  source: "linkedin";
+}
+
+export interface SyncCertificatesResult {
+  fetched: number;
+  upserted: number;
+  skipped: number;
+  warnings: string[];
 }
