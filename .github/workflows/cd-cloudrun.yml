@@ -33,6 +33,7 @@ jobs:
     env:
       SERVICE_NAME: ${{ vars.CLOUD_RUN_SERVICE_PORTFOLIO || 'portfolio' }}
       IMAGE_NAME: portfolio
+      SMOKE_PATH: ${{ vars.CLOUD_RUN_SMOKE_PATH_PORTFOLIO || '/' }}
 
     steps:
       - name: Checkout
@@ -96,7 +97,7 @@ jobs:
         if: ${{ env.ACT != 'true' }}
         run: |
           SERVICE_URL="$(gcloud run services describe "${SERVICE_NAME}" --project "${GCP_PROJECT_ID}" --region "${GCP_REGION}" --format='value(status.url)')"
-          curl --fail --silent --show-error "${SERVICE_URL}" > /dev/null
+          curl --fail --silent --show-error "${SERVICE_URL}${SMOKE_PATH}" > /dev/null
 
   deploy-maestros-del-salmon:
     name: Deploy maestros-del-salmon
@@ -105,6 +106,7 @@ jobs:
     env:
       SERVICE_NAME: ${{ vars.CLOUD_RUN_SERVICE_SALMON || 'maestros-del-salmon' }}
       IMAGE_NAME: maestros-del-salmon
+      SMOKE_PATH: ${{ vars.CLOUD_RUN_SMOKE_PATH_SALMON || '/maestros-del-salmon' }}
 
     steps:
       - name: Checkout
@@ -168,4 +170,4 @@ jobs:
         if: ${{ env.ACT != 'true' }}
         run: |
           SERVICE_URL="$(gcloud run services describe "${SERVICE_NAME}" --project "${GCP_PROJECT_ID}" --region "${GCP_REGION}" --format='value(status.url)')"
-          curl --fail --silent --show-error "${SERVICE_URL}" > /dev/null
+          curl --fail --silent --show-error "${SERVICE_URL}${SMOKE_PATH}" > /dev/null
