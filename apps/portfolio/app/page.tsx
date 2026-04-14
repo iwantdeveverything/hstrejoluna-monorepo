@@ -10,6 +10,8 @@ import {
 } from "@/types/sanity";
 import { ObsidianStream } from "@/components/ObsidianStream";
 
+export const dynamic = "force-dynamic";
+
 const profileQuery = '*[_type == "profile"][0]';
 const projectsQuery =
   '*[_type == "project"] | order(isFeatured desc, _createdAt desc) { ..., techStack[]-> }';
@@ -24,13 +26,15 @@ const getProfile = cache(() => client.fetch<Profile | null>(profileQuery));
 
 export async function generateMetadata(): Promise<Metadata> {
   const profile = await getProfile();
-  
+  const resolvedName = profile?.name ?? defaultName;
+  const resolvedHeadline = profile?.headline ?? defaultHeadline;
+
   return {
-    title: `${profile?.name ?? defaultName} | Senior Software Architect`,
-    description: profile?.headline ?? defaultHeadline,
+    title: `${resolvedName} | Senior Software Architect`,
+    description: resolvedHeadline,
     openGraph: {
-      title: `${profile?.name ?? defaultName} | Obsidian Command Portfolio`,
-      description: profile?.headline ?? defaultHeadline,
+      title: `${resolvedName} | Obsidian Command Portfolio`,
+      description: resolvedHeadline,
       type: "website",
       images: [
         {
@@ -43,8 +47,8 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     twitter: {
       card: "summary_large_image",
-      title: profile?.name ?? defaultName,
-      description: profile?.headline ?? defaultHeadline,
+      title: resolvedName,
+      description: resolvedHeadline,
     },
   };
 }
@@ -66,7 +70,7 @@ export default async function PortfolioPage() {
     description: profile?.bio,
     url: "https://hstrejoluna.com",
     sameAs: profile?.socials?.map((social) => social.url) ?? [],
-    knowsAbout: skills.map(s => s.name),
+    knowsAbout: skills.map((s) => s.name),
   };
 
   return (

@@ -34,6 +34,8 @@ jobs:
       SERVICE_NAME: ${{ vars.CLOUD_RUN_SERVICE_PORTFOLIO || 'portfolio' }}
       IMAGE_NAME: portfolio
       SMOKE_PATH: ${{ vars.CLOUD_RUN_SMOKE_PATH_PORTFOLIO || '/' }}
+      SALMON_ORIGIN: ${{ vars.SALMON_ORIGIN || '' }}
+      SANITY_API_READ_TOKEN: ${{ secrets.SANITY_API_READ_TOKEN }}
 
     steps:
       - name: Checkout
@@ -62,6 +64,19 @@ jobs:
         if: ${{ env.ACT != 'true' }}
         run: gcloud auth configure-docker "${GCP_REGION}-docker.pkg.dev" --quiet
 
+      - name: Validate portfolio runtime env contract
+        if: ${{ env.ACT != 'true' }}
+        run: |
+          missing=()
+          [ -z "${SALMON_ORIGIN}" ] && missing+=("SALMON_ORIGIN (repo variable)")
+          [ -z "${SANITY_API_READ_TOKEN}" ] && missing+=("SANITY_API_READ_TOKEN (repo secret)")
+
+          if [ ${#missing[@]} -gt 0 ]; then
+            echo "Missing required runtime configuration for portfolio deploy:"
+            printf ' - %s\n' "${missing[@]}"
+            exit 1
+          fi
+
       - name: Build image
         if: ${{ env.ACT != 'true' }}
         run: |
@@ -88,6 +103,8 @@ jobs:
             --cpu "${CLOUD_RUN_CPU}" \
             --memory "${CLOUD_RUN_MEMORY}" \
             --timeout "${CLOUD_RUN_TIMEOUT}" \
+            --update-env-vars "SALMON_ORIGIN=${SALMON_ORIGIN}" \
+            --update-env-vars "SANITY_API_READ_TOKEN=${SANITY_API_READ_TOKEN}" \
             --cpu-throttling \
             --no-cpu-boost \
             --allow-unauthenticated \
