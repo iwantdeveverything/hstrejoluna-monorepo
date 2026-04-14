@@ -1,0 +1,15 @@
+{
+  "pull_request": {
+    "number": 1,
+    "head": {
+      "ref": "feat/local-act-validation"
+    },
+    "base": {
+      "ref": "master"
+    }
+  },
+  "repository": {
+    "full_name": "iwantdeveverything/hstrejoluna-monorepo",
+    "default_branch": "master"
+  }
+}

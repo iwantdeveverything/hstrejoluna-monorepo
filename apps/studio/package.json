@@ -6,7 +6,7 @@
     "dev": "sanity dev --port 3333",
     "build": "sanity build",
     "start": "sanity start",
-    "lint": "eslint ."
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
   },
   "dependencies": {
     "sanity": "latest",

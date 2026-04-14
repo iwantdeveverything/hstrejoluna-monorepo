@@ -1,0 +1,13 @@
+.git
+.github
+.cursor
+node_modules
+**/node_modules
+**/.next
+**/dist
+**/coverage
+**/.turbo
+**/*.log
+.env
+.env.*
+openspec

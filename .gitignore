@@ -41,3 +41,6 @@ apps/studio/node_modules
 
 # Antigravity (Skill Registry)
 .atl/
+
+# Local act configuration
+.github/act/*.local

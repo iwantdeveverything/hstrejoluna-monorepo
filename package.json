@@ -2,9 +2,11 @@
   "name": "hstrejoluna-monorepo",
   "private": true,
   "scripts": {
-    "build": "turbo run build",
+    "build": "npm run build --workspace=apps/portfolio && npm run build --workspace=apps/maestros-del-salmon",
     "dev": "turbo run dev",
-    "lint": "turbo run lint",
+    "lint": "npm run lint --workspace=apps/portfolio && npm run lint --workspace=apps/maestros-del-salmon",
+    "typecheck": "npx tsc -p apps/portfolio/tsconfig.json --noEmit && npx tsc -p apps/maestros-del-salmon/tsconfig.json --noEmit",
+    "test": "npm run test --workspace=apps/portfolio",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "workspaces": [

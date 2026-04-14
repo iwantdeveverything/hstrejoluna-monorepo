@@ -1,8 +1,7 @@
-// ExperienceOverview.tsx
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { type Experience } from "@/types/sanity";
-import { PortableText } from '@portabletext/react';
+import { PortableText } from "@portabletext/react";
 import { Calendar, Building, ChevronRight } from "lucide-react";
 
 export const ExperienceOverview = ({ experiences }: { experiences: Experience[] }) => {
@@ -12,9 +11,16 @@ export const ExperienceOverview = ({ experiences }: { experiences: Experience[] 
     setExpandedId(prev => prev === id ? null : id);
   };
 
+  const getDescription = (description: Experience["description"]) => {
+    if (typeof description === "string") {
+      return <p>{description}</p>;
+    }
+
+    return <PortableText value={description} />;
+  };
+
   return (
     <div className="relative w-full max-w-5xl mx-auto py-12 px-4 md:px-0">
-      {/* Central Spine */}
       <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-px bg-surface_container_highest -translate-x-1/2 z-0" />
 
       <div className="space-y-4 relative z-10">
@@ -24,17 +30,18 @@ export const ExperienceOverview = ({ experiences }: { experiences: Experience[] 
 
           return (
             <div key={exp._id} className={`flex flex-col md:flex-row w-full ${isLeft ? 'md:flex-row' : 'md:flex-row-reverse'} relative`}>
-              {/* Spine Node */}
               <div className="absolute left-4 md:left-1/2 top-6 -translate-x-1/2 w-3 h-3 bg-surface_container_highest border border-primary/50 rotate-45 z-20"
                    style={{ backgroundColor: isExpanded ? 'var(--color-primary)' : '' }} />
 
-              {/* Card Container */}
               <div className="w-full md:w-1/2 pl-12 md:pl-0 flex">
                 <div className={`w-full max-w-lg ${isLeft ? 'md:mr-auto md:pr-12' : 'md:ml-auto md:pl-12'}`}>
-                  <motion.div 
+                  <motion.button
                     layout
+                    type="button"
                     onClick={() => toggleExp(exp._id)}
-                    className={`cursor-pointer border border-surface_container_highest bg-background p-6 transition-colors duration-300 hover:border-primary/50 group ${isExpanded ? 'border-primary/50 bg-primary/5' : ''}`}
+                    aria-expanded={isExpanded}
+                    aria-controls={`details-${exp._id}`}
+                    className={`w-full text-left cursor-pointer border border-surface_container_highest bg-background p-6 transition-colors duration-300 hover:border-primary/50 group ${isExpanded ? 'border-primary/50 bg-primary/5' : ''}`}
                   >
                     <div className="flex items-center gap-2 text-primary font-mono text-xs mb-3">
                       <Calendar className="w-3 h-3" />
@@ -62,11 +69,12 @@ export const ExperienceOverview = ({ experiences }: { experiences: Experience[] 
                           animate={{ height: "auto", opacity: 1 }}
                           exit={{ height: 0, opacity: 0 }}
                           transition={{ duration: 0.3 }}
+                          id={`details-${exp._id}`}
                           className="overflow-hidden mt-6 pt-6 border-t border-surface_container_highest"
                         >
                           <div className="prose prose-invert prose-sm max-w-none prose-p:text-on_surface_variant prose-li:text-on_surface_variant prose-strong:text-on_surface prose-a:text-primary">
                             {exp.description ? (
-                              <PortableText value={exp.description} />
+                              getDescription(exp.description)
                             ) : (
                               <p className="text-on_surface_variant/50 italic font-mono text-xs">[NO_DESCRIPTION_PROVIDED]</p>
                             )}
@@ -74,7 +82,7 @@ export const ExperienceOverview = ({ experiences }: { experiences: Experience[] 
                         </motion.div>
                       )}
                     </AnimatePresence>
-                  </motion.div>
+                  </motion.button>
                 </div>
               </div>
             </div>

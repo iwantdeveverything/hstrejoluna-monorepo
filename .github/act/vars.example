@@ -1,0 +1,8 @@
+# Used by `act --var-file`.
+# Copy to `.github/act/vars.local` and adjust values.
+
+GCP_PROJECT_ID=local-project
+GCP_REGION=us-central1
+GAR_REPOSITORY=apps
+CLOUD_RUN_SERVICE_PORTFOLIO=portfolio
+CLOUD_RUN_SERVICE_SALMON=maestros-del-salmon

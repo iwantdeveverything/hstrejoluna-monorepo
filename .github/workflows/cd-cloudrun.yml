@@ -1,0 +1,171 @@
+name: CD Cloud Run
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: cd-cloudrun-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
+  GCP_REGION: ${{ vars.GCP_REGION || 'us-central1' }}
+  GAR_REPOSITORY: ${{ vars.GAR_REPOSITORY || 'apps' }}
+  CLOUD_RUN_MIN_INSTANCES: ${{ vars.CLOUD_RUN_MIN_INSTANCES || '0' }}
+  CLOUD_RUN_MAX_INSTANCES: ${{ vars.CLOUD_RUN_MAX_INSTANCES || '2' }}
+  CLOUD_RUN_CONCURRENCY: ${{ vars.CLOUD_RUN_CONCURRENCY || '80' }}
+  CLOUD_RUN_CPU: ${{ vars.CLOUD_RUN_CPU || '1' }}
+  CLOUD_RUN_MEMORY: ${{ vars.CLOUD_RUN_MEMORY || '512Mi' }}
+  CLOUD_RUN_TIMEOUT: ${{ vars.CLOUD_RUN_TIMEOUT || '60' }}
+
+jobs:
+  deploy-portfolio:
+    name: Deploy portfolio
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      SERVICE_NAME: ${{ vars.CLOUD_RUN_SERVICE_PORTFOLIO || 'portfolio' }}
+      IMAGE_NAME: portfolio
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Local act simulation marker
+        if: ${{ env.ACT == 'true' }}
+        run: |
+          IMAGE_BASE="${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT_ID:-local-project}/${GAR_REPOSITORY}/${IMAGE_NAME}"
+          IMAGE_TAG="${IMAGE_BASE}:${GITHUB_SHA}"
+          echo "IMAGE_DIGEST=${IMAGE_TAG}@sha256:actlocal" >> "${GITHUB_ENV}"
+          echo "ACT mode: skipping real GCP deploy steps."
+
+      - name: Authenticate to Google Cloud
+        if: ${{ env.ACT != 'true' }}
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WIF_PROVIDER }}
+          service_account: ${{ secrets.GCP_WIF_SERVICE_ACCOUNT }}
+
+      - name: Setup gcloud
+        if: ${{ env.ACT != 'true' }}
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure Docker auth for Artifact Registry
+        if: ${{ env.ACT != 'true' }}
+        run: gcloud auth configure-docker "${GCP_REGION}-docker.pkg.dev" --quiet
+
+      - name: Build image
+        if: ${{ env.ACT != 'true' }}
+        run: |
+          IMAGE_BASE="${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/${GAR_REPOSITORY}/${IMAGE_NAME}"
+          IMAGE_TAG="${IMAGE_BASE}:${GITHUB_SHA}"
+          IMAGE_LATEST="${IMAGE_BASE}:latest"
+          docker build -f apps/portfolio/Dockerfile -t "${IMAGE_TAG}" -t "${IMAGE_LATEST}" .
+          docker push "${IMAGE_TAG}"
+          docker push "${IMAGE_LATEST}"
+          DIGEST="$(docker inspect --format='{{index .RepoDigests 0}}' "${IMAGE_TAG}")"
+          echo "IMAGE_DIGEST=${DIGEST}" >> "${GITHUB_ENV}"
+
+      - name: Deploy to Cloud Run
+        if: ${{ env.ACT != 'true' }}
+        run: |
+          gcloud run deploy "${SERVICE_NAME}" \
+            --project "${GCP_PROJECT_ID}" \
+            --region "${GCP_REGION}" \
+            --platform managed \
+            --image "${IMAGE_DIGEST}" \
+            --min-instances "${CLOUD_RUN_MIN_INSTANCES}" \
+            --max-instances "${CLOUD_RUN_MAX_INSTANCES}" \
+            --concurrency "${CLOUD_RUN_CONCURRENCY}" \
+            --cpu "${CLOUD_RUN_CPU}" \
+            --memory "${CLOUD_RUN_MEMORY}" \
+            --timeout "${CLOUD_RUN_TIMEOUT}" \
+            --cpu-throttling \
+            --no-cpu-boost \
+            --allow-unauthenticated \
+            --quiet
+
+      - name: Smoke check
+        if: ${{ env.ACT != 'true' }}
+        run: |
+          SERVICE_URL="$(gcloud run services describe "${SERVICE_NAME}" --project "${GCP_PROJECT_ID}" --region "${GCP_REGION}" --format='value(status.url)')"
+          curl --fail --silent --show-error "${SERVICE_URL}" > /dev/null
+
+  deploy-maestros-del-salmon:
+    name: Deploy maestros-del-salmon
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      SERVICE_NAME: ${{ vars.CLOUD_RUN_SERVICE_SALMON || 'maestros-del-salmon' }}
+      IMAGE_NAME: maestros-del-salmon
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Local act simulation marker
+        if: ${{ env.ACT == 'true' }}
+        run: |
+          IMAGE_BASE="${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT_ID:-local-project}/${GAR_REPOSITORY}/${IMAGE_NAME}"
+          IMAGE_TAG="${IMAGE_BASE}:${GITHUB_SHA}"
+          echo "IMAGE_DIGEST=${IMAGE_TAG}@sha256:actlocal" >> "${GITHUB_ENV}"
+          echo "ACT mode: skipping real GCP deploy steps."
+
+      - name: Authenticate to Google Cloud
+        if: ${{ env.ACT != 'true' }}
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WIF_PROVIDER }}
+          service_account: ${{ secrets.GCP_WIF_SERVICE_ACCOUNT }}
+
+      - name: Setup gcloud
+        if: ${{ env.ACT != 'true' }}
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure Docker auth for Artifact Registry
+        if: ${{ env.ACT != 'true' }}
+        run: gcloud auth configure-docker "${GCP_REGION}-docker.pkg.dev" --quiet
+
+      - name: Build image
+        if: ${{ env.ACT != 'true' }}
+        run: |
+          IMAGE_BASE="${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/${GAR_REPOSITORY}/${IMAGE_NAME}"
+          IMAGE_TAG="${IMAGE_BASE}:${GITHUB_SHA}"
+          IMAGE_LATEST="${IMAGE_BASE}:latest"
+          docker build -f apps/maestros-del-salmon/Dockerfile -t "${IMAGE_TAG}" -t "${IMAGE_LATEST}" .
+          docker push "${IMAGE_TAG}"
+          docker push "${IMAGE_LATEST}"
+          DIGEST="$(docker inspect --format='{{index .RepoDigests 0}}' "${IMAGE_TAG}")"
+          echo "IMAGE_DIGEST=${DIGEST}" >> "${GITHUB_ENV}"
+
+      - name: Deploy to Cloud Run
+        if: ${{ env.ACT != 'true' }}
+        run: |
+          gcloud run deploy "${SERVICE_NAME}" \
+            --project "${GCP_PROJECT_ID}" \
+            --region "${GCP_REGION}" \
+            --platform managed \
+            --image "${IMAGE_DIGEST}" \
+            --min-instances "${CLOUD_RUN_MIN_INSTANCES}" \
+            --max-instances "${CLOUD_RUN_MAX_INSTANCES}" \
+            --concurrency "${CLOUD_RUN_CONCURRENCY}" \
+            --cpu "${CLOUD_RUN_CPU}" \
+            --memory "${CLOUD_RUN_MEMORY}" \
+            --timeout "${CLOUD_RUN_TIMEOUT}" \
+            --cpu-throttling \
+            --no-cpu-boost \
+            --allow-unauthenticated \
+            --quiet
+
+      - name: Smoke check
+        if: ${{ env.ACT != 'true' }}
+        run: |
+          SERVICE_URL="$(gcloud run services describe "${SERVICE_NAME}" --project "${GCP_PROJECT_ID}" --region "${GCP_REGION}" --format='value(status.url)')"
+          curl --fail --silent --show-error "${SERVICE_URL}" > /dev/null

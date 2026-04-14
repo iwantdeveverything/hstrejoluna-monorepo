@@ -2,7 +2,7 @@
 
 import { motion, Variants } from "framer-motion";
 import Link from "next/link";
-import { Profile, Project, Skill } from "@/types/sanity";
+import { PortableTextBlock, Profile, Project, Skill } from "@/types/sanity";
 import { SkillsGrid } from "@/components/SkillsGrid";
 
 const containerVariants: Variants = {
@@ -28,13 +28,14 @@ const getProjectUrl = (project: Project) => {
   return project.externalLink || "#";
 };
 
-// Simple helper to extract text from Sanity block content
-const blockContentToText = (blocks: any[]): string => {
-  if (!blocks || !Array.isArray(blocks)) return typeof blocks === 'string' ? blocks : "";
+const blockContentToText = (blocks: string | PortableTextBlock[] | undefined): string => {
+  if (!blocks) return "";
+  if (typeof blocks === "string") return blocks;
+
   return blocks
     .map((block) => {
       if (block._type !== "block" || !block.children) return "";
-      return block.children.map((child: any) => child.text).join("");
+      return block.children.map((child) => child.text).join("");
     })
     .join("\n");
 };
@@ -45,9 +46,24 @@ interface PortfolioGridProps {
   skills: Skill[];
 }
 
+const buildNameParts = (name: string) => {
+  const seen = new Map<string, number>();
+
+  return name.split(" ").map((word) => {
+    const count = (seen.get(word) ?? 0) + 1;
+    seen.set(word, count);
+
+    return {
+      word,
+      key: `${word}-${count}`,
+    };
+  });
+};
+
 export const PortfolioGrid = ({ profile, projects, skills }: PortfolioGridProps) => {
   const featuredProject = projects.find(p => p.isFeatured);
   const otherProjects = projects.filter(p => !p.isFeatured);
+  const nameParts = buildNameParts(profile?.name ?? "SEBASTIÁN TREJO");
 
   return (
     <motion.div
@@ -56,27 +72,23 @@ export const PortfolioGrid = ({ profile, projects, skills }: PortfolioGridProps)
       initial="hidden"
       animate="visible"
     >
-      {/* Header with high-impact typography */}
       <motion.header variants={itemVariants} className="mb-20 space-y-4">
         <div className="inline-block px-4 py-1.5 rounded-none bg-primary/10 border border-outline_variant/10 text-primary font-mono text-label-sm uppercase tracking-widest mb-4">
           Available for new challenges
         </div>
         <h1 className="text-6xl md:text-9xl font-black tracking-tighter leading-[0.9] text-white">
-          {profile?.name?.split(' ').map((word, i) => (
-            <span key={i} className={i === 0 ? "block" : "block text-brand-salmon"}>
+          {nameParts.map(({ word, key }, i) => (
+            <span key={key} className={i === 0 ? "block" : "block text-brand-salmon"}>
               {word}
             </span>
-          )) || "SEBASTIÁN TREJO"}
+          ))}
         </h1>
         <p className="text-2xl md:text-3xl text-gray-400 max-w-3xl font-light leading-tight">
           {profile?.headline || "Software Architect specializing in Generative AI and scalable ecosystems."}
         </p>
       </motion.header>
 
-      {/* Main Bento Grid */}
       <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-6 gap-6 auto-rows-[minmax(240px,auto)]">
-        
-        {/* About Block - Large */}
         <motion.div
           variants={itemVariants}
           className="md:col-span-4 lg:col-span-3 row-span-2 bento-card p-10 flex flex-col justify-end relative overflow-hidden group"
@@ -103,7 +115,6 @@ export const PortfolioGrid = ({ profile, projects, skills }: PortfolioGridProps)
           </div>
         </motion.div>
 
-        {/* Featured Project - High Contrast */}
         {featuredProject && (
           <motion.div
             variants={itemVariants}
@@ -129,10 +140,8 @@ export const PortfolioGrid = ({ profile, projects, skills }: PortfolioGridProps)
           </motion.div>
         )}
 
-        {/* Skills - Technical Bento */}
         <SkillsGrid skills={skills} variants={itemVariants} />
 
-        {/* Other Projects - Clean Tiles */}
         {otherProjects.map((project) => (
           <motion.div
             key={project._id}
