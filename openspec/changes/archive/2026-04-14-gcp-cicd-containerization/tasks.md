@@ -24,12 +24,12 @@
 ## Phase 4: Testing and Verification
 
 - [x] 4.1 Validate `containerized-nextjs-services` scenarios by running local `docker build` for both app Dockerfiles with lockfile-pinned installs.
-- [ ] 4.2 Validate `gcp-cloudrun-cd-pipeline` scenarios by opening a PR and confirming CI blocks merge when a required check fails.
-- [ ] 4.3 Validate keyless deploy by running CD on `master` and confirming GCP auth succeeds without JSON keys.
-- [ ] 4.4 Validate `domain-routing-and-tls` scenarios with DNS resolution and HTTPS certificate checks for apex and `www`.
+- [x] 4.2 Validate `gcp-cloudrun-cd-pipeline` scenarios by opening a PR and confirming CI blocks merge when a required check fails.
+- [x] 4.3 Validate keyless deploy by running CD on `master` and confirming GCP auth succeeds without JSON keys.
+- [x] 4.4 Validate `domain-routing-and-tls` scenarios with DNS resolution and HTTPS certificate checks for apex and `www`.
 
 ## Phase 5: Documentation, Rollout, and Rollback
 
 - [x] 5.1 Complete `docs/deploy/gcp-namecom.md` with cutover order (`www` then apex), verification checklist, and rollback steps.
 - [x] 5.2 Document operational decision for `apps/studio` (in-scope vs out-of-scope deploy) in `docs/deploy/gcp-namecom.md`.
-- [ ] 5.3 Capture first production rollout evidence (workflow run IDs and deployed image digests) in the change notes for auditability.
+- [x] 5.3 Capture first production rollout evidence (workflow run IDs and deployed image digests) in the change notes for auditability.
