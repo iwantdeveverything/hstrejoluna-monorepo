@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { cache } from "react";
+import { normalizeSocialLinks } from "@/lib/navigation";
 import { client } from "@/lib/sanity";
 import {
   Profile,
@@ -69,12 +70,15 @@ export default async function PortfolioPage() {
     jobTitle: profile?.headline,
     description: profile?.bio,
     url: "https://hstrejoluna.com",
-    sameAs: profile?.socials?.map((social) => social.url) ?? [],
+    sameAs: normalizeSocialLinks(profile?.socials).map((social) => social.href),
     knowsAbout: skills.map((s) => s.name),
   };
 
   return (
-    <main className="min-h-screen bg-void text-white selection:bg-ember selection:text-void">
+    <main
+      id="main-content"
+      className="min-h-screen bg-void text-white selection:bg-ember selection:text-void"
+    >
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

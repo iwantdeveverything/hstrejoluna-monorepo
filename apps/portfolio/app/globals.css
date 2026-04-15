@@ -56,6 +56,10 @@
   color: var(--color-on-background);
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -83,6 +87,13 @@ body::before {
 @layer utilities {
   .stream-section {
     @apply min-h-screen w-full;
+    scroll-margin-top: clamp(4rem, 8vh, 6rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
   }
 }
 

@@ -1,8 +1,16 @@
+export interface ProfileSocialLink {
+  platform: string;
+  url?: string;
+  email?: string;
+  label?: string;
+  order?: number;
+}
+
 export interface Profile {
   name?: string;
   headline?: string;
   bio?: string;
-  socials?: { platform: string; url: string }[];
+  socials?: ProfileSocialLink[];
 }
 
 export interface SanityImage {
