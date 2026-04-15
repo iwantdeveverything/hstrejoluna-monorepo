@@ -20,6 +20,8 @@ GCP_REGION="${GCP_REGION:-us-central1}"
 GAR_REPOSITORY="${GAR_REPOSITORY:-apps}"
 CLOUD_RUN_SERVICE_PORTFOLIO="${CLOUD_RUN_SERVICE_PORTFOLIO:-portfolio}"
 CLOUD_RUN_SERVICE_SALMON="${CLOUD_RUN_SERVICE_SALMON:-maestros-del-salmon}"
+CLOUD_RUN_SMOKE_PATH_PORTFOLIO="${CLOUD_RUN_SMOKE_PATH_PORTFOLIO:-/}"
+CLOUD_RUN_SMOKE_PATH_SALMON="${CLOUD_RUN_SMOKE_PATH_SALMON:-/maestros-del-salmon}"
 GCP_WIF_PROVIDER="${GCP_WIF_PROVIDER:-}"
 GCP_WIF_SERVICE_ACCOUNT="${GCP_WIF_SERVICE_ACCOUNT:-}"
 DOMAIN_APEX="${DOMAIN_APEX:-hstrejoluna.com}"
@@ -77,6 +79,7 @@ fi
 
 describe_service() {
   local service_name="$1"
+  local smoke_path="$2"
   echo
   echo "==> Cloud Run service: ${service_name}"
 
@@ -98,12 +101,12 @@ describe_service() {
   min_scale="$(gcloud run services describe "${service_name}" \
     --project "${GCP_PROJECT_ID}" \
     --region "${GCP_REGION}" \
-    --format='value(spec.template.metadata.annotations.autoscaling.knative.dev/minScale)')"
+    --format="value(spec.template.metadata.annotations.'autoscaling.knative.dev/minScale')")"
 
   max_scale="$(gcloud run services describe "${service_name}" \
     --project "${GCP_PROJECT_ID}" \
     --region "${GCP_REGION}" \
-    --format='value(spec.template.metadata.annotations.autoscaling.knative.dev/maxScale)')"
+    --format="value(spec.template.metadata.annotations.'autoscaling.knative.dev/maxScale')")"
 
   concurrency="$(gcloud run services describe "${service_name}" \
     --project "${GCP_PROJECT_ID}" \
@@ -134,7 +137,6 @@ describe_service() {
     image_digest="$(gcloud run revisions describe "${latest_revision}" \
       --project "${GCP_PROJECT_ID}" \
       --region "${GCP_REGION}" \
-      --service "${service_name}" \
       --format='value(status.imageDigest)')"
     if [[ -n "${image_digest}" ]]; then
       echo "Image digest: ${image_digest}"
@@ -143,13 +145,13 @@ describe_service() {
     fi
   fi
 
-  echo "Smoke check: ${service_url}"
-  curl --fail --silent --show-error --location --max-time 20 "${service_url}" >/dev/null
+  echo "Smoke check: ${service_url}${smoke_path}"
+  curl --fail --silent --show-error --location --max-time 20 "${service_url}${smoke_path}" >/dev/null
   echo "Smoke check OK"
 }
 
-describe_service "${CLOUD_RUN_SERVICE_PORTFOLIO}"
-describe_service "${CLOUD_RUN_SERVICE_SALMON}"
+describe_service "${CLOUD_RUN_SERVICE_PORTFOLIO}" "${CLOUD_RUN_SMOKE_PATH_PORTFOLIO}"
+describe_service "${CLOUD_RUN_SERVICE_SALMON}" "${CLOUD_RUN_SMOKE_PATH_SALMON}"
 
 echo
 echo "==> DNS checks"

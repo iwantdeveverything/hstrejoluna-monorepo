@@ -11,6 +11,12 @@ out/
 dist/
 build/
 .turbo/
+*.tsbuildinfo
+playwright-report/
+test-results/
+apps/portfolio/playwright-report/
+apps/portfolio/test-results/
+apps/portfolio/.lighthouseci/
 
 # Environment variables
 .env
