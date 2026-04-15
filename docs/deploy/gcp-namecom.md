@@ -17,6 +17,8 @@ This runbook covers CI/CD for:
 - `GAR_REPOSITORY` (example: `apps`)
 - `CLOUD_RUN_SERVICE_PORTFOLIO` (example: `portfolio`)
 - `CLOUD_RUN_SERVICE_SALMON` (example: `maestros-del-salmon`)
+- `SALMON_ORIGIN` (example: `https://hstrejoluna.com`)
+- `CLOUD_RUN_SECRET_SANITY_API_READ_TOKEN` (example: `portfolio-sanity-api-read-token`)
 - `CLOUD_RUN_MIN_INSTANCES` (recommended: `0` for cost-first)
 - `CLOUD_RUN_MAX_INSTANCES` (recommended: `2` to cap burst cost)
 - `CLOUD_RUN_CONCURRENCY` (recommended: `80`)
@@ -29,9 +31,22 @@ This runbook covers CI/CD for:
 - `GCP_WIF_PROVIDER` (full provider resource name)
 - `GCP_WIF_SERVICE_ACCOUNT` (deployer service account email)
 
-### Runtime Variable
+### Runtime Variables via Cloud Run
 
-- `SALMON_ORIGIN` (set on portfolio Cloud Run service, example: `https://maestros-del-salmon-xxxxx-uc.a.run.app`)
+- `SALMON_ORIGIN` is injected via `--update-env-vars`.
+- `SANITY_API_READ_TOKEN` is injected from Secret Manager via `--set-secrets` and MUST NOT be passed as plain env value.
+
+Create the secret once (or rotate by adding a new version):
+
+```bash
+gcloud secrets create portfolio-sanity-api-read-token \
+  --replication-policy=automatic \
+  --project=hstrejoluna
+
+printf '%s' '<SANITY_READ_TOKEN>' | gcloud secrets versions add portfolio-sanity-api-read-token \
+  --data-file=- \
+  --project=hstrejoluna
+```
 
 ## GCP Bootstrap Checklist
 

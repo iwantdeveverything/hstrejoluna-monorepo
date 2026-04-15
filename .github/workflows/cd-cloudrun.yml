@@ -35,7 +35,7 @@ jobs:
       IMAGE_NAME: portfolio
       SMOKE_PATH: ${{ vars.CLOUD_RUN_SMOKE_PATH_PORTFOLIO || '/' }}
       SALMON_ORIGIN: ${{ vars.SALMON_ORIGIN || '' }}
-      SANITY_API_READ_TOKEN: ${{ secrets.SANITY_API_READ_TOKEN }}
+      SANITY_API_READ_SECRET: ${{ vars.CLOUD_RUN_SECRET_SANITY_API_READ_TOKEN || 'portfolio-sanity-api-read-token' }}
 
     steps:
       - name: Checkout
@@ -69,13 +69,15 @@ jobs:
         run: |
           missing=()
           [ -z "${SALMON_ORIGIN}" ] && missing+=("SALMON_ORIGIN (repo variable)")
-          [ -z "${SANITY_API_READ_TOKEN}" ] && missing+=("SANITY_API_READ_TOKEN (repo secret)")
+          [ -z "${SANITY_API_READ_SECRET}" ] && missing+=("CLOUD_RUN_SECRET_SANITY_API_READ_TOKEN (repo variable)")
 
           if [ ${#missing[@]} -gt 0 ]; then
             echo "Missing required runtime configuration for portfolio deploy:"
             printf ' - %s\n' "${missing[@]}"
             exit 1
           fi
+
+          gcloud secrets describe "${SANITY_API_READ_SECRET}" --project "${GCP_PROJECT_ID}" > /dev/null
 
       - name: Build image
         if: ${{ env.ACT != 'true' }}
@@ -104,7 +106,7 @@ jobs:
             --memory "${CLOUD_RUN_MEMORY}" \
             --timeout "${CLOUD_RUN_TIMEOUT}" \
             --update-env-vars "SALMON_ORIGIN=${SALMON_ORIGIN}" \
-            --update-env-vars "SANITY_API_READ_TOKEN=${SANITY_API_READ_TOKEN}" \
+            --set-secrets "SANITY_API_READ_TOKEN=${SANITY_API_READ_SECRET}:latest" \
             --cpu-throttling \
             --no-cpu-boost \
             --allow-unauthenticated \
