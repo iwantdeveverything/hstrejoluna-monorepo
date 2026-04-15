@@ -8,7 +8,12 @@
     "start": "next start",
     "lint": "npx tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "qa:e2e:install": "playwright install chromium firefox webkit",
+    "qa:e2e": "playwright test",
+    "qa:e2e:headed": "playwright test --headed",
+    "qa:lighthouse": "npm run build && lhci autorun --config=./lighthouserc.cjs",
+    "qa:gate": "npm run lint && npm run test && npm run qa:e2e && npm run qa:lighthouse"
   },
   "dependencies": {
     "@portabletext/react": "^6.0.3",
@@ -21,6 +26,9 @@
     "react-dom": "latest"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.11.1",
+    "@lhci/cli": "^0.15.1",
+    "@playwright/test": "^1.59.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@types/node": "latest",

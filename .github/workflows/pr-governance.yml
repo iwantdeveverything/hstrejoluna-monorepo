@@ -1,0 +1,149 @@
+name: PR Governance
+
+on:
+  pull_request:
+    branches:
+      - master
+    types:
+      - opened
+      - edited
+      - synchronize
+      - reopened
+      - labeled
+      - unlabeled
+      - ready_for_review
+
+permissions:
+  contents: read
+  pull-requests: read
+  issues: read
+
+concurrency:
+  group: pr-governance-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  enforce:
+    name: Enforce Gitflow + Versioning + Issue-First
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GH_TOKEN: ${{ github.token }}
+      OWNER: ${{ github.repository_owner }}
+      REPO: ${{ github.event.repository.name }}
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+      HEAD_BRANCH: ${{ github.head_ref }}
+      BASE_BRANCH: ${{ github.base_ref }}
+
+    steps:
+      - name: Validate branch naming convention
+        run: |
+          set -euo pipefail
+          BRANCH_REGEX='^(feat|fix|chore|docs|style|refactor|perf|test|build|ci|revert|feature|bugfix|hotfix|release)\/[a-z0-9._-]+$'
+          if ! [[ "${HEAD_BRANCH}" =~ ${BRANCH_REGEX} ]]; then
+            echo "Invalid branch name: ${HEAD_BRANCH}"
+            echo "Expected format: type/description (lowercase)"
+            echo "Allowed types: feat, fix, chore, docs, style, refactor, perf, test, build, ci, revert, feature, bugfix, hotfix, release"
+            exit 1
+          fi
+
+      - name: Validate Gitflow base branch mapping
+        run: |
+          set -euo pipefail
+
+          if [[ "${HEAD_BRANCH}" =~ ^(release|hotfix)/ ]]; then
+            if [ "${BASE_BRANCH}" != "master" ]; then
+              echo "release/* and hotfix/* branches must target master."
+              exit 1
+            fi
+            exit 0
+          fi
+
+          if gh api "repos/${OWNER}/${REPO}/branches/develop" > /dev/null 2>&1; then
+            if [ "${BASE_BRANCH}" != "develop" ]; then
+              echo "Feature/fix/chore/etc branches must target develop when develop branch exists."
+              exit 1
+            fi
+          else
+            if [ "${BASE_BRANCH}" != "master" ]; then
+              echo "Repository has no develop branch; PRs must target master."
+              exit 1
+            fi
+          fi
+
+      - name: Validate linked issue in PR body
+        id: linked_issue
+        run: |
+          set -euo pipefail
+          PR_BODY="$(gh api "repos/${OWNER}/${REPO}/pulls/${PR_NUMBER}" --jq '.body // ""')"
+          ISSUE_NUMBER="$(python - <<'PY'
+import os
+import re
+body = os.environ.get("PR_BODY", "")
+match = re.search(r'(?im)\b(closes|fixes|resolves)\s+#(\d+)\b', body)
+print(match.group(2) if match else "")
+PY
+)"
+          if [ -z "${ISSUE_NUMBER}" ]; then
+            echo "PR body must include: Closes #<issue>, Fixes #<issue>, or Resolves #<issue>"
+            exit 1
+          fi
+          echo "issue_number=${ISSUE_NUMBER}" >> "${GITHUB_OUTPUT}"
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+
+      - name: Validate linked issue is approved
+        run: |
+          set -euo pipefail
+          ISSUE_NUMBER="${{ steps.linked_issue.outputs.issue_number }}"
+          HAS_APPROVED="$(gh api "repos/${OWNER}/${REPO}/issues/${ISSUE_NUMBER}" --jq '[.labels[].name] | any(. == "status:approved")')"
+          if [ "${HAS_APPROVED}" != "true" ]; then
+            echo "Linked issue #${ISSUE_NUMBER} must have label status:approved"
+            exit 1
+          fi
+
+      - name: Validate exactly one type label
+        run: |
+          set -euo pipefail
+          TYPE_LABEL_COUNT="$(gh api "repos/${OWNER}/${REPO}/issues/${PR_NUMBER}" --jq '[.labels[].name | select(startswith("type:"))] | length')"
+          if [ "${TYPE_LABEL_COUNT}" -ne 1 ]; then
+            echo "PR must have exactly one type:* label. Found: ${TYPE_LABEL_COUNT}"
+            exit 1
+          fi
+
+      - name: Validate SemVer selection in PR template
+        run: |
+          set -euo pipefail
+          PR_BODY="$(gh api "repos/${OWNER}/${REPO}/pulls/${PR_NUMBER}" --jq '.body // ""')"
+          SEMVER_COUNT="$(python - <<'PY'
+import os
+import re
+body = os.environ.get("PR_BODY", "")
+matches = re.findall(r'(?im)^-\s+\[[xX]\]\s+`semver:(patch|minor|major|none)`', body)
+print(len(matches))
+PY
+)"
+          if [ "${SEMVER_COUNT}" -ne 1 ]; then
+            echo "PR template must select exactly one SemVer impact checkbox (`semver:patch|minor|major|none`). Found: ${SEMVER_COUNT}"
+            exit 1
+          fi
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+
+      - name: Validate conventional commit messages in PR
+        run: |
+          set -euo pipefail
+          regex='^(build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(\([a-z0-9._-]+\))?!?: .+'
+          invalid=0
+
+          while IFS=$'\t' read -r sha first_line; do
+            if ! [[ "${first_line}" =~ ${regex} ]]; then
+              echo "Invalid conventional commit: ${sha:0:7} -> ${first_line}"
+              invalid=1
+            fi
+          done < <(gh api "repos/${OWNER}/${REPO}/pulls/${PR_NUMBER}/commits" --paginate --jq '.[] | [.sha, (.commit.message | split("\n")[0])] | @tsv')
+
+          if [ "${invalid}" -ne 0 ]; then
+            echo "One or more commits do not follow Conventional Commits."
+            exit 1
+          fi

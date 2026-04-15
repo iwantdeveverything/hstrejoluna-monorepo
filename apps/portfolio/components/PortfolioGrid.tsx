@@ -2,6 +2,7 @@
 
 import { motion, Variants } from "framer-motion";
 import Link from "next/link";
+import { normalizeSocialLinks } from "@/lib/navigation";
 import { PortableTextBlock, Profile, Project, Skill } from "@/types/sanity";
 import { SkillsGrid } from "@/components/SkillsGrid";
 
@@ -64,6 +65,7 @@ export const PortfolioGrid = ({ profile, projects, skills }: PortfolioGridProps)
   const featuredProject = projects.find(p => p.isFeatured);
   const otherProjects = projects.filter(p => !p.isFeatured);
   const nameParts = buildNameParts(profile?.name ?? "SEBASTIÁN TREJO");
+  const socialLinks = normalizeSocialLinks(profile?.socials);
 
   return (
     <motion.div
@@ -100,15 +102,15 @@ export const PortfolioGrid = ({ profile, projects, skills }: PortfolioGridProps)
               {profile?.bio || "Coding at business: Elevating ecosystems with impeccable software architecture."}
             </p>
             <div className="mt-10 flex gap-6">
-              {profile?.socials?.map((social) => (
+              {socialLinks.map((social) => (
                 <a 
-                  key={social.url}
-                  href={social.url} 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
+                  key={social.kind}
+                  href={social.href} 
+                  target={social.external ? "_blank" : undefined}
+                  rel={social.external ? "noopener noreferrer external" : undefined}
                   className="text-white hover:text-brand-salmon transition-colors text-lg font-bold border-b-2 border-white/10 hover:border-brand-salmon pb-1"
                 >
-                  {social.platform}
+                  {social.label}
                 </a>
               ))}
             </div>

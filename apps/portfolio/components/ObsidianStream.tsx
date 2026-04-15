@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { useAutoHideNavigation } from "@/hooks/useAutoHideNavigation";
 import { useActiveSection } from "@/hooks/useActiveSection";
 import {
   Profile,
@@ -19,7 +20,7 @@ import { SectionDock } from "./ui/SectionDock";
 import { CommandNav } from "./ui/CommandNav";
 import { BootSequence } from "./ui/BootSequence";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
-import { streamSectionIds } from "@/lib/sections";
+import { navSections, streamSectionIds } from "@/lib/sections";
 import type { NavSectionId, StreamSectionId } from "@/lib/sections";
 
 interface ObsidianStreamProps {
@@ -64,11 +65,12 @@ export const ObsidianStream = ({
   experiences,
   certificates,
 }: ObsidianStreamProps) => {
-  const [isBooted, setIsBooted] = useState(false);
+  const skipBootSequence = process.env.NEXT_PUBLIC_SKIP_BOOT_SEQUENCE === "1";
+  const [isBooted, setIsBooted] = useState(skipBootSequence);
   const isReducedMotion = useReducedMotion();
-  const sectionIds: StreamSectionId[] = [...streamSectionIds];
+  const isNavigationHidden = useAutoHideNavigation(isBooted);
   
-  const activeId = useActiveSection<StreamSectionId>(sectionIds, 0.4);
+  const activeId = useActiveSection<StreamSectionId>(streamSectionIds, 0.4);
 
   const { scrollYProgress } = useScroll();
   const sectionBaseWrapperClass =
@@ -115,7 +117,11 @@ export const ObsidianStream = ({
               </span>
             </motion.div>
 
-            <SectionDock sections={sectionIds} activeId={activeId} />
+            <SectionDock
+              sections={navSections}
+              activeId={activeId}
+              hideOnScroll={isNavigationHidden}
+            />
             <CommandNav 
               activeId={activeId} 
               counts={{
@@ -123,6 +129,8 @@ export const ObsidianStream = ({
                 experience: experiences.length,
                 certificates: certificates.length,
               }}
+              socials={profile?.socials}
+              hideOnScroll={isNavigationHidden}
             />
 
             <main className="relative z-10 flex flex-col w-full">
