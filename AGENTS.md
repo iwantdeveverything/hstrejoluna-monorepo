@@ -17,6 +17,7 @@ This project uses **Gentleman Guardian Angel** to ensure high code quality and c
 - **Be Concise:** Provide brief, actionable feedback.
 - **Be Constructive:** Explain the "why" behind suggested changes.
 - **Check for Performance:** Flag inefficient loops or memory-intensive operations.
+- **GitHub MCP First:** Use GitHub MCP tools as the primary interface for issues/PR/workflow operations.
 
 ## Installed Skills & Tools
 | Skill/Tool | Description | Trigger/Usage |
@@ -33,3 +34,4 @@ This project uses **Gentleman Guardian Angel** to ensure high code quality and c
 | Strategy | Location | Scope |
 |----------|----------|-------|
 | **Semantic & SEO Master Plan** | `docs/strategies/semantic-seo.md` | Landmarking, JSON-LD, Metadata API, A11y standards |
+| **Gitflow + SemVer + GitHub MCP Standard** | `docs/standards/gitflow-semver-github-mcp.md` | Branching, versioning, issue-first governance, PR rules |

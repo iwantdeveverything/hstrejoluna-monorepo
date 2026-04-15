@@ -39,6 +39,18 @@ body:
         - Other
     validations:
       required: true
+  - type: dropdown
+    id: semver-impact
+    attributes:
+      label: Expected SemVer Impact
+      description: Initial triage estimate; final value is selected in PR.
+      options:
+        - patch (bug fix / backward-compatible correction)
+        - minor (new backward-compatible capability)
+        - major (breaking behavior/API change)
+        - none (docs/chore/no runtime impact)
+    validations:
+      required: true
   - type: textarea
     id: alternatives
     attributes:
