@@ -20,6 +20,22 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Detect Storybook scope changes
+        id: storybook_changes
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            storybook:
+              - 'apps/portfolio/.storybook/**'
+              - 'apps/portfolio/components/**/*.tsx'
+              - 'apps/portfolio/scripts/**'
+              - 'apps/portfolio/test/**'
+              - 'apps/portfolio/app/globals.css'
+              - 'apps/portfolio/package.json'
+              - 'packages/ui/**'
+              - 'package.json'
+              - 'turbo.json'
+
       - name: Simulate required check failure (act only)
         if: ${{ env.ACT == 'true' && env.ACT_FAIL_REQUIRED_CHECK == 'true' }}
         run: |
@@ -46,3 +62,11 @@ jobs:
 
       - name: Test portfolio workspace
         run: npm run test --workspace=apps/portfolio
+
+      - name: Storybook static build (portfolio)
+        if: ${{ github.event_name == 'workflow_dispatch' || steps.storybook_changes.outputs.storybook == 'true' }}
+        run: npm run storybook:build --workspace=apps/portfolio
+
+      - name: Storybook failure contract (portfolio)
+        if: ${{ github.event_name == 'workflow_dispatch' || steps.storybook_changes.outputs.storybook == 'true' }}
+        run: npm run storybook:build:expect-fail --workspace=apps/portfolio

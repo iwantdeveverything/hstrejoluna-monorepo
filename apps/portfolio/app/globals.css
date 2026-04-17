@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "@hstrejoluna/ui/styles/tokens.css";
 
 @theme {
   --color-background: #131313;

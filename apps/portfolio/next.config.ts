@@ -3,6 +3,7 @@ import type { NextConfig } from "next";
 const salmonOrigin = process.env.SALMON_ORIGIN ?? "http://localhost:3001";
 
 const nextConfig: NextConfig = {
+  transpilePackages: ["@hstrejoluna/ui"],
   images: {
     remotePatterns: [
       {

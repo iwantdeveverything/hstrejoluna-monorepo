@@ -7,6 +7,9 @@
     "lint": "npm run lint --workspace=apps/portfolio && npm run lint --workspace=apps/maestros-del-salmon",
     "typecheck": "npx tsc -p apps/portfolio/tsconfig.json --noEmit && npx tsc -p apps/maestros-del-salmon/tsconfig.json --noEmit",
     "test": "npm run test --workspace=apps/portfolio",
+    "storybook": "npm run storybook --workspace=apps/portfolio",
+    "storybook:build": "npm run storybook:build --workspace=apps/portfolio",
+    "storybook:build:expect-fail": "npm run storybook:build:expect-fail --workspace=apps/portfolio",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "workspaces": [
