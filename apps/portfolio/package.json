@@ -9,6 +9,9 @@
     "lint": "npx tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
+    "storybook": "storybook dev -p 6006",
+    "storybook:build": "storybook build",
+    "storybook:build:expect-fail": "node ./scripts/verify-storybook-build-failure.mjs",
     "qa:e2e:install": "playwright install chromium firefox webkit",
     "qa:e2e": "playwright test",
     "qa:e2e:headed": "playwright test --headed",
@@ -16,6 +19,7 @@
     "qa:gate": "npm run lint && npm run test && npm run qa:e2e && npm run qa:lighthouse"
   },
   "dependencies": {
+    "@hstrejoluna/ui": "*",
     "@portabletext/react": "^6.0.3",
     "@sanity/image-url": "^1.1.0",
     "apify-client": "^2.22.3",
@@ -26,6 +30,10 @@
     "react-dom": "latest"
   },
   "devDependencies": {
+    "@storybook/addon-a11y": "latest",
+    "@storybook/addon-docs": "latest",
+    "@storybook/addon-onboarding": "latest",
+    "@storybook/nextjs-vite": "latest",
     "@axe-core/playwright": "^4.11.1",
     "@lhci/cli": "^0.15.1",
     "@playwright/test": "^1.59.1",
