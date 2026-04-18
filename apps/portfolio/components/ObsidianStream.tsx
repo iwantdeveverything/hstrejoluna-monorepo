@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { useReducedMotion } from "@hstrejoluna/ui";
 import { useAutoHideNavigation } from "@/hooks/useAutoHideNavigation";
 import { useActiveSection } from "@/hooks/useActiveSection";
 import {
@@ -18,7 +18,7 @@ import { SkillsOverview } from "./fragments/SkillsOverview";
 import { CertificatesOverview } from "./fragments/CertificatesOverview";
 import { SectionDock } from "./ui/SectionDock";
 import { CommandNav } from "./ui/CommandNav";
-import { BootSequence } from "./ui/BootSequence";
+import { BootSequence } from "@hstrejoluna/ui";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { navSections, streamSectionIds } from "@/lib/sections";
 import type { NavSectionId, StreamSectionId } from "@/lib/sections";

@@ -3,8 +3,8 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Experience } from "@/types/sanity";
-import { GlitchText } from "@/components/ui/GlitchText";
-import { TelemetryHUD } from "@/components/ui/TelemetryHUD";
+import { GlitchText } from "@hstrejoluna/ui";
+import { TelemetryHUD } from "@hstrejoluna/ui";
 import { blockToPlainText } from "@/lib/utils";
 
 interface ExperienceFragmentProps {
@@ -18,6 +18,9 @@ interface ExperienceFragmentProps {
  * Reimagines job history as a cinematic 'Chrono Log' with HUD data and code stream background.
  */
 export const ExperienceFragment = ({ experience }: ExperienceFragmentProps) => {
+  const formatDate = (dateStr?: string) => dateStr ? dateStr.replace(/-/g, ".") : "N/A";
+  const dateRange = `${formatDate(experience.startDate)} // ${experience.isCurrent ? "PRESENT" : (experience.endDate ? formatDate(experience.endDate) : "STABLE")}`;
+
   return (
     <section className="stream-fragment flex items-center justify-center p-6 md:p-24 relative overflow-hidden bg-void">
       {/* Background Code Stream Decoration */}
@@ -47,7 +50,12 @@ export const ExperienceFragment = ({ experience }: ExperienceFragmentProps) => {
           <div className="absolute top-0 left-0 -translate-x-[10px] w-4 h-4 bg-primary rounded-none shadow-[0_0_20px_rgba(255,42,0,1)]" />
           
           {/* HUD Metadata */}
-          <TelemetryHUD data={experience} className="mb-10" />
+          <TelemetryHUD 
+            identifier={experience.company || "ENTITY_UNDEFINED"}
+            status="ACTIVE_OPS"
+            dateRange={dateRange}
+            className="mb-10" 
+          />
           
           {/* Main Role Title */}
           <h3 className="text-fluid-h2 font-black uppercase tracking-tighter mb-4 leading-[0.85] italic">

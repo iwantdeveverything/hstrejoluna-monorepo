@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useReducedMotion } from "./useReducedMotion";
+import { useReducedMotion } from "@hstrejoluna/ui";
 
 /**
  * useKeyboardNav Hook

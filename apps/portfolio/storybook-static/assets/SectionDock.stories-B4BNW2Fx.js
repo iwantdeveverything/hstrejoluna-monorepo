@@ -1,0 +1,9 @@
+import{j as d}from"./jsx-runtime-B-1wRJft.js";import{u as p,S as m}from"./useReducedMotion-DMHckXoT.js";import"./iframe-BrKxg2xT.js";import"./TelemetryHUD-BIPvxtqD.js";import{s as u}from"./navigation-C58ziVEb.js";import"./preload-helper-PPVm8Dsz.js";const s=({sections:t,activeId:a,hideOnScroll:i=!1})=>{const c=p(),n=l=>{u({id:l,reducedMotion:c})};return d.jsx(m,{sections:t,activeId:a,hideOnScroll:i,onSectionNavigate:n})};s.__docgenInfo={description:"",methods:[],displayName:"SectionDock",props:{sections:{required:!0,tsType:{name:"unknown"},description:""},activeId:{required:!0,tsType:{name:"union",raw:'StreamSectionId | ""',elements:[{name:"StreamSectionId"},{name:"literal",value:'""'}]},description:""},hideOnScroll:{required:!1,tsType:{name:"boolean"},description:"",defaultValue:{value:"false",computed:!1}}}};const S=[{id:"projects",label:"Projects",shortLabel:"Projects"},{id:"experience",label:"Experience",shortLabel:"Experience"},{id:"skills",label:"Skills",shortLabel:"Skills"},{id:"certificates",label:"Certificates",shortLabel:"Certificates"}],j={title:"UI/SectionDock",component:s,args:{sections:S,activeId:"projects",hideOnScroll:!1},parameters:{layout:"padded"}},e={},r={args:{hideOnScroll:!0}},o={args:{activeId:"skills"}};e.parameters={...e.parameters,docs:{...e.parameters?.docs,source:{originalSource:"{}",...e.parameters?.docs?.source}}};r.parameters={...r.parameters,docs:{...r.parameters?.docs,source:{originalSource:`{
+  args: {
+    hideOnScroll: true
+  }
+}`,...r.parameters?.docs?.source}}};o.parameters={...o.parameters,docs:{...o.parameters?.docs,source:{originalSource:`{
+  args: {
+    activeId: "skills"
+  }
+}`,...o.parameters?.docs?.source}}};const x=["ActiveProjects","HiddenOnScroll","ActiveSkills"];export{e as ActiveProjects,o as ActiveSkills,r as HiddenOnScroll,x as __namedExportsOrder,j as default};

@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, type Variants } from "framer-motion";
 import { Profile } from "@/types/sanity";
-import { GlitchText } from "@/components/ui/GlitchText";
+import { GlitchText } from "@hstrejoluna/ui";
 
 interface HeroFragmentProps {
   profile: Profile | null;

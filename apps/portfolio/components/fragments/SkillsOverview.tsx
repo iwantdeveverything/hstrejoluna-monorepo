@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { type Skill } from "@/types/sanity";
-import { HudChip } from "@/components/ui/HudChip";
+import { HudChip } from "@hstrejoluna/ui";
 
 export const SkillsOverview = ({ skills }: { skills: Skill[] }) => {
   const [expandedId, setExpandedId] = useState<string | null>(null);

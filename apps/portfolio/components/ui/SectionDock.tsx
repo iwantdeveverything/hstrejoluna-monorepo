@@ -1,7 +1,7 @@
 "use client";
 
 import { SectionTimeline } from "@hstrejoluna/ui";
-import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { useReducedMotion } from "@hstrejoluna/ui";
 import { scrollToSection } from "@/lib/navigation";
 import type { NavSectionDefinition, NavSectionId, StreamSectionId } from "@/lib/sections";
 

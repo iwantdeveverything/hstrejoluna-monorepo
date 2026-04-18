@@ -3,7 +3,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Skill } from "@/types/sanity";
-import { GlitchText } from "@/components/ui/GlitchText";
+import { GlitchText } from "@hstrejoluna/ui";
 
 interface SkillsFragmentProps {
   skills: Skill[];

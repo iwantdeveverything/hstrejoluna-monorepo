@@ -6,8 +6,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { Project } from "@/types/sanity";
 import { urlFor } from "@/lib/sanity";
-import { GlitchText } from "@/components/ui/GlitchText";
-import { TelemetryHUD } from "@/components/ui/TelemetryHUD";
+import { GlitchText } from "@hstrejoluna/ui";
+import { TelemetryHUD } from "@hstrejoluna/ui";
 import { blockToPlainText } from "@/lib/utils";
 
 interface ProjectFragmentProps {
@@ -36,13 +36,18 @@ export const ProjectFragment = ({ project, index }: ProjectFragmentProps) => {
         {/* Project Info Panel */}
         <div className="lg:col-span-5 order-2 lg:order-1">
           <motion.div
-            initial={{ opacity: 0, x: -40 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-          >
-            <TelemetryHUD data={project} className="mb-6 md:mb-10" />
-            
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.5 }}
+                      className="w-full"
+                    >
+                      <TelemetryHUD 
+                        identifier={project.slug?.current || "PROJECT_UNDEFINED"}
+                        status="PROD_LIVE"
+                        techStack={project.techStack?.filter(Boolean).map(t => t.name || "") || []}
+                        className="mb-6 md:mb-10" 
+                      />
             <h2 className="text-fluid-h2 font-black uppercase tracking-tighter mb-6 md:mb-8 leading-[0.9] italic">
               <GlitchText text={project.title} className="text-white" />
             </h2>
