@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import { type Project } from "@/types/sanity";
 import { urlFor } from "@/lib/sanity";
-import { HudChip, GlowBorder, CipherText, MicroInteraction } from "@hstrejoluna/ui";
+import { HudChip, GlowBorder, MicroInteraction } from "@hstrejoluna/ui";
 import { ExternalLink, Activity } from "lucide-react";
 
 interface ProjectsOverviewProps {
@@ -21,18 +21,18 @@ export const ProjectsOverview = ({ projects }: ProjectsOverviewProps) => {
 
   const getProjectDescription = (description: Project["description"]) => {
     if (typeof description === "string" && description.length > 0) {
-      return <CipherText text={description} delay={0.2} revealSpeed={0.05} />;
+      return description;
     }
 
     return "DATA_EXTRACT: Classified";
   };
 
   return (
-      <div className="grid-with-life grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0 border-t border-l border-surface_container_highest relative z-20 w-full">
+    <div className="grid-with-life grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0 border-t border-l border-surface_container_highest relative z-20 w-full">
       {projects.map((project) => (
         <MicroInteraction key={project._id}>
           <GlowBorder glowColor="var(--color-primary)" glowIntensity="0 0 10px">
-            <motion.div 
+            <m.div 
               layout
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -54,6 +54,7 @@ export const ProjectsOverview = ({ projects }: ProjectsOverviewProps) => {
                       src={urlFor(project.image).url()}
                       alt={project.title}
                       fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       className="object-cover transition-transform duration-700 group-hover:scale-105 filter grayscale group-hover:grayscale-0"
                     />
                     <div className="absolute inset-0 bg-void/60 group-hover:bg-void/20 transition-colors duration-500" />
@@ -79,7 +80,7 @@ export const ProjectsOverview = ({ projects }: ProjectsOverviewProps) => {
 
               <AnimatePresence initial={false}>
                 {expandedId === project._id && (
-                  <motion.div
+                  <m.div
                     id={`project-panel-${project._id}`}
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: "auto", opacity: 1 }}
@@ -89,9 +90,9 @@ export const ProjectsOverview = ({ projects }: ProjectsOverviewProps) => {
                   >
                     <div className="p-6 md:p-10 flex flex-col md:flex-row gap-8 border-t border-primary/20">
                       <div className="flex-1 space-y-6">
-                        <p className="text-on_surface_variant leading-relaxed text-sm md:text-base font-mono">
+                        <div className="text-on_surface_variant leading-relaxed text-sm md:text-base font-mono">
                           {getProjectDescription(project.description)}
-                        </p>
+                        </div>
                         
                         <div className="flex flex-wrap gap-2">
                           {project.techStack?.filter(Boolean).map((tech) => (
@@ -110,10 +111,10 @@ export const ProjectsOverview = ({ projects }: ProjectsOverviewProps) => {
                         )}
                       </div>
                     </div>
-                  </motion.div>
+                  </m.div>
                 )}
               </AnimatePresence>
-            </motion.div>
+            </m.div>
           </GlowBorder>
         </MicroInteraction>
       ))}

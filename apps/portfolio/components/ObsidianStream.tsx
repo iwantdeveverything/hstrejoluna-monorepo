@@ -19,7 +19,7 @@ import { CertificatesOverview } from "./fragments/CertificatesOverview";
 import { SectionDock } from "./ui/SectionDock";
 import { CommandNav } from "./ui/CommandNav";
 import { BootSequence } from "@hstrejoluna/ui";
-import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import { motion, useScroll, useTransform, AnimatePresence, LazyMotion, domAnimation } from "framer-motion";
 import { navSections, streamSectionIds } from "@/lib/sections";
 import type { NavSectionId, StreamSectionId } from "@/lib/sections";
 
@@ -133,51 +133,53 @@ export const ObsidianStream = ({
               hideOnScroll={isNavigationHidden}
             />
 
-            <main className="relative z-10 flex flex-col w-full">
-              <section id="hero" className="stream-section">
-                <HeroFragment profile={profile} />
-              </section>
+            <LazyMotion features={domAnimation}>
+              <main className="relative z-10 flex flex-col w-full">
+                <section id="hero" className="stream-section">
+                  <HeroFragment profile={profile} />
+                </section>
 
-              <StreamSection
-                id="projects"
-                sectionClassName="stream-section bg-surface_container_lowest"
-                wrapperClassName={compactSectionWrapperClass}
-                title="PROJECTS"
-                countLabel={`[0${projects.length}]`}
-              >
-                <ProjectsOverview projects={projects} />
-              </StreamSection>
+                <StreamSection
+                  id="projects"
+                  sectionClassName="stream-section bg-surface_container_lowest"
+                  wrapperClassName={compactSectionWrapperClass}
+                  title="PROJECTS"
+                  countLabel={`[0${projects.length}]`}
+                >
+                  <ProjectsOverview projects={projects} />
+                </StreamSection>
 
-              <StreamSection
-                id="experience"
-                sectionClassName="stream-section relative bg-background"
-                wrapperClassName={compactSectionWrapperClass}
-                title="EXPERIENCE_LOG"
-                countLabel={`[0${experiences.length}]`}
-              >
-                <ExperienceOverview experiences={experiences} />
-              </StreamSection>
+                <StreamSection
+                  id="experience"
+                  sectionClassName="stream-section relative bg-background"
+                  wrapperClassName={compactSectionWrapperClass}
+                  title="EXPERIENCE_LOG"
+                  countLabel={`[0${experiences.length}]`}
+                >
+                  <ExperienceOverview experiences={experiences} />
+                </StreamSection>
 
-              <StreamSection
-                id="skills"
-                sectionClassName="stream-section bg-surface_container_lowest"
-                wrapperClassName={fullSectionWrapperClass}
-                title="NEURAL_MAP"
-                countLabel={`[ACTIVE_NODES: ${skills.length}]`}
-              >
-                <SkillsOverview skills={skills} />
-              </StreamSection>
+                <StreamSection
+                  id="skills"
+                  sectionClassName="stream-section bg-surface_container_lowest"
+                  wrapperClassName={fullSectionWrapperClass}
+                  title="NEURAL_MAP"
+                  countLabel={`[ACTIVE_NODES: ${skills.length}]`}
+                >
+                  <SkillsOverview skills={skills} />
+                </StreamSection>
 
-              <StreamSection
-                id="certificates"
-                sectionClassName="stream-section relative bg-background"
-                wrapperClassName={fullSectionWrapperClass}
-                title="CERTIFICATES"
-                countLabel={`[0${certificates.length}]`}
-              >
-                <CertificatesOverview certificates={certificates} />
-              </StreamSection>
-            </main>
+                <StreamSection
+                  id="certificates"
+                  sectionClassName="stream-section relative bg-background"
+                  wrapperClassName={fullSectionWrapperClass}
+                  title="CERTIFICATES"
+                  countLabel={`[0${certificates.length}]`}
+                >
+                  <CertificatesOverview certificates={certificates} />
+                </StreamSection>
+              </main>
+            </LazyMotion>
 
             <div className="fixed top-0 left-0 w-full h-[2px] z-[100] bg-white/5 pointer-events-none">
               <motion.div 

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { Project } from "@/types/sanity";
@@ -35,19 +35,19 @@ export const ProjectFragment = ({ project, index }: ProjectFragmentProps) => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center z-10 w-full max-w-7xl">
         {/* Project Info Panel */}
         <div className="lg:col-span-5 order-2 lg:order-1">
-          <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.5 }}
-                      className="w-full"
-                    >
-                      <TelemetryHUD 
-                        identifier={project.slug?.current || "PROJECT_UNDEFINED"}
-                        status="PROD_LIVE"
-                        techStack={project.techStack?.filter(Boolean).map(t => t.name || "") || []}
-                        className="mb-6 md:mb-10" 
-                      />
+          <m.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="w-full"
+          >
+            <TelemetryHUD 
+              identifier={project.slug?.current || "PROJECT_UNDEFINED"}
+              status="PROD_LIVE"
+              techStack={project.techStack?.filter(Boolean).map(t => t.name || "") || []}
+              className="mb-6 md:mb-10" 
+            />
             <h2 className="text-fluid-h2 font-black uppercase tracking-tighter mb-6 md:mb-8 leading-[0.9] italic">
               <GlitchText text={project.title} className="text-white" />
             </h2>
@@ -64,20 +64,20 @@ export const ProjectFragment = ({ project, index }: ProjectFragmentProps) => {
               <span className="font-mono text-[10px] md:text-xs tracking-[0.3em] md:tracking-[0.4em] uppercase text-primary border-b border-primary/20 pb-2 group-hover:border-primary group-hover:text-white transition-all duration-300">
                 [EXEC_UPLINK_PROJ]
               </span>
-              <motion.span 
+              <m.span 
                 className="text-primary text-2xl"
                 animate={{ x: [0, 8, 0] }}
                 transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
               >
                 →
-              </motion.span>
+              </m.span>
             </Link>
-          </motion.div>
+          </m.div>
         </div>
 
         {/* Asymmetric Image Fragment */}
         <div className="lg:col-span-7 order-1 lg:order-2">
-          <motion.div
+          <m.div
             initial={{ opacity: 0, scale: 0.95, rotate: 1 }}
             whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
             viewport={{ once: true }}
@@ -100,22 +100,20 @@ export const ProjectFragment = ({ project, index }: ProjectFragmentProps) => {
                   src={urlFor(project.image).url()}
                   alt={project.title}
                   fill
-                  sizes="(max-width: 768px) 100vw, 50vw"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   priority={index === 0}
                   className="object-cover transition-transform duration-[2s] cubic-bezier(0.16, 1, 0.3, 1) group-hover:scale-110"
                 />
               )}
               
               {/* Digital Noise/Scanline Overlay */}
-              <div className="absolute inset-0 z-20 pointer-events-none opacity-30 group-hover:opacity-10 transition-opacity duration-700">
-                <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%),linear-gradient(90deg,rgba(255,0,0,0.03),rgba(0,255,0,0.01),rgba(0,0,255,0.03))] bg-[length:100%_4px,3px_100%]" />
-              </div>
+              <div className="absolute inset-0 z-20 pointer-events-none opacity-30 group-hover:opacity-10 transition-opacity duration-700 bg-[length:100%_4px,3px_100%] bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%),linear-gradient(90deg,rgba(255,0,0,0.03),rgba(0,255,0,0.01),rgba(0,0,255,0.03))]" />
 
               {/* Edge Glitch Light */}
               <div className="absolute top-0 right-0 w-1 h-full bg-glitch-cyan/20 z-30 opacity-0 group-hover:opacity-100 transition-opacity" />
               <div className="absolute bottom-0 left-0 w-1 h-full bg-glitch-magenta/20 z-30 opacity-0 group-hover:opacity-100 transition-opacity" />
             </div>
-          </motion.div>
+          </m.div>
         </div>
       </div>
     </section>
