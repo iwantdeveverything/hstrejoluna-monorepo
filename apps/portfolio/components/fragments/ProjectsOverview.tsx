@@ -5,11 +5,8 @@ import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { type Project } from "@/types/sanity";
 import { urlFor } from "@/lib/sanity";
-import { HudChip } from "@/components/ui/HudChip";
+import { HudChip, GlowBorder, CipherText, MicroInteraction } from "@hstrejoluna/ui";
 import { ExternalLink, Activity } from "lucide-react";
-import { GlowBorder } from "@/components/ui/GlowBorder";
-import { CipherText } from "@/components/ui/CipherText";
-import { MicroInteraction } from "@/components/ui/MicroInteraction";
 
 interface ProjectsOverviewProps {
   projects: Project[];

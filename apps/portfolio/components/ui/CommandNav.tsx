@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { CommandSurface } from "@hstrejoluna/ui";
-import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { useReducedMotion } from "@hstrejoluna/ui";
 import { normalizeSocialLinks, scrollToSection } from "@/lib/navigation";
 import { navSectionIds, navSections } from "@/lib/sections";
 import type { NavSectionId, StreamSectionId } from "@/lib/sections";

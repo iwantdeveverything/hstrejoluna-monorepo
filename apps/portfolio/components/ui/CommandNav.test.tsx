@@ -3,9 +3,13 @@ import { describe, expect, it, vi } from "vitest";
 import * as navigation from "@/lib/navigation";
 import { CommandNav } from "./CommandNav";
 
-vi.mock("@/hooks/useReducedMotion", () => ({
-  useReducedMotion: () => false,
-}));
+vi.mock("@hstrejoluna/ui", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@hstrejoluna/ui")>();
+  return {
+    ...actual,
+    useReducedMotion: () => false,
+  };
+});
 
 describe("CommandNav", () => {
   it("renders semantic navigation and marks active section with aria-current", () => {

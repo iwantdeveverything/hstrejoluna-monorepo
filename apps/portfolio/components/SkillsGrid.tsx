@@ -2,7 +2,7 @@
 
 import { motion, Variants } from "framer-motion";
 import { Skill } from "@/types/sanity";
-import { HudChip } from "./ui/HudChip";
+import { HudChip } from "@hstrejoluna/ui";
 
 interface SkillsGridProps {
   skills: Skill[];

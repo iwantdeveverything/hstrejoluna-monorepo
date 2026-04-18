@@ -7,6 +7,7 @@ const currentDir = path.dirname(fileURLToPath(import.meta.url));
 const config: StorybookConfig = {
   stories: [
     "../components/**/*.stories.@(js|jsx|mjs|ts|tsx)",
+    "../../../packages/ui/src/**/*.stories.@(js|jsx|mjs|ts|tsx)",
   ],
   addons: ["@storybook/addon-docs", "@storybook/addon-a11y", "@storybook/addon-onboarding"],
   framework: {

@@ -4,9 +4,13 @@ import * as navigation from "@/lib/navigation";
 import { navSections } from "@/lib/sections";
 import { SectionDock } from "./SectionDock";
 
-vi.mock("@/hooks/useReducedMotion", () => ({
-  useReducedMotion: () => false,
-}));
+vi.mock("@hstrejoluna/ui", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@hstrejoluna/ui")>();
+  return {
+    ...actual,
+    useReducedMotion: () => false,
+  };
+});
 
 describe("SectionDock", () => {
   it("renders semantic dock navigation with active marker", () => {
