@@ -7,16 +7,12 @@ test.describe("WCAG 2.2 AA Accessibility Hardening", () => {
     // Navigate to a page where we can test contrast overrides
     await page.goto("/");
 
-    // We can emulate media features in Playwright
-    await page.emulateMedia({ mediaFeatures: [{ name: "prefers-contrast", value: "more" }] });
+    await page.emulateMedia({ contrast: "more" });
 
     // In globals.css, we added:
     // .text-on_surface_variant { color: rgba(255, 255, 255, 0.85) !important; }
     const variantText = page.locator(".text-on_surface_variant").first();
     await expect(variantText).toBeVisible();
-
-    // We can emulate media features in Playwright
-    await page.emulateMedia({ contrast: "more" });
 
     // Force wait for css to apply
     await page.waitForTimeout(500);
