@@ -69,7 +69,7 @@ const useSpotlightTracking = () => {
 };
 
 const TelemetryPanel = () => (
-  <div className="absolute top-12 right-12 hidden xl:flex flex-col items-end font-mono text-[9px] text-white/30 tracking-[0.3em] uppercase">
+  <div aria-hidden="true" className="absolute top-12 right-12 hidden xl:flex flex-col items-end font-mono text-[9px] text-white/30 tracking-[0.3em] uppercase">
     <div className="mb-1 flex items-center gap-2">
       <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.5)]" />
       UPLINK_STATUS: OPTIMAL
@@ -126,7 +126,7 @@ export const HeroFragment = ({ profile }: HeroFragmentProps) => {
         }}
       />
 
-      <div className="absolute inset-0 z-0 pointer-events-none opacity-[0.02] bg-[linear-gradient(to_right,#ffffff_1px,transparent_1px),linear-gradient(to_bottom,#ffffff_1px,transparent_1px)] bg-[size:32px_32px] mix-blend-overlay" />
+      <div aria-hidden="true" className="absolute inset-0 z-0 pointer-events-none opacity-[0.02] bg-[linear-gradient(to_right,#ffffff_1px,transparent_1px),linear-gradient(to_bottom,#ffffff_1px,transparent_1px)] bg-[size:32px_32px] mix-blend-overlay" />
 
       <motion.div
         variants={containerVariants}
@@ -180,7 +180,7 @@ export const HeroFragment = ({ profile }: HeroFragmentProps) => {
 
       <TelemetryPanel />
 
-      <div className="absolute bottom-6 right-6 md:bottom-12 md:right-12 font-mono text-[8px] md:text-[9px] text-white/20 tracking-[0.3em] text-right uppercase z-0">
+      <div aria-hidden="true" className="absolute bottom-6 right-6 md:bottom-12 md:right-12 font-mono text-[8px] md:text-[9px] text-white/20 tracking-[0.3em] text-right uppercase z-0">
         <div className="mb-1">COORDS: 0.00.00° ALPHA</div>
         <div>OS: THE_VOID</div>
       </div>

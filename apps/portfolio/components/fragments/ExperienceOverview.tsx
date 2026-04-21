@@ -46,7 +46,13 @@ export const ExperienceOverview = ({ experiences }: { experiences: Experience[] 
                     <div className="flex items-center gap-2 text-primary font-mono text-xs mb-3">
                       <Calendar className="w-3 h-3" />
                       <span>
-                        {new Date(exp.startDate).getFullYear()} — {exp.endDate ? new Date(exp.endDate).getFullYear() : 'PRESENT'}
+                        <time dateTime={exp.startDate}>{new Date(exp.startDate).getFullYear()}</time>
+                        {' — '}
+                        {exp.endDate ? (
+                          <time dateTime={exp.endDate}>{new Date(exp.endDate).getFullYear()}</time>
+                        ) : (
+                          <span>PRESENT</span>
+                        )}
                       </span>
                     </div>
                     

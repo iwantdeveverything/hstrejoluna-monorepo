@@ -46,9 +46,12 @@ export const SkillsOverview = ({ skills }: { skills: Skill[] }) => {
               key={skill._id}
               className={`border-b border-surface_container_highest bg-background ${isExpanded ? 'bg-surface_container_lowest' : ''}`}
             >
-              <div 
+              <button 
+                type="button"
                 onClick={() => setExpandedId(isExpanded ? null : skill._id)}
-                className="cursor-pointer p-4 md:p-6 flex items-center justify-between group hover:bg-surface_container_low transition-colors"
+                aria-expanded={isExpanded}
+                aria-controls={`skill-panel-${skill._id}`}
+                className="w-full text-left cursor-pointer p-4 md:p-6 flex items-center justify-between group hover:bg-surface_container_low transition-colors"
               >
                 <div className="flex items-center gap-4">
                   <span className="font-mono text-primary text-xs opacity-50 group-hover:opacity-100">
@@ -62,11 +65,12 @@ export const SkillsOverview = ({ skills }: { skills: Skill[] }) => {
                 <div className="hidden md:flex gap-2">
                   <HudChip>SYNC_RATE: {skill.proficiency || 0}%</HudChip>
                 </div>
-              </div>
+              </button>
 
               <AnimatePresence>
                 {isExpanded && (
                   <motion.div
+                    id={`skill-panel-${skill._id}`}
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: "auto", opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}

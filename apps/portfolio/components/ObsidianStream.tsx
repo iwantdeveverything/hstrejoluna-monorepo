@@ -110,6 +110,7 @@ export const ObsidianStream = ({
           <>
             <motion.div 
               style={{ y: backgroundY }}
+              aria-hidden="true"
               className="fixed inset-0 z-0 flex flex-col justify-center items-center pointer-events-none select-none opacity-5 md:opacity-10"
             >
               <span className="text-[15vw] font-black uppercase leading-none italic">
@@ -181,7 +182,7 @@ export const ObsidianStream = ({
               </main>
             </LazyMotion>
 
-            <div className="fixed top-0 left-0 w-full h-[2px] z-[100] bg-white/5 pointer-events-none">
+            <div aria-hidden="true" className="fixed top-0 left-0 w-full h-[2px] z-[100] bg-white/5 pointer-events-none">
               <motion.div 
                 className="h-full bg-primary origin-left"
                 style={{ scaleX: scrollYProgress }} 

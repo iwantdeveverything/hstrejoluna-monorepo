@@ -6,6 +6,9 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-display" });
 const jetBrainsMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" });
 
+import Footer from "../components/fragments/Footer";
+import CookieBanner from "../components/fragments/CookieBanner";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -20,7 +23,11 @@ export default function RootLayout({
         >
           Skip to main content
         </a>
-        {children}
+        <div className="relative min-h-screen flex flex-col">
+          <main className="flex-grow">{children}</main>
+          <Footer />
+        </div>
+        <CookieBanner />
       </body>
     </html>
   );

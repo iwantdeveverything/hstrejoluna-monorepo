@@ -52,7 +52,7 @@ export const ProjectsOverview = ({ projects }: ProjectsOverviewProps) => {
                   <>
                     <Image
                       src={urlFor(project.image).url()}
-                      alt={project.title}
+                      alt={`Screenshot of ${project.title}`}
                       fill
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       className="object-cover transition-transform duration-700 group-hover:scale-105 filter grayscale group-hover:grayscale-0"
@@ -60,7 +60,7 @@ export const ProjectsOverview = ({ projects }: ProjectsOverviewProps) => {
                     <div className="absolute inset-0 bg-void/60 group-hover:bg-void/20 transition-colors duration-500" />
                   </>
                 ) : (
-                  <div className="absolute inset-0 bg-gradient-to-br from-surface_container_low to-void opacity-50" />
+                  <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-br from-surface_container_low to-void opacity-50" />
                 )}
                 
                 <div className="absolute inset-0 p-6 flex flex-col justify-end pointer-events-none">
