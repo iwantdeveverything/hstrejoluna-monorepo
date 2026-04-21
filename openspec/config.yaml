@@ -7,15 +7,15 @@ context: |
   Testing: No test runner detected (Vitest/Jest/Playwright not found).
   Style: Clean Code, Type Safety (no any), DRY, KISS. camelCase (vars/fns), PascalCase (components).
 
-strict_tdd: false
+strict_tdd: true
 
 testing:
-  runner: null
+  runner: vitest
   layers:
-    unit: false
-    integration: false
-    e2E: false
-  coverage: false
+    unit: true
+    integration: true
+    e2E: true
+  coverage: true
   quality_tools:
     linter: true
     type_checker: true
