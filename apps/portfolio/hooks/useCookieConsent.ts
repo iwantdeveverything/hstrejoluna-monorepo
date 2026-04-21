@@ -2,39 +2,49 @@ import { useState, useEffect } from "react";
 
 type ConsentPreferences = {
   analytics: boolean;
-  marketing: boolean;
   timestamp: string;
 };
+
+declare global {
+  interface Navigator {
+    globalPrivacyControl?: boolean;
+  }
+}
 
 export function useCookieConsent() {
   const [hasConsented, setHasConsented] = useState(false);
   const [isGpcActive, setIsGpcActive] = useState(false);
   const [shouldShowBanner, setShouldShowBanner] = useState(false);
 
-  useEffect(() => {
-    // Read GPC flag
-    const gpc = (navigator as any).globalPrivacyControl;
-    const isGpcTruthy = typeof gpc !== "undefined" && gpc === true;
+  const saveConsent = (analytics: boolean) => {
+    const prefs: ConsentPreferences = {
+      analytics,
+      timestamp: new Date().toISOString(),
+    };
+    localStorage.setItem("consent_preferences", JSON.stringify(prefs));
+    setHasConsented(true);
+    setShouldShowBanner(false);
+  };
 
-    // Read existing preferences
+  useEffect(() => {
+    const isGpcTruthy = typeof navigator.globalPrivacyControl !== "undefined" && navigator.globalPrivacyControl === true;
     const stored = localStorage.getItem("consent_preferences");
 
-    if (isGpcTruthy && !stored) {
-      // Auto-reject scenario
-      const prefs: ConsentPreferences = {
-        analytics: false,
-        marketing: false,
-        timestamp: new Date().toISOString(),
-      };
-      localStorage.setItem("consent_preferences", JSON.stringify(prefs));
-      setIsGpcActive(true);
-      setHasConsented(true); // Treat auto-reject as resolved consent
-      setShouldShowBanner(false);
-      return;
-    }
-
     if (isGpcTruthy) {
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored) as ConsentPreferences;
+          if (parsed && typeof parsed.analytics === "boolean" && parsed.analytics) {
+            saveConsent(false);
+          }
+        } catch (error) {
+          console.error("Consent preferences parsing failed:", error);
+        }
+      } else {
+        saveConsent(false);
+      }
       setIsGpcActive(true);
+      return;
     }
 
     if (stored) {
@@ -45,27 +55,8 @@ export function useCookieConsent() {
     }
   }, []);
 
-  const acceptCookies = () => {
-    const prefs: ConsentPreferences = {
-      analytics: true,
-      marketing: true, // simplified for now
-      timestamp: new Date().toISOString(),
-    };
-    localStorage.setItem("consent_preferences", JSON.stringify(prefs));
-    setHasConsented(true);
-    setShouldShowBanner(false);
-  };
-
-  const rejectCookies = () => {
-    const prefs: ConsentPreferences = {
-      analytics: false,
-      marketing: false,
-      timestamp: new Date().toISOString(),
-    };
-    localStorage.setItem("consent_preferences", JSON.stringify(prefs));
-    setHasConsented(true);
-    setShouldShowBanner(false);
-  };
+  const acceptCookies = () => saveConsent(true);
+  const rejectCookies = () => saveConsent(false);
 
   return {
     hasConsented,

@@ -9,7 +9,7 @@ vi.mock('../../hooks/useCookieConsent', () => ({
   useCookieConsent: vi.fn()
 }));
 
-const mockUseCookieConsent = useCookieConsent as any;
+const mockUseCookieConsent = vi.mocked(useCookieConsent);
 
 describe('CookieBanner Component', () => {
   beforeEach(() => {
@@ -19,7 +19,10 @@ describe('CookieBanner Component', () => {
   it('does not render if shouldShowBanner is false', () => {
     mockUseCookieConsent.mockReturnValue({
       shouldShowBanner: false,
-      acceptCookies: vi.fn()
+      acceptCookies: vi.fn(),
+      rejectCookies: vi.fn(),
+      hasConsented: false,
+      isGpcActive: false
     });
 
     const { container } = render(<CookieBanner />);
@@ -29,7 +32,10 @@ describe('CookieBanner Component', () => {
   it('renders correctly when shouldShowBanner is true, includes correct ARIA attributes', () => {
     mockUseCookieConsent.mockReturnValue({
       shouldShowBanner: true,
-      acceptCookies: vi.fn()
+      acceptCookies: vi.fn(),
+      rejectCookies: vi.fn(),
+      hasConsented: false,
+      isGpcActive: false
     });
 
     render(<CookieBanner />);
@@ -42,7 +48,10 @@ describe('CookieBanner Component', () => {
     const acceptCookiesMock = vi.fn();
     mockUseCookieConsent.mockReturnValue({
       shouldShowBanner: true,
-      acceptCookies: acceptCookiesMock
+      acceptCookies: acceptCookiesMock,
+      rejectCookies: vi.fn(),
+      hasConsented: false,
+      isGpcActive: false
     });
 
     render(<CookieBanner />);

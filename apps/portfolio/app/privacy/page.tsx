@@ -1,4 +1,4 @@
-import React from "react";
+
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function PrivacyPolicy() {
   return (
-    <main className="relative z-10 mx-auto max-w-3xl px-6 py-24 sm:py-32 lg:px-8">
+    <div className="container mx-auto px-4 py-16 md:py-24 max-w-4xl relative z-10">
       <div className="prose prose-invert prose-emerald max-w-none">
         <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl">Privacy Policy</h1>
         <p className="text-gray-400">Last updated: April 2026</p>
@@ -44,6 +44,6 @@ export default function PrivacyPolicy() {
           </p>
         </section>
       </div>
-    </main>
+    </div>
   );
 }
