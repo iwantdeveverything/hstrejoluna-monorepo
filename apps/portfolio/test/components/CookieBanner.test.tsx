@@ -21,6 +21,8 @@ describe('CookieBanner Component', () => {
       shouldShowBanner: false,
       acceptCookies: vi.fn(),
       rejectCookies: vi.fn(),
+      acceptAll: vi.fn(),
+      rejectAll: vi.fn(),
       consentState: { necessary: true, analytics: false, marketing: false },
       isGpcActive: false
     });
@@ -34,6 +36,8 @@ describe('CookieBanner Component', () => {
       shouldShowBanner: true,
       acceptCookies: vi.fn(),
       rejectCookies: vi.fn(),
+      acceptAll: vi.fn(),
+      rejectAll: vi.fn(),
       consentState: { necessary: true, analytics: false, marketing: false },
       isGpcActive: false
     });
@@ -50,6 +54,8 @@ describe('CookieBanner Component', () => {
       shouldShowBanner: true,
       acceptCookies: acceptCookiesMock,
       rejectCookies: vi.fn(),
+      acceptAll: vi.fn(),
+      rejectAll: vi.fn(),
       consentState: { necessary: true, analytics: false, marketing: false },
       isGpcActive: false
     });
