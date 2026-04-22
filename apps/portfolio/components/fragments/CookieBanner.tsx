@@ -1,12 +1,13 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import { useCookieConsent } from "../../hooks/useCookieConsent";
 import { motion, AnimatePresence } from "framer-motion";
 import { ShieldAlert } from "lucide-react";
 
 export default function CookieBanner() {
-  const { shouldShowBanner, acceptCookies } = useCookieConsent();
+  const { shouldShowBanner, acceptCookies, rejectCookies } = useCookieConsent();
 
   // We use AnimatePresence so it unmounts gracefully when returning false
   return (
@@ -26,13 +27,19 @@ export default function CookieBanner() {
               <ShieldAlert className="h-5 w-5 text-emerald-400" aria-hidden="true" />
               <p className="flex-1">
                 We use cookies to ensure you get the best experience. We respect global privacy control signals.{" "}
-                <a href="/privacy" className="text-emerald-400 transition-colors hover:text-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-black">
+                <Link href="/privacy" className="text-emerald-400 transition-colors hover:text-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-black">
                   Read our Privacy Policy
-                </a>
+                </Link>
                 .
               </p>
             </div>
             <div className="flex w-full flex-col gap-2 sm:flex-row sm:w-auto">
+              <button
+                onClick={rejectCookies}
+                className="rounded-br-xl rounded-tl-xl border border-gray-500/20 bg-gray-500/10 px-6 py-2 font-mono text-gray-400 transition-all hover:bg-gray-500/20 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:ring-offset-black"
+              >
+                Reject
+              </button>
               <button
                 onClick={acceptCookies}
                 className="rounded-br-xl rounded-tl-xl border border-emerald-500/20 bg-emerald-500/10 px-6 py-2 font-mono text-emerald-400 transition-all hover:bg-emerald-500/20 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-black"

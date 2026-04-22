@@ -14,23 +14,19 @@ test.describe("WCAG 2.2 AA Accessibility Hardening", () => {
     const variantText = page.locator(".text-on_surface_variant").first();
     await expect(variantText).toBeVisible();
 
-    // Force wait for css to apply
-    await page.waitForTimeout(500);
-
-    const color = await variantText.evaluate((el) => getComputedStyle(el).color);
-    console.log("High Contrast Color:", color);
-    
-    // Also check the border color for high contrast
     const borderElement = page.locator('.border-surface_container_highest').first();
-    const borderColor = await borderElement.evaluate((el) => getComputedStyle(el).borderColor);
-    console.log("High Contrast Border:", borderColor);
-    
+    await expect(borderElement).toBeVisible();
+
     // The default in theme is --color-on-surface-variant (often grey scaled).
     // The high contrast overrides this. Let's just ensure it's not the default by expecting it to not equal 'rgb(X)'
     // Actually, in CSS: color: rgba(255, 255, 255, 0.85) usually computes as rgba(255, 255, 255, 0.85) in chromium.
     // If it's rgb(255, 255, 255) it means alpha is 1, which might mean our override failed or another override won.
-    expect(color).toContain("255");
-    expect(borderColor).toContain("255");
+    await expect
+      .poll(async () => variantText.evaluate((el) => getComputedStyle(el).color))
+      .toContain("255");
+    await expect
+      .poll(async () => borderElement.evaluate((el) => getComputedStyle(el).borderColor))
+      .toContain("255");
   });
 
   test("skills overview maintains singular accordion expansion behavior (solo un panel abierto)", async ({ page }) => {

@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function PrivacyPolicy() {
   return (
-    <div className="container mx-auto px-4 py-16 md:py-24 max-w-4xl relative z-10">
+    <div id="main-content" className="container mx-auto px-4 py-16 md:py-24 max-w-4xl relative z-10">
       <div className="prose prose-invert prose-emerald max-w-none">
         <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl">Privacy Policy</h1>
         <p className="text-gray-400">Last updated: April 2026</p>
@@ -25,14 +25,14 @@ export default function PrivacyPolicy() {
           <h2 className="text-2xl font-semibold text-white">2. Data We Collect</h2>
           <p className="mt-4 text-gray-300">
             We operate under a strict data minimization principle. We only collect basic anonymous telemetry (if consented) to understand page load performance.
-            We <strong>do not</strong> collect identifying Personal Identifiable Information (PII) through this front-end portfolio.
+            We <strong>do not</strong> collect identifying Personally Identifiable Information (PII) through this front-end portfolio.
           </p>
         </section>
 
         <section className="mt-10">
           <h2 className="text-2xl font-semibold text-white">3. Global Privacy Control (GPC)</h2>
           <p className="mt-4 text-gray-300">
-            We natively respect the <strong>Global Privacy Control</strong> signal. If your browser sends the <code>Sec-GPC</code> header or injects <code>navigator.globalPrivacyControl</code>, 
+            We natively respect the <strong>Global Privacy Control</strong> signal. If your browser supports and injects <code>navigator.globalPrivacyControl</code>, 
             we automatically opt you out of all non-essential scripts and cookies without showing you a disruptive banner.
           </p>
         </section>
