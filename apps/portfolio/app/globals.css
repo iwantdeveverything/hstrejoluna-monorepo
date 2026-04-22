@@ -174,3 +174,27 @@ body::before {
   0% { transform: translateY(-100%); }
   100% { transform: translateY(100%); }
 }
+
+/* ── High Contrast Mode — WCAG 2.2 AA ───────────────────────── */
+@media (prefers-contrast: more) {
+  /* Increase visibility of decorative text that remains visible */
+  .font-mono {
+    opacity: 1 !important;
+  }
+
+  /* Stronger borders for better element separation */
+  [class*="border-surface_container_highest"] {
+    border-color: rgba(255, 255, 255, 0.3) !important;
+  }
+
+  /* Increase text contrast for variant text */
+  .text-on_surface_variant {
+    color: rgba(255, 255, 255, 0.85) !important;
+  }
+
+  /* Make focus indicators more prominent */
+  :focus-visible {
+    outline: 3px solid var(--color-primary) !important;
+    outline-offset: 2px !important;
+  }
+}

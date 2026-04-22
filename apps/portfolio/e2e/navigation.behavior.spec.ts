@@ -1,6 +1,11 @@
 import { expect, test } from "@playwright/test";
 
 test.describe("portfolio navigation behavior", () => {
+  test.beforeEach(async ({ page }) => {
+    await page.addInitScript(() => {
+      window.localStorage.setItem("consent_preferences", JSON.stringify({ analytics: true, timestamp: new Date().toISOString() }));
+    });
+  });
   test("scrolling updates active section marker without clicking navigation", async ({
     page,
   }, testInfo) => {

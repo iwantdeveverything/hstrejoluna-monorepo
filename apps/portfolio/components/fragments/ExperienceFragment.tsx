@@ -24,7 +24,7 @@ export const ExperienceFragment = ({ experience }: ExperienceFragmentProps) => {
   return (
     <section className="stream-fragment flex items-center justify-center p-6 md:p-24 relative overflow-hidden bg-void">
       {/* Background Code Stream Decoration */}
-      <div className="absolute top-0 right-0 h-full w-1/2 opacity-[0.03] font-mono text-[8px] md:text-[10px] text-white overflow-hidden pointer-events-none select-none leading-none z-0">
+      <div aria-hidden="true" className="absolute top-0 right-0 h-full w-1/2 opacity-[0.03] font-mono text-[8px] md:text-[10px] text-white overflow-hidden pointer-events-none select-none leading-none z-0">
         {Array.from({ length: 100 }).map((_, i) => {
           // Deterministic LCG pseudo-random — same output on server & client
           let seed = (i + 1) * 9301 + 49297;
@@ -79,7 +79,7 @@ export const ExperienceFragment = ({ experience }: ExperienceFragmentProps) => {
       </div>
 
       {/* Side HUD Telemetry */}
-      <div className="absolute bottom-12 left-12 hidden lg:block font-mono text-[9px] text-white/10 tracking-[0.3em] uppercase rotate-90 origin-left">
+      <div aria-hidden="true" className="absolute bottom-12 left-12 hidden lg:block font-mono text-[9px] text-white/10 tracking-[0.3em] uppercase rotate-90 origin-left">
         CHRONO_LOG_SYNC_STATE: 100%_STABLE
       </div>
     </section>

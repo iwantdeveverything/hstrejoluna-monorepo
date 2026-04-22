@@ -1,6 +1,9 @@
-import type { Metadata } from "next";
+
 import { Inter, Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+
+import Footer from "../components/fragments/Footer";
+import CookieBanner from "../components/fragments/CookieBanner";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-display" });
@@ -20,7 +23,11 @@ export default function RootLayout({
         >
           Skip to main content
         </a>
-        {children}
+        <div className="relative min-h-screen flex flex-col">
+          <main id="main-content" className="flex-grow">{children}</main>
+          <Footer />
+        </div>
+        <CookieBanner />
       </body>
     </html>
   );
