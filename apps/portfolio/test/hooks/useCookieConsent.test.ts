@@ -1,6 +1,7 @@
+/** @vitest-environment jsdom */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
-import { useCookieConsent } from '../../hooks/useCookieConsent';
+import { useCookieConsent } from '@hstrejoluna/compliance';
 
 // Mock localStorage
 const localStorageMock = (() => {
@@ -27,7 +28,7 @@ describe('useCookieConsent Hook', () => {
   it('initializes with no consent and no GPC', () => {
     const { result } = renderHook(() => useCookieConsent());
     
-    expect(result.current.hasConsented).toBe(false);
+    expect(result.current.consentState).not.toBeNull();
     expect(result.current.isGpcActive).toBe(false);
     expect(result.current.shouldShowBanner).toBe(true);
   });
@@ -54,7 +55,7 @@ describe('useCookieConsent Hook', () => {
       result.current.acceptCookies();
     });
 
-    expect(result.current.hasConsented).toBe(true);
+    expect(result.current.consentState?.analytics).toBe(true);
     expect(result.current.shouldShowBanner).toBe(false);
 
     const stored = localStorage.getItem('consent_preferences');

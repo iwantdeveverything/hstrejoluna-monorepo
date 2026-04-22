@@ -2,10 +2,10 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import CookieBanner from '../../components/fragments/CookieBanner';
-import { useCookieConsent } from '../../hooks/useCookieConsent';
+import { useCookieConsent } from '@hstrejoluna/compliance';
 
 // Mock the hook
-vi.mock('../../hooks/useCookieConsent', () => ({
+vi.mock('@hstrejoluna/compliance', () => ({
   useCookieConsent: vi.fn()
 }));
 
@@ -21,7 +21,7 @@ describe('CookieBanner Component', () => {
       shouldShowBanner: false,
       acceptCookies: vi.fn(),
       rejectCookies: vi.fn(),
-      hasConsented: false,
+      consentState: { necessary: true, analytics: false, marketing: false },
       isGpcActive: false
     });
 
@@ -34,7 +34,7 @@ describe('CookieBanner Component', () => {
       shouldShowBanner: true,
       acceptCookies: vi.fn(),
       rejectCookies: vi.fn(),
-      hasConsented: false,
+      consentState: { necessary: true, analytics: false, marketing: false },
       isGpcActive: false
     });
 
@@ -50,7 +50,7 @@ describe('CookieBanner Component', () => {
       shouldShowBanner: true,
       acceptCookies: acceptCookiesMock,
       rejectCookies: vi.fn(),
-      hasConsented: false,
+      consentState: { necessary: true, analytics: false, marketing: false },
       isGpcActive: false
     });
 

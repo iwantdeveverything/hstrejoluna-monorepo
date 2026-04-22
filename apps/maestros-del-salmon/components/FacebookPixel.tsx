@@ -1,10 +1,17 @@
 "use client";
 
+import React from "react";
 import Script from "next/script";
-import * as fpixel from "@/lib/fpixel";
+import * as fpixel from "../lib/fpixel";
+import { useCookieConsent } from "@hstrejoluna/compliance";
 
 export const FacebookPixel = () => {
+  const { consentState } = useCookieConsent();
+  
   if (!fpixel.fbPixelId) return null;
+  
+  // Consent Gate: Only initialize and run if marketing consent is granted
+  if (!consentState?.marketing) return null;
 
   return (
     <>

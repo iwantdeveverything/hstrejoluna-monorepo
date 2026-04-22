@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { useCookieConsent } from "../../hooks/useCookieConsent";
+import { useCookieConsent } from "@hstrejoluna/compliance";
 import { motion, AnimatePresence } from "framer-motion";
 import { ShieldAlert } from "lucide-react";
 
