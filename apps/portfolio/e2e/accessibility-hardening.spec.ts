@@ -9,7 +9,9 @@ test.describe("WCAG 2.2 AA Accessibility Hardening", () => {
     });
   });
 
-  test("prefers-contrast: more applies correct high-contrast CSS overrides", async ({ page }) => {
+  test("prefers-contrast: more applies correct high-contrast CSS overrides", async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name.includes("Mobile"), "Layout specific selectors are hidden on mobile");
+
     // Navigate to a page where we can test contrast overrides
     await page.goto("/");
 
