@@ -1,9 +1,18 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
 import { Copyleft } from "lucide-react";
+import { clearConsentState } from "@hstrejoluna/compliance";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
+
+  // Handle manual consent reset/management
+  const handleManageCookies = () => {
+    clearConsentState();
+    window.location.reload(); // Simple reload to trigger banner again
+  };
 
   return (
     <footer className="relative z-50 mt-20 border-t border-white/10 bg-black/50 py-8 backdrop-blur-sm sm:mt-32">
@@ -23,6 +32,16 @@ export default function Footer() {
           <Link href="/cookies" className="transition-colors hover:text-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-black">
             Cookie Policy
           </Link>
+          <Link href="/legal" className="transition-colors hover:text-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-black">
+            Legal Notice
+          </Link>
+          <button 
+            type="button"
+            onClick={handleManageCookies}
+            className="transition-colors hover:text-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-black"
+          >
+            Manage Cookies
+          </button>
         </nav>
         
       </div>

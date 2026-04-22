@@ -2,24 +2,43 @@
 schema: spec-driven
 
 context: |
-  Tech stack: TypeScript, React 19, Next.js 16, Sanity Studio, Turborepo.
+  Tech stack: TypeScript, React 19, Next.js 16 (App Router), Sanity Studio, Turborepo.
   Architecture: Monorepo with NPM workspaces. Portfolio and Landing apps connected to Sanity CMS.
-  Testing: Vitest and Playwright detected.
+  Testing: Vitest (unit) + Testing Library (integration) + Playwright (e2e).
   Style: Clean Code, Type Safety (no any), DRY, KISS. camelCase (vars/fns), PascalCase (components).
 
 strict_tdd: true
 
 testing:
-  runner: vitest
+  runner:
+    name: vitest
+    command: npm test
   layers:
-    unit: true
-    integration: true
-    e2E: true
-  coverage: true
+    unit:
+      available: true
+      tool: vitest
+      command: npm test
+    integration:
+      available: true
+      tool: "@testing-library/react"
+      command: npm test
+    e2e:
+      available: true
+      tool: playwright
+      command: npm run qa:e2e --workspace=apps/portfolio
+  coverage:
+    available: false
+    command: "—"
   quality_tools:
-    linter: true
-    type_checker: true
-    formatter: true
+    linter:
+      available: true
+      command: npm run lint
+    type_checker:
+      available: true
+      command: npm run typecheck
+    formatter:
+      available: true
+      command: npm run format
 
 rules:
   proposal:

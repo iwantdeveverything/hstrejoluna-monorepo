@@ -19,6 +19,7 @@
     "qa:gate": "npm run lint && npm run test && npm run qa:e2e && npm run qa:lighthouse"
   },
   "dependencies": {
+    "@hstrejoluna/compliance": "*",
     "@hstrejoluna/ui": "*",
     "@portabletext/react": "^6.0.3",
     "@sanity/image-url": "^1.1.0",

@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { FacebookPixel } from "@/components/FacebookPixel";
+import Footer from "@/components/Footer";
+import CookieBanner from "@/components/CookieBanner";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -24,10 +26,6 @@ export const metadata: Metadata = {
     locale: "es_MX",
     type: "website",
   },
-  robots: {
-    index: true,
-    follow: true,
-  },
 };
 
 export default function RootLayout({
@@ -39,7 +37,11 @@ export default function RootLayout({
     <html lang="es">
       <body className={`${inter.className} text-brand-marine bg-brand-sand min-h-screen flex flex-col`}>
         <FacebookPixel />
-        {children}
+        <main className="flex-grow">
+          {children}
+        </main>
+        <Footer />
+        <CookieBanner />
       </body>
     </html>
   );

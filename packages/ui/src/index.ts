@@ -23,4 +23,5 @@ export * from "./components/GlassNav";
 export * from "./components/MicroInteraction";
 export * from "./components/BootSequence";
 export * from "./components/TelemetryHUD";
+export * from "./components/LegalPageShell";
 export * from "./hooks/useReducedMotion";
