@@ -10,7 +10,7 @@ export default function Footer() {
       <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-6 px-4 md:flex-row md:px-8 lg:px-12">
         
         {/* Anti-copyright / Brand */}
-        <div className="flex items-center gap-2 text-sm text-gray-500">
+        <div className="flex items-center gap-2 text-sm text-gray-400">
           <Copyleft className="h-4 w-4" aria-hidden="true" />
           <span>{currentYear} Dark Kinetic. Free to fork.</span>
         </div>
