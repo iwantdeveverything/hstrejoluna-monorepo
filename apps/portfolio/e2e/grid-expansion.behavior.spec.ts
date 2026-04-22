@@ -7,6 +7,11 @@ const getProjectGridColumnCount = async (page: import("@playwright/test").Page) 
   });
 
 test.describe("in-place expansion grids", () => {
+  test.beforeEach(async ({ page }) => {
+    await page.addInitScript(() => {
+      window.localStorage.setItem("consent_preferences", JSON.stringify({ analytics: true, timestamp: new Date().toISOString() }));
+    });
+  });
   test("projects grid uses three columns on desktop", async ({ page }, testInfo) => {
     test.skip(testInfo.project.name.includes("Mobile"), "Desktop-only responsive assertion");
 

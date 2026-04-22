@@ -2,6 +2,12 @@ import { expect, test } from "@playwright/test";
 
 test.describe("WCAG 2.2 AA Accessibility Hardening", () => {
   test.use({ colorScheme: "dark" });
+  
+  test.beforeEach(async ({ page }) => {
+    await page.addInitScript(() => {
+      window.localStorage.setItem("consent_preferences", JSON.stringify({ analytics: true, timestamp: new Date().toISOString() }));
+    });
+  });
 
   test("prefers-contrast: more applies correct high-contrast CSS overrides", async ({ page }) => {
     // Navigate to a page where we can test contrast overrides
