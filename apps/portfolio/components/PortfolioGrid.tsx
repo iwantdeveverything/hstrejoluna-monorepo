@@ -1,9 +1,9 @@
 "use client";
 
 import { motion, Variants } from "framer-motion";
-import Link from "next/link";
+import { Link } from "@hstrejoluna/i18n";
 import { normalizeSocialLinks } from "@/lib/navigation";
-import { PortableTextBlock, Profile, Project, Skill } from "@/types/sanity";
+import { PortableTextBlock, Profile, Project, Skill } from "@hstrejoluna/types-sanity";
 import { SkillsGrid } from "@/components/SkillsGrid";
 
 const containerVariants: Variants = {

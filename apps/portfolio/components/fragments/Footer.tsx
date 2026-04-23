@@ -1,12 +1,14 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
+import { Link } from "@hstrejoluna/i18n";
 import { Copyleft } from "lucide-react";
 import { clearConsentState } from "@hstrejoluna/compliance";
+import { useTranslations } from "next-intl";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
+  const t = useTranslations("common");
 
   // Handle manual consent reset/management
   const handleManageCookies = () => {
@@ -21,26 +23,26 @@ export default function Footer() {
         {/* Anti-copyright / Brand */}
         <div className="flex items-center gap-2 text-sm text-gray-400">
           <Copyleft className="h-4 w-4" aria-hidden="true" />
-          <span>{currentYear} Dark Kinetic. Free to fork.</span>
+          <span>{currentYear} Dark Kinetic. {t("footer.portfolio_tagline")}</span>
         </div>
 
         {/* Legal Navigation */}
         <nav aria-label="Legal Navigation" className="flex flex-wrap items-center justify-center gap-6 text-sm font-medium text-gray-400">
           <Link href="/privacy" className="transition-colors hover:text-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-black">
-            Privacy Policy
+            {t("privacy")}
           </Link>
           <Link href="/cookies" className="transition-colors hover:text-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-black">
-            Cookie Policy
+            {t("cookies")}
           </Link>
           <Link href="/legal" className="transition-colors hover:text-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-black">
-            Legal Notice
+            {t("legal")}
           </Link>
           <button 
             type="button"
             onClick={handleManageCookies}
             className="transition-colors hover:text-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-black"
           >
-            Manage Cookies
+            {t("manage_cookies")}
           </button>
         </nav>
         

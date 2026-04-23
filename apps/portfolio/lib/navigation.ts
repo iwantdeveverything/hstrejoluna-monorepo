@@ -1,5 +1,5 @@
 import type { NavSectionId } from "@/lib/sections";
-import type { ProfileSocialLink } from "@/types/sanity";
+import type { ProfileSocialLink } from "@hstrejoluna/types-sanity";
 
 export interface NavigationSocialLink {
   kind: "github" | "linkedin" | "email";
@@ -33,17 +33,24 @@ const platformPriority: Record<NavigationSocialLink["kind"], number> = {
 
 const emailRegex = /\S+@\S+\.\S+/;
 
+/**
+ * Type guard for navigation platforms.
+ */
+function isSupportedPlatform(platform: string): platform is NavigationSocialLink["kind"] {
+  return supportedPlatforms.has(platform as NavigationSocialLink["kind"]);
+}
+
 const normalizePlatform = (platform?: string): NavigationSocialLink["kind"] | null => {
   if (!platform) {
     return null;
   }
 
   const normalized = platform.toLowerCase().trim();
-  if (!supportedPlatforms.has(normalized as NavigationSocialLink["kind"])) {
+  if (!isSupportedPlatform(normalized)) {
     return null;
   }
 
-  return normalized as NavigationSocialLink["kind"];
+  return normalized;
 };
 
 const normalizeEmailToHref = (value?: string): string | null => {

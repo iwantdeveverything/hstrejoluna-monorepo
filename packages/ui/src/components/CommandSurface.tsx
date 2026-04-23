@@ -29,6 +29,7 @@ export interface CommandSurfaceProps {
   socials?: readonly CommandSurfaceSocialLink[];
   hideOnScroll?: boolean;
   onSectionNavigate?: (sectionId: string) => void;
+  renderExtra?: () => React.ReactNode;
 }
 
 const resolveLabel = (activeId: string, counts: CommandSurfaceCounts): string => {
@@ -48,6 +49,7 @@ export const CommandSurface = ({
   socials = [],
   hideOnScroll = false,
   onSectionNavigate,
+  renderExtra,
 }: CommandSurfaceProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const shouldHide = hideOnScroll && !isMenuOpen;
@@ -97,16 +99,21 @@ export const CommandSurface = ({
           </AnimatePresence>
         </div>
 
-        <button
-          type="button"
-          className="lg:hidden rounded border border-surface_container_highest px-3 py-1 text-[11px] font-mono uppercase tracking-wider text-on_surface focus-visible:outline-none"
-          aria-expanded={isMenuOpen}
-          aria-controls="mobile-navigation-panel"
-          aria-label={isMenuOpen ? "Close navigation menu" : "Open navigation menu"}
-          onClick={() => setIsMenuOpen((previous) => !previous)}
-        >
-          {isMenuOpen ? "Close" : "Menu"}
-        </button>
+        <div className="flex items-center gap-4">
+          <div className="hidden lg:block">
+            {renderExtra?.()}
+          </div>
+          <button
+            type="button"
+            className="lg:hidden rounded border border-surface_container_highest px-3 py-1 text-[11px] font-mono uppercase tracking-wider text-on_surface focus-visible:outline-none"
+            aria-expanded={isMenuOpen}
+            aria-controls="mobile-navigation-panel"
+            aria-label={isMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+            onClick={() => setIsMenuOpen((previous) => !previous)}
+          >
+            {isMenuOpen ? "Close" : "Menu"}
+          </button>
+        </div>
       </div>
 
       <nav
@@ -175,9 +182,14 @@ export const CommandSurface = ({
               ))}
             </ul>
             <div className="mt-4 border-t border-surface_container_highest pt-3">
-              <p className="mb-2 text-[11px] font-mono uppercase tracking-wider text-on_surface_variant">
-                Social
-              </p>
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-[11px] font-mono uppercase tracking-wider text-on_surface_variant">
+                  Social
+                </p>
+                <div className="lg:hidden">
+                  {renderExtra?.()}
+                </div>
+              </div>
               {socials.length > 0 ? (
                 <ul className="flex flex-col gap-2">
                   {socials.map((social) => (

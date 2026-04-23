@@ -3,8 +3,8 @@
 import React from "react";
 import { m } from "framer-motion";
 import Image from "next/image";
-import Link from "next/link";
-import { Project } from "@/types/sanity";
+import { Link } from "@hstrejoluna/i18n";
+import { Project } from "@hstrejoluna/types-sanity";
 import { urlFor } from "@/lib/sanity";
 import { GlitchText } from "@hstrejoluna/ui";
 import { TelemetryHUD } from "@hstrejoluna/ui";

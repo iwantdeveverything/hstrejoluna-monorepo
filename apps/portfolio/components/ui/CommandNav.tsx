@@ -1,12 +1,12 @@
 "use client";
 
-import { useMemo } from "react";
 import { CommandSurface } from "@hstrejoluna/ui";
 import { useReducedMotion } from "@hstrejoluna/ui";
 import { normalizeSocialLinks, scrollToSection } from "@/lib/navigation";
-import { navSectionIds, navSections } from "@/lib/sections";
-import type { NavSectionId, StreamSectionId } from "@/lib/sections";
-import type { ProfileSocialLink } from "@/types/sanity";
+import { navSectionIds } from "@/lib/sections";
+import type { NavSectionId, StreamSectionId, NavSectionDefinition } from "@/lib/sections";
+import type { ProfileSocialLink } from "@hstrejoluna/types-sanity";
+import { LocaleSwitcher } from "./LocaleSwitcher";
 
 interface CommandNavCounts {
   projects: number;
@@ -17,6 +17,7 @@ interface CommandNavCounts {
 interface CommandNavProps {
   activeId: StreamSectionId | "";
   counts: CommandNavCounts;
+  sections: readonly NavSectionDefinition[];
   socials?: ProfileSocialLink[];
   hideOnScroll?: boolean;
 }
@@ -24,11 +25,12 @@ interface CommandNavProps {
 export const CommandNav = ({
   activeId,
   counts,
+  sections,
   socials,
   hideOnScroll = false,
 }: CommandNavProps) => {
   const isReducedMotion = useReducedMotion();
-  const socialLinks = useMemo(() => normalizeSocialLinks(socials), [socials]);
+  const socialLinks = normalizeSocialLinks(socials);
 
   const handleSectionNavigation = (sectionId: string) => {
     if (!navSectionIds.includes(sectionId as NavSectionId)) {
@@ -42,10 +44,11 @@ export const CommandNav = ({
     <CommandSurface
       activeId={activeId}
       counts={counts}
-      sections={navSections}
+      sections={sections}
       socials={socialLinks}
       hideOnScroll={hideOnScroll}
       onSectionNavigate={handleSectionNavigation}
+      renderExtra={() => <LocaleSwitcher />}
     />
   );
 };
