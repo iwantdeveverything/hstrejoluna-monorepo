@@ -1,0 +1,82 @@
+{
+  "common": {
+    "nav": {
+      "projects": "Proyectos",
+      "experience": "Experiencia",
+      "certificates": "Certificados"
+    },
+    "contact": "Contacto",
+    "manage_cookies": "Gestionar Cookies",
+    "skip_to_content": "Saltar al contenido principal",
+    "legal": "Aviso Legal",
+    "privacy": "Política de Privacidad",
+    "cookies": "Política de Cookies",
+    "cookie_banner": {
+      "title": "Privacidad y Seguimiento",
+      "description": "Utilizamos cookies para mejorar tu experiencia y analizar el tráfico del sitio. Al hacer clic en \"Aceptar Todo\", consientes nuestro uso de seguimiento para analítica y marketing. Consulta nuestra",
+      "portfolio_description": "Utilizamos cookies para asegurar que tengas la mejor experiencia. Respetamos las señales de control de privacidad global. Lee nuestra",
+      "accept": "Aceptar Todo",
+      "reject": "Solo Necesarias"
+    },
+    "footer": {
+      "portfolio_tagline": "Libre para forkear.",
+      "salmon_tagline": "Micrositio de Portfolio."
+    }
+  },
+  "home": {
+    "hero": {
+      "system_ready": "[SISTEMA_LISTO]: INICIALIZANDO ENLACE NEURAL",
+      "title": "Arquitecto de Software Senior",
+      "subtitle": "Portfolio Cinemático de un Ingeniero Frontend Senior especializado en Ecosistemas Escalables.",
+      "tagline": "Transformo restricciones complejas en arte funcional puro y cinético.",
+      "cta": "Iniciar Secuencia"
+    },
+    "telemetry": {
+      "status": "ESTADO_ENLACE: ÓPTIMO",
+      "latency": "LATENCIA: 0.00MS",
+      "framework": "FRAMEWORK: KINETIC_V2",
+      "descent": "Descenso",
+      "coords": "COORD: 0.00.00° ALPHA",
+      "os": "SO: EL_VACIO"
+    },
+    "sections": {
+      "projects": "Proyectos",
+      "experience": "Registro_Experiencia",
+      "skills": "Mapa_Neural",
+      "certificates": "Certificados"
+    }
+  },
+  "experience": {
+    "present": "Actualidad",
+    "no_description": "SIN_DESCRIPCION_DISPONIBLE"
+  },
+  "skills": {
+    "sync_rate": "TASA_SINCRONIZACION",
+    "documentation_fragment": "// FRAGMENTO_DOCUMENTACION"
+  },
+  "salmon": {
+    "header": {
+      "contact_label": "Atención a Chefs y B2B",
+      "contact_aria": "Contactar por WhatsApp"
+    },
+    "hero": {
+      "title": "El Salmón de la Alta Cocina, Directo a tu Mesa.",
+      "subtitle": "Manejamos calidad premium para los paladares más exigentes en Cancún. Exclusiva Doble Garantía certificada.",
+      "cta_buy": "Hacer mi Primer Pedido",
+      "cta_sales": "Ventas Corporativas"
+    },
+    "guarantee": {
+      "title": "Nuestra Inigualable Doble Garantía",
+      "bap_title": "Certificación BAP 4-Estrellas",
+      "bap_desc": "Aseguramos las mejores prácticas globales en acuicultura. Sostenibilidad, responsabilidad integral y seguridad alimentaria.",
+      "kosher_title": "Certificación Kosher",
+      "kosher_desc": "Cumplimos de manera estricta con rigurosos estándares de supervisión, garantizando excelencia y tranquilidad."
+    },
+    "guarantee_title": "Nuestra Inigualable Doble Garantía",
+    "cta_section": {
+      "title": "¿Listo para elevar el estándar de tu cocina?",
+      "desc": "Realiza tu pedido y recíbelo fresco y en óptimas condiciones en Cancún con logística garantizada.",
+      "button": "Comprar Salmón Ahora"
+    }
+  }
+}

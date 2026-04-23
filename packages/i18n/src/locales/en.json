@@ -1,0 +1,81 @@
+{
+  "common": {
+    "nav": {
+      "projects": "Projects",
+      "experience": "Experience",
+      "certificates": "Certificates"
+    },
+    "contact": "Contact",
+    "manage_cookies": "Manage Cookies",
+    "skip_to_content": "Skip to main content",
+    "legal": "Legal Notice",
+    "privacy": "Privacy Policy",
+    "cookies": "Cookie Policy",
+    "cookie_banner": {
+      "title": "Privacy & Tracking",
+      "description": "We use cookies to improve your experience and track site usage. By clicking \"Accept All\", you consent to our use of tracking for analytics and marketing. View our",
+      "portfolio_description": "We use cookies to ensure you get the best experience. We respect global privacy control signals. Read our",
+      "accept": "Accept All",
+      "reject": "Strictly Necessary"
+    },
+    "footer": {
+      "portfolio_tagline": "Free to fork.",
+      "salmon_tagline": "Portfolio Microsite."
+    }
+  },
+  "home": {
+    "hero": {
+      "system_ready": "[SYSTEM_READY]: INITIALIZING_NEURAL_UPLINK",
+      "title": "Senior Software Architect",
+      "subtitle": "Cinematic Portfolio of a Senior Frontend Engineer specializing in Scalable Ecosystems.",
+      "tagline": "I transform complex constraints into pure, kinetic functional art.",
+      "cta": "Initiate Sequence"
+    },
+    "telemetry": {
+      "status": "UPLINK_STATUS: OPTIMAL",
+      "latency": "LATENCY: 0.00MS",
+      "framework": "FRAMEWORK: KINETIC_V2",
+      "descent": "Descent",
+      "coords": "COORDS: 0.00.00° ALPHA",
+      "os": "OS: THE_VOID"
+    },
+    "sections": {
+      "projects": "Projects",
+      "experience": "Experience_Log",
+      "skills": "Neural_Map",
+      "certificates": "Certificates"
+    }
+  },
+  "experience": {
+    "present": "Present",
+    "no_description": "NO_DESCRIPTION_PROVIDED"
+  },
+  "skills": {
+    "sync_rate": "SYNC_RATE",
+    "documentation_fragment": "// DOCUMENTATION_FRAGMENT"
+  },
+  "salmon": {
+    "header": {
+      "contact_label": "Chef & B2B Support",
+      "contact_aria": "Contact via WhatsApp"
+    },
+    "hero": {
+      "title": "Chef-Grade Salmon, Delivered to Your Door.",
+      "subtitle": "Premium quality for Cancún's most demanding palates. Certified Double Guarantee.",
+      "cta_buy": "Place My First Order",
+      "cta_sales": "Corporate Sales"
+    },
+    "guarantee": {
+      "title": "Our Unrivaled Double Guarantee",
+      "bap_title": "4-Star BAP Certification",
+      "bap_desc": "Ensuring global best practices in aquaculture. Sustainability, responsibility, and food safety.",
+      "kosher_title": "Kosher Certification",
+      "kosher_desc": "Strict adherence to supervision standards, guaranteeing excellence and peace of mind."
+    },
+    "cta_section": {
+      "title": "Ready to elevate your kitchen standards?",
+      "desc": "Order now and receive fresh, cold-chain guaranteed delivery in Cancún.",
+      "button": "Buy Salmon Now"
+    }
+  }
+}
