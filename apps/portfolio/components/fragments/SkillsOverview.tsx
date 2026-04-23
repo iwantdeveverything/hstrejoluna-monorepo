@@ -96,8 +96,8 @@ export const SkillsOverview = ({ skills }: { skills: Skill[] }) => {
                       <div className="font-mono text-xs text-on_surface_variant leading-relaxed columns-1 md:columns-2 gap-8">
                         <div>
                           <p className="text-primary mb-2">{t("skills.documentation_fragment")}</p>
-                          {/* Localized technical narrative */}
-                          <p>{skill.name} {t("skills.proficiency_narrative_prefix")} {skill.category} {t("skills.proficiency_narrative_mid")} {skill.proficiency}% {t("skills.proficiency_narrative_suffix")}</p>
+                          {/* Localized technical narrative with variable interpolation */}
+                          <p>{t("skills.proficiency_narrative", { name: skill.name, category: skill.category, proficiency: skill.proficiency })}</p>
                         </div>
                       </div>
                     </div>

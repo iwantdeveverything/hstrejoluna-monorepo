@@ -16,7 +16,8 @@
       "menu": "Menu",
       "close": "Close",
       "no_socials": "No social links configured.",
-      "social_title": "Social"
+      "social_title": "Social",
+      "active_nodes": "ACTIVE_NODES"
     },
     "contact": "Contact",
     "manage_cookies": "Manage Cookies",
@@ -38,8 +39,8 @@
   },
   "home": {
     "default_name": "SEBASTIÁN TREJO",
-    "default_bio": "Coding at business: Elevating ecosystems with impeccable software architecture.",
-    "default_headline": "Software Architect specializing in Generative AI and scalable ecosystems.",
+    "default_bio": "Software Architect & GDE specializing in scalable ecosystems and cinematic digital experiences.",
+    "default_headline": "Senior Software Architect specializing in Generative AI and scalable ecosystems.",
     "project_description_fallback": "DATA_EXTRACT: Classified project documentation pending decryption.",
     "availability_badge": "Available for new challenges",
     "about_title": "About",
@@ -47,6 +48,7 @@
     "explore_project_button": "Explore Project",
     "case_study_link": "CASE STUDY",
     "project_uplink_badge": "[EXEC_UPLINK_PROJ]",
+    "skills_description": "A non-linear mapping of technical proficiencies across cloud, frontend architecture, and generative systems. All nodes are synchronized with production-grade telemetry.",
     "hero": {
       "system_ready": "[SYSTEM_READY]: INITIALIZING_NEURAL_UPLINK",
       "title": "Senior Software Architect",
@@ -61,16 +63,8 @@
       "descent": "Descent",
       "coords": "COORDS: 0.00.00° ALPHA",
       "os": "OS: THE_VOID"
-    },
-    "sections": {
-      "projects": "Projects",
-      "experience": "Experience_Log",
-      "skills": "Neural_Map",
-      "certificates": "Certificates"
-    },
-    "skills_description": "A non-linear mapping of technical proficiencies across cloud, frontend architecture, and generative systems. All nodes are synchronized with production-grade telemetry.",
-    "telemetry": {
-...
+    }
+  },
   "experience": {
     "present": "Present",
     "stable": "STABLE",
@@ -89,9 +83,7 @@
     "system_decomposition": "SYSTEM_DECOMPOSITION: Systematic breakdown of architectural modules, language fluencies, and ecosystem synchronization.",
     "skill_map_title": "Skill",
     "skill_map_subtitle": "Map",
-    "proficiency_narrative_prefix": "represents a core competency within the",
-    "proficiency_narrative_mid": "cluster. Proficiency mapped at",
-    "proficiency_narrative_suffix": "indicates active mastery and deployment capability in production environments."
+    "proficiency_narrative": "{name} represents a core competency within the {category} cluster. Proficiency mapped at {proficiency}% indicates active mastery and deployment capability in production environments."
   },
   "salmon": {
     "seo": {

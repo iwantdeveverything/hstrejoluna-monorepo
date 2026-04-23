@@ -16,7 +16,8 @@
       "menu": "Menú",
       "close": "Cerrar",
       "no_socials": "No hay enlaces sociales configurados.",
-      "social_title": "Social"
+      "social_title": "Social",
+      "active_nodes": "NODOS_ACTIVOS"
     },
     "contact": "Contacto",
     "manage_cookies": "Gestionar Cookies",
@@ -26,10 +27,10 @@
     "cookies": "Política de Cookies",
     "cookie_banner": {
       "title": "Privacidad y Seguimiento",
-      "description": "Utilizamos cookies para mejorar tu experiencia y analizar el tráfico del sitio. Al hacer clic en \"Aceptar Todo\", consientes nuestro uso de seguimiento para analítica y marketing. Consulta nuestra",
-      "portfolio_description": "Utilizamos cookies para asegurar que tengas la mejor experiencia. Respetamos las señales de control de privacidad global. Lee nuestra",
-      "accept": "Aceptar Todo",
-      "reject": "Solo Necesarias"
+      "description": "Utilizamos cookies para mejorar su experiencia y rastrear el uso del sitio. Al hacer clic en \"Aceptar todo\", usted acepta nuestro uso del seguimiento para análisis y marketing. Vea nuestra",
+      "portfolio_description": "Usamos cookies para asegurar que obtengas la mejor experiencia. Respetamos las señales de control de privacidad global. Lee nuestra",
+      "accept": "Aceptar todo",
+      "reject": "Estrictamente necesarias"
     },
     "footer": {
       "portfolio_tagline": "Libre para forkear.",
@@ -38,8 +39,8 @@
   },
   "home": {
     "default_name": "SEBASTIÁN TREJO",
-    "default_bio": "Coding at business: Elevando ecosistemas con una arquitectura de software impecable.",
-    "default_headline": "Arquitecto de Software especializado en IA Generativa y ecosistemas escalables.",
+    "default_bio": "Arquitecto de Software y GDE especializado en ecosistemas escalables y experiencias digitales cinemáticas.",
+    "default_headline": "Arquitecto de Software Senior especializado en IA Generativa y ecosistemas escalables.",
     "project_description_fallback": "EXTRACTO_DATOS: Documentación clasificada del proyecto pendiente de decodificación.",
     "availability_badge": "Disponible para nuevos desafíos",
     "about_title": "Acerca de",
@@ -47,8 +48,9 @@
     "explore_project_button": "Explorar Proyecto",
     "case_study_link": "CASO DE ESTUDIO",
     "project_uplink_badge": "[EJEC_ENLACE_PROY]",
+    "skills_description": "Un mapeo no lineal de competencias técnicas en la nube, arquitectura frontend y sistemas generativos. Todos los nodos están sincronizados con telemetría de grado de producción.",
     "hero": {
-      "system_ready": "[SISTEMA_LISTO]: INICIALIZANDO ENLACE NEURAL",
+      "system_ready": "[SISTEMA_LISTO]: INICIALIZANDO_ENLACE_NEURAL",
       "title": "Arquitecto de Software Senior",
       "subtitle": "Portfolio Cinemático de un Ingeniero Frontend Senior especializado en Ecosistemas Escalables.",
       "tagline": "Transformo restricciones complejas en arte funcional puro y cinético.",
@@ -60,17 +62,9 @@
       "framework": "FRAMEWORK: KINETIC_V2",
       "descent": "Descenso",
       "coords": "COORD: 0.00.00° ALPHA",
-      "os": "SO: EL_VACIO"
-    },
-    "sections": {
-      "projects": "Proyectos",
-      "experience": "Registro_Experiencia",
-      "skills": "Mapa_Neural",
-      "certificates": "Certificados"
-    },
-    "skills_description": "Un mapeo no lineal de competencias técnicas en la nube, arquitectura frontend y sistemas generativos. Todos los nodos están sincronizados con telemetría de grado de producción.",
-    "telemetry": {
-...
+      "os": "SO: EL_VACÍO"
+    }
+  },
   "experience": {
     "present": "Actualidad",
     "stable": "ESTABLE",
@@ -89,9 +83,7 @@
     "system_decomposition": "DESCOMPOSICION_SISTEMA: Desglose sistemático de módulos arquitectónicos, fluidez de lenguajes y sincronización de ecosistemas.",
     "skill_map_title": "Mapa",
     "skill_map_subtitle": "Habilidades",
-    "proficiency_narrative_prefix": "representa una competencia central dentro del clúster de",
-    "proficiency_narrative_mid": ". El nivel de dominio mapeado al",
-    "proficiency_narrative_suffix": "indica maestría activa y capacidad de despliegue en entornos de producción."
+    "proficiency_narrative": "{name} representa una competencia central dentro del clúster de {category}. El nivel de dominio mapeado al {proficiency}% indica maestría activa y capacidad de despliegue en entornos de producción."
   },
   "salmon": {
     "seo": {
@@ -103,19 +95,18 @@
       "contact_aria": "Contactar por WhatsApp"
     },
     "hero": {
-      "title": "El Salmón de la Alta Cocina, Directo a tu Mesa.",
-      "subtitle": "Manejamos calidad premium para los paladares más exigentes en Cancún. Exclusiva Doble Garantía certificada.",
-      "cta_buy": "Hacer mi Primer Pedido",
+      "title": "Salmón de Calidad de Chef, Entregado a Tu Puerta.",
+      "subtitle": "Calidad premium para los paladares más exigentes de Cancún. Doble Garantía Certificada.",
+      "cta_buy": "Hacer Mi Primer Pedido",
       "cta_sales": "Ventas Corporativas"
     },
     "guarantee": {
-      "title": "Nuestra Inigualable Doble Garantía",
-      "bap_title": "Certificación BAP 4-Estrellas",
-      "bap_desc": "Aseguramos las mejores prácticas globales en acuicultura. Sostenibilidad, responsabilidad integral y seguridad alimentaria.",
+      "title": "Nuestra Doble Garantía Inigualable",
+      "bap_title": "Certificación BAP 4 Estrellas",
+      "bap_desc": "Asegurando las mejores prácticas globales en acuicultura. Sostenibilidad, responsabilidad y seguridad alimentaria.",
       "kosher_title": "Certificación Kosher",
-      "kosher_desc": "Cumplimos de manera estricta con rigurosos estándares de supervisión, garantizando excelencia y tranquilidad."
+      "kosher_desc": "Cumplimiento estricto de estándares de supervisión, garantizando excelencia y tranquilidad."
     },
-    "guarantee_title": "Nuestra Inigualable Doble Garantía",
     "cta_section": {
       "title": "¿Listo para elevar el estándar de tu cocina?",
       "desc": "Realiza tu pedido y recíbelo fresco y en óptimas condiciones en Cancún con logística garantizada.",
