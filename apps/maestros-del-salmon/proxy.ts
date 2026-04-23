@@ -12,6 +12,6 @@ export { intlMiddleware as proxy };
 export const config = {
   matcher: [
     '/((?!api|_next|_static|_vercel|[\\w-]+\\.\\w+).*)',
-    `/(${routing.locales.join('|')})/:path*`
+    '/(en|es)/:path*'
   ]
 };

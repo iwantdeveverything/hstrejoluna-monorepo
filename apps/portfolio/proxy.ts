@@ -16,6 +16,6 @@ export const config = {
     // - all root files inside /public (e.g. /favicon.ico)
     '/((?!api|_next|_static|_vercel|[\\w-]+\\.\\w+).*)',
     // Match all pathnames within locales
-    `/(${routing.locales.join('|')})/:path*`
+    '/(en|es)/:path*'
   ]
 };
