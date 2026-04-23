@@ -1,5 +1,5 @@
 import type { NavSectionId } from "@/lib/sections";
-import type { ProfileSocialLink } from "@hstrejoluna/types-sanity";
+import type { ProfileSocialLink, Project } from "@hstrejoluna/types-sanity";
 
 export interface NavigationSocialLink {
   kind: "github" | "linkedin" | "email";
@@ -159,4 +159,15 @@ export const scrollToSection = ({ id, reducedMotion }: ScrollToSectionOptions): 
   }
 
   return true;
+};
+
+/**
+ * Programmatically generates the URL for a project.
+ */
+export const getProjectUrl = (project: Project): string => {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "";
+  if (project.micrositePath) {
+    return `${baseUrl}${project.micrositePath}`;
+  }
+  return project.externalLink || "#";
 };

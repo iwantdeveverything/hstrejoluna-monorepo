@@ -2,9 +2,9 @@
 import React from 'react';
 import { render, screen, cleanup } from '@testing-library/react';
 import { describe, it, expect, afterEach } from 'vitest';
-import PrivacyPage from '../../app/privacy/page';
-import CookiesPage from '../../app/cookies/page';
-import LegalPage from '../../app/legal/page';
+import PrivacyPage from '../../app/[locale]/privacy/page';
+import CookiesPage from '../../app/[locale]/cookies/page';
+import LegalPage from '../../app/[locale]/legal/page';
 
 describe('Legal Pages Integration (Portfolio)', () => {
   afterEach(() => {

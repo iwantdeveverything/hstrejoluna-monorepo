@@ -1,5 +1,7 @@
 "use client";
 
+import { useMemo } from "react";
+import { useTranslations } from "next-intl";
 import { CommandSurface } from "@hstrejoluna/ui";
 import { useReducedMotion } from "@hstrejoluna/ui";
 import { normalizeSocialLinks, scrollToSection } from "@/lib/navigation";
@@ -30,25 +32,50 @@ export const CommandNav = ({
   hideOnScroll = false,
 }: CommandNavProps) => {
   const isReducedMotion = useReducedMotion();
-  const socialLinks = normalizeSocialLinks(socials);
+  const tNav = useTranslations("common.nav_labels");
+
+  const socialLinks = useMemo(() => 
+    normalizeSocialLinks(socials), 
+    [socials]
+  );
+
+  const translatedSections = useMemo(() => {
+    const pad = (num: number) => num.toString().padStart(2, "0");
+    return sections.map((s) => {
+      let label = s.label;
+      if (s.id === "projects") label = `${tNav("projects")} [${pad(counts.projects)}]`;
+      if (s.id === "experience") label = `${tNav("experience")} [${pad(counts.experience)}]`;
+      if (s.id === "skills") label = tNav("neural_map");
+      if (s.id === "certificates") label = `${tNav("certificates")} [${pad(counts.certificates)}]`;
+
+      return { ...s, label };
+    });
+  }, [sections, counts, tNav]);
 
   const handleSectionNavigation = (sectionId: string) => {
-    if (!navSectionIds.includes(sectionId as NavSectionId)) {
+    const isValidId = (id: string): id is NavSectionId => 
+      (navSectionIds as readonly string[]).includes(id);
+
+    if (!isValidId(sectionId)) {
       return;
     }
 
-    scrollToSection({ id: sectionId as NavSectionId, reducedMotion: isReducedMotion });
+    scrollToSection({ id: sectionId, reducedMotion: isReducedMotion });
   };
 
   return (
     <CommandSurface
       activeId={activeId}
-      counts={counts}
-      sections={sections}
+      sections={translatedSections}
       socials={socialLinks}
       hideOnScroll={hideOnScroll}
       onSectionNavigate={handleSectionNavigation}
       renderExtra={() => <LocaleSwitcher />}
+      fallbackLabel={tNav("system_online")}
+      menuLabel={tNav("menu")}
+      closeLabel={tNav("close")}
+      socialTitle={tNav("social_title")}
+      noSocialsLabel={tNav("no_socials")}
     />
   );
 };

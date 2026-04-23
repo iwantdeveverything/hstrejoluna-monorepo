@@ -19,13 +19,11 @@ describe('CookieBanner Component', () => {
   it('does not render if shouldShowBanner is false', () => {
     mockUseCookieConsent.mockReturnValue({
       shouldShowBanner: false,
-      acceptCookies: vi.fn(),
-      rejectCookies: vi.fn(),
       acceptAll: vi.fn(),
       rejectAll: vi.fn(),
       consentState: { necessary: true, analytics: false, marketing: false },
       isGpcActive: false
-    });
+    } as any);
 
     const { container } = render(<CookieBanner />);
     expect(container.firstChild).toBeNull();
@@ -34,36 +32,32 @@ describe('CookieBanner Component', () => {
   it('renders correctly when shouldShowBanner is true, includes correct ARIA attributes', () => {
     mockUseCookieConsent.mockReturnValue({
       shouldShowBanner: true,
-      acceptCookies: vi.fn(),
-      rejectCookies: vi.fn(),
       acceptAll: vi.fn(),
       rejectAll: vi.fn(),
       consentState: { necessary: true, analytics: false, marketing: false },
       isGpcActive: false
-    });
+    } as any);
 
     render(<CookieBanner />);
     
-    const banner = screen.getByRole('complementary', { name: /Cookie Consent/i });
+    const banner = screen.getByRole('complementary', { name: /common\.cookie_banner\.title/i });
     expect(banner).toBeInTheDocument();
   });
 
-  it('calls acceptCookies when the user clicks the Accept button', () => {
-    const acceptCookiesMock = vi.fn();
+  it('calls acceptAll when the user clicks the Accept button', () => {
+    const acceptAllMock = vi.fn();
     mockUseCookieConsent.mockReturnValue({
       shouldShowBanner: true,
-      acceptCookies: acceptCookiesMock,
-      rejectCookies: vi.fn(),
-      acceptAll: vi.fn(),
+      acceptAll: acceptAllMock,
       rejectAll: vi.fn(),
       consentState: { necessary: true, analytics: false, marketing: false },
       isGpcActive: false
-    });
+    } as any);
 
     render(<CookieBanner />);
     
-    const acceptButton = screen.getByRole('button', { name: /Accept/i });
+    const acceptButton = screen.getByRole('button', { name: /common\.cookie_banner\.accept/i });
     fireEvent.click(acceptButton);
-    expect(acceptCookiesMock).toHaveBeenCalledTimes(1);
+    expect(acceptAllMock).toHaveBeenCalledTimes(1);
   });
 });

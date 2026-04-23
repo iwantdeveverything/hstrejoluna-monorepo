@@ -3,7 +3,8 @@
 import { useState } from "react";
 import Image from "next/image";
 import { m, AnimatePresence } from "framer-motion";
-import { type Project } from "@/types/sanity";
+import { useTranslations } from "next-intl";
+import { type Project } from "@hstrejoluna/types-sanity";
 import { urlFor } from "@/lib/sanity";
 import { HudChip, GlowBorder, MicroInteraction } from "@hstrejoluna/ui";
 import { ExternalLink, Activity } from "lucide-react";
@@ -12,19 +13,18 @@ interface ProjectsOverviewProps {
   projects: Project[];
 }
 
-export const ProjectsOverview = ({ projects }: ProjectsOverviewProps) => {
+export const ProjectsOverview = ({ projects }: { projects: Project[] }) => {
+  const t = useTranslations("home");
   const [expandedId, setExpandedId] = useState<string | null>(null);
+
 
   const toggleProject = (id: string) => {
     setExpandedId(prev => prev === id ? null : id);
   };
 
   const getProjectDescription = (description: Project["description"]) => {
-    if (typeof description === "string" && description.length > 0) {
-      return description;
-    }
-
-    return "DATA_EXTRACT: Classified";
+    const plainText = blockToPlainText(description);
+    return plainText.length > 0 ? plainText : t("project_description_fallback");
   };
 
   return (

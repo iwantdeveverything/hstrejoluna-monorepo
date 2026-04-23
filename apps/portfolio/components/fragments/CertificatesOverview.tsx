@@ -1,5 +1,5 @@
 import { CertificatesPanel } from "@hstrejoluna/ui";
-import type { Certificate } from "@/types/sanity";
+import type { Certificate } from "@hstrejoluna/types-sanity";
 
 interface CertificatesOverviewProps {
   certificates: Certificate[];

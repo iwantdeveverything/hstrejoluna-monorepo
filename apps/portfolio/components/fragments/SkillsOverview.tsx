@@ -1,14 +1,19 @@
 // SkillsOverview.tsx
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { type Skill } from "@/types/sanity";
+import { type Skill } from "@hstrejoluna/types-sanity";
 import { HudChip } from "@hstrejoluna/ui";
+import { useTranslations } from "next-intl";
 
 export const SkillsOverview = ({ skills }: { skills: Skill[] }) => {
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const t = useTranslations();
   
   // Create unique categories
-  const categories = Array.from(new Set(skills.map(s => s.category).filter(Boolean))) as string[];
+  const categories = Array.from(new Set(skills.map((s) => s.category))).filter(
+    (c): c is string => Boolean(c)
+  );
+
   const [activeCategory, setActiveCategory] = useState<string>(categories[0] || '');
 
   const filteredSkills = skills.filter(s => s.category === activeCategory);
@@ -63,7 +68,7 @@ export const SkillsOverview = ({ skills }: { skills: Skill[] }) => {
                 </div>
                 
                 <div className="hidden md:flex gap-2">
-                  <HudChip>SYNC_RATE: {skill.proficiency || 0}%</HudChip>
+                  <HudChip>{t("skills.sync_rate")}: {skill.proficiency || 0}%</HudChip>
                 </div>
               </button>
 
@@ -90,8 +95,9 @@ export const SkillsOverview = ({ skills }: { skills: Skill[] }) => {
                       
                       <div className="font-mono text-xs text-on_surface_variant leading-relaxed columns-1 md:columns-2 gap-8">
                         <div>
-                          <p className="text-primary mb-2">{'// DOCUMENTATION_FRAGMENT'}</p>
-                          <p>{skill.name} represents a core competency within the {skill.category} cluster. Proficiency mapped at {skill.proficiency}% indicates active mastery and deployment capability in production environments.</p>
+                          <p className="text-primary mb-2">{t("skills.documentation_fragment")}</p>
+                          {/* Localized technical narrative */}
+                          <p>{skill.name} {t("skills.proficiency_narrative_prefix")} {skill.category} {t("skills.proficiency_narrative_mid")} {skill.proficiency}% {t("skills.proficiency_narrative_suffix")}</p>
                         </div>
                       </div>
                     </div>

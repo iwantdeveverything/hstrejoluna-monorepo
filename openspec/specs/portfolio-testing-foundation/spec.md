@@ -8,7 +8,7 @@ Definir una base formal de testing para `apps/portfolio` que cubra la logica nue
 
 ### Requirement: Test Runner and Environment Setup
 
-The system MUST provide a configured test runner for `apps/portfolio` with a browser-like environment suitable for React component tests.
+The system MUST provide a configured test runner for \`apps/portfolio\` with a browser-like environment and LOCALE context support for testing localized components.
 
 #### Scenario: Local test execution
 
@@ -17,12 +17,11 @@ The system MUST provide a configured test runner for `apps/portfolio` with a bro
 - THEN the test runner MUST execute successfully in the configured environment
 - AND the command MUST be documented in package scripts
 
-#### Scenario: Shared test setup loading
+#### Scenario: Localized component test
 
-- GIVEN test files rely on shared matchers or global mocks
-- WHEN tests are executed
-- THEN the runner MUST load a centralized setup file before test execution
-- AND the setup MUST be reusable across new tests without per-test duplication
+- GIVEN a component uses i18n hooks
+- WHEN it is tested with a specific locale mock (e.g., 'es')
+- THEN it MUST render the correct localized strings from the dictionary.
 
 ### Requirement: Certificates Domain Test Coverage
 

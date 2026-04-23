@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { type Experience } from "@/types/sanity";
+import { type Experience } from "@hstrejoluna/types-sanity";
 import { PortableText } from "@portabletext/react";
 import { Calendar, Building, ChevronRight } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 export const ExperienceOverview = ({ experiences }: { experiences: Experience[] }) => {
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const t = useTranslations("experience");
 
   const toggleExp = (id: string) => {
     setExpandedId(prev => prev === id ? null : id);
@@ -51,7 +53,7 @@ export const ExperienceOverview = ({ experiences }: { experiences: Experience[] 
                         {exp.endDate ? (
                           <time dateTime={exp.endDate}>{new Date(exp.endDate).getFullYear()}</time>
                         ) : (
-                          <span>PRESENT</span>
+                          <span>{t("present")}</span>
                         )}
                       </span>
                     </div>
@@ -82,7 +84,7 @@ export const ExperienceOverview = ({ experiences }: { experiences: Experience[] 
                             {exp.description ? (
                               getDescription(exp.description)
                             ) : (
-                              <p className="text-on_surface_variant/50 italic font-mono text-xs">[NO_DESCRIPTION_PROVIDED]</p>
+                              <p className="text-on_surface_variant/50 italic font-mono text-xs">[{t("no_description")}]</p>
                             )}
                           </div>
                         </motion.div>

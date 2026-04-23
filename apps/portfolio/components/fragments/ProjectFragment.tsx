@@ -1,11 +1,14 @@
 "use client";
 
 import React from "react";
+import { useTranslations } from "next-intl";
 import { m } from "framer-motion";
 import Image from "next/image";
 import { Link } from "@hstrejoluna/i18n";
 import { Project } from "@hstrejoluna/types-sanity";
 import { urlFor } from "@/lib/sanity";
+import { getProjectUrl } from "@/lib/navigation";
+import { getExternalLinkProps } from "@hstrejoluna/ui";
 import { GlitchText } from "@hstrejoluna/ui";
 import { TelemetryHUD } from "@hstrejoluna/ui";
 import { blockToPlainText } from "@/lib/utils";
@@ -20,15 +23,14 @@ interface ProjectFragmentProps {
  * Displays a single project as an asymmetric cinematic fragment with HUD data.
  */
 export const ProjectFragment = ({ project, index }: ProjectFragmentProps) => {
-  const getProjectUrl = () => {
-    if (project.micrositePath) return project.micrositePath;
-    return project.externalLink || "#";
-  };
-
+  const t = useTranslations("home");
   return (
     <section className="stream-fragment flex items-center justify-center p-6 md:p-24 relative overflow-hidden bg-background">
       {/* Massive Background Index Number (Watermark) */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-black text-[20rem] md:text-[40rem] text-white/[0.01] select-none z-0 pointer-events-none italic">
+      <div 
+        aria-hidden="true"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-black text-[20rem] md:text-[40rem] text-white/[0.01] select-none z-0 pointer-events-none italic"
+      >
         {String(index + 1).padStart(2, '0')}
       </div>
 
@@ -53,16 +55,16 @@ export const ProjectFragment = ({ project, index }: ProjectFragmentProps) => {
             </h2>
 
             <div className="text-white/30 text-base md:text-lg font-light leading-relaxed max-w-md mb-12 border-l-2 border-primary/10 pl-6">
-              {blockToPlainText(project.description) || 'DATA_EXTRACT: Classified project documentation pending decryption.'}
+              {blockToPlainText(project.description) || t("project_description_fallback")}
             </div>
 
             <Link 
-              href={getProjectUrl()} 
-              target={project.externalLink ? "_blank" : "_self"}
+              href={getProjectUrl(project)} 
+              {...getExternalLinkProps(!!project.externalLink)}
               className="group inline-flex items-center gap-4 md:gap-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-4"
             >
               <span className="font-mono text-[10px] md:text-xs tracking-[0.3em] md:tracking-[0.4em] uppercase text-primary border-b border-primary/20 pb-2 group-hover:border-primary group-hover:text-white transition-all duration-300">
-                [EXEC_UPLINK_PROJ]
+                {t("project_uplink_badge")}
               </span>
               <m.span 
                 className="text-primary text-2xl"
@@ -102,7 +104,7 @@ export const ProjectFragment = ({ project, index }: ProjectFragmentProps) => {
                   fill
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   priority={index === 0}
-                  className="object-cover transition-transform duration-[2s] cubic-bezier(0.16, 1, 0.3, 1) group-hover:scale-110"
+                  className="object-cover transition-transform duration-[2s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-110"
                 />
               )}
               

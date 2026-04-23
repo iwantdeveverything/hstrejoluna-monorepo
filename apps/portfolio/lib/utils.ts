@@ -32,3 +32,18 @@ export const blockToPlainText = (blocks: unknown): string => {
     .map((b) => (b.children ?? []).map((c) => c.text).join(''))
     .join('\n');
 };
+
+/**
+ * Deterministic LCG pseudo-random string generator.
+ * Used for consistent background stream generation between server and client.
+ */
+export const generateDeterministicStream = (seedBase: number, length: number): string => {
+  let seed = seedBase * 9301 + 49297;
+  const chars = '0123456789abcdefghijklmnopqrstuvwxyz';
+  let str = '';
+  for (let j = 0; j < length; j++) {
+    seed = (seed * 9301 + 49297) % 233280;
+    str += chars[seed % chars.length];
+  }
+  return str;
+};

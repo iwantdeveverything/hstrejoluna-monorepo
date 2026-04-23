@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, type ReactNode } from "react";
 import { useReducedMotion } from "@hstrejoluna/ui";
 import { useAutoHideNavigation } from "@/hooks/useAutoHideNavigation";
 import { useActiveSection } from "@/hooks/useActiveSection";
@@ -10,7 +10,7 @@ import {
   Skill,
   Experience,
   Certificate,
-} from "@/types/sanity";
+} from "@hstrejoluna/types-sanity";
 import { HeroFragment } from "./fragments/HeroFragment";
 import { ProjectsOverview } from "./fragments/ProjectsOverview";
 import { ExperienceOverview } from "./fragments/ExperienceOverview";
@@ -22,6 +22,7 @@ import { BootSequence } from "@hstrejoluna/ui";
 import { motion, useScroll, useTransform, AnimatePresence, LazyMotion, domAnimation } from "framer-motion";
 import { navSections, streamSectionIds } from "@/lib/sections";
 import type { NavSectionId, StreamSectionId } from "@/lib/sections";
+import { useTranslations } from "next-intl";
 
 interface ObsidianStreamProps {
   profile: Profile | null;
@@ -37,7 +38,7 @@ interface StreamSectionProps {
   wrapperClassName: string;
   title: string;
   countLabel: string;
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 const StreamSection = ({
@@ -69,6 +70,10 @@ export const ObsidianStream = ({
   const [isBooted, setIsBooted] = useState(skipBootSequence);
   const isReducedMotion = useReducedMotion();
   const isNavigationHidden = useAutoHideNavigation(isBooted);
+  const tSections = useTranslations("home.sections");
+  const tHome = useTranslations("home");
+  const tCommon = useTranslations("common");
+  const tNavLabels = useTranslations("common.nav_labels");
   
   const activeId = useActiveSection<StreamSectionId>(streamSectionIds, 0.4);
 
@@ -95,6 +100,27 @@ export const ObsidianStream = ({
     };
   }, [isBooted]);
 
+  const translatedNavSections = useMemo(() => 
+    navSections.map(section => {
+      // Explicit keys for type safety
+      const labelMap: Record<NavSectionId, string> = {
+        hero: tCommon("nav.hero"),
+        projects: tCommon("nav.projects"),
+        experience: tCommon("nav.experience"),
+        skills: tCommon("nav.skills"),
+        certificates: tCommon("nav.certificates"),
+      };
+
+      const label = labelMap[section.id];
+      return {
+        ...section,
+        label,
+        shortLabel: label
+      };
+    }),
+    [tCommon]
+  );
+
   return (
     <div className="relative bg-background w-full min-h-screen font-sans overflow-x-hidden">
       <AnimatePresence>
@@ -114,12 +140,12 @@ export const ObsidianStream = ({
               className="fixed inset-0 z-0 flex flex-col justify-center items-center pointer-events-none select-none opacity-5 md:opacity-10"
             >
               <span className="text-[15vw] font-black uppercase leading-none italic">
-                {profile?.name || "SEBASTIÁN TREJO"}
+                {profile?.name || tHome("default_name")}
               </span>
             </motion.div>
 
             <SectionDock
-              sections={navSections}
+              sections={translatedNavSections}
               activeId={activeId}
               hideOnScroll={isNavigationHidden}
             />
@@ -132,6 +158,7 @@ export const ObsidianStream = ({
               }}
               socials={profile?.socials}
               hideOnScroll={isNavigationHidden}
+              sections={translatedNavSections}
             />
 
             <LazyMotion features={domAnimation}>
@@ -144,8 +171,8 @@ export const ObsidianStream = ({
                   id="projects"
                   sectionClassName="stream-section bg-surface_container_lowest"
                   wrapperClassName={compactSectionWrapperClass}
-                  title="PROJECTS"
-                  countLabel={`[0${projects.length}]`}
+                  title={tSections("projects")}
+                  countLabel={`[${projects.length.toString().padStart(2, '0')}]`}
                 >
                   <ProjectsOverview projects={projects} />
                 </StreamSection>
@@ -154,8 +181,8 @@ export const ObsidianStream = ({
                   id="experience"
                   sectionClassName="stream-section relative bg-background"
                   wrapperClassName={compactSectionWrapperClass}
-                  title="EXPERIENCE_LOG"
-                  countLabel={`[0${experiences.length}]`}
+                  title={tSections("experience")}
+                  countLabel={`[${experiences.length.toString().padStart(2, '0')}]`}
                 >
                   <ExperienceOverview experiences={experiences} />
                 </StreamSection>
@@ -164,8 +191,8 @@ export const ObsidianStream = ({
                   id="skills"
                   sectionClassName="stream-section bg-surface_container_lowest"
                   wrapperClassName={fullSectionWrapperClass}
-                  title="NEURAL_MAP"
-                  countLabel={`[ACTIVE_NODES: ${skills.length}]`}
+                  title={tSections("skills")}
+                  countLabel={`[${tNavLabels("active_nodes")}: ${skills.length}]`}
                 >
                   <SkillsOverview skills={skills} />
                 </StreamSection>
@@ -174,8 +201,8 @@ export const ObsidianStream = ({
                   id="certificates"
                   sectionClassName="stream-section relative bg-background"
                   wrapperClassName={fullSectionWrapperClass}
-                  title="CERTIFICATES"
-                  countLabel={`[0${certificates.length}]`}
+                  title={tSections("certificates")}
+                  countLabel={`[${certificates.length.toString().padStart(2, '0')}]`}
                 >
                   <CertificatesOverview certificates={certificates} />
                 </StreamSection>

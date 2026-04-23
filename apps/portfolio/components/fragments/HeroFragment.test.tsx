@@ -41,7 +41,7 @@ describe("HeroFragment — Decorative Content Isolation", () => {
   it("hides TelemetryPanel from assistive technology", () => {
     const { container } = render(<HeroFragment profile={mockProfile} />);
 
-    const telemetryText = screen.queryByText(/UPLINK_STATUS/);
+    const telemetryText = screen.queryByText(/home\.telemetry\.status/);
     expect(telemetryText).toBeInTheDocument();
 
     const telemetryPanel = telemetryText!.closest("[aria-hidden]");
@@ -51,7 +51,7 @@ describe("HeroFragment — Decorative Content Isolation", () => {
   it("hides coordinate readout from assistive technology", () => {
     const { container } = render(<HeroFragment profile={mockProfile} />);
 
-    const coordsText = screen.queryByText(/COORDS:/);
+    const coordsText = screen.queryByText(/home\.telemetry\.coords/);
     expect(coordsText).toBeInTheDocument();
 
     const coordsContainer = coordsText!.closest("[aria-hidden]");

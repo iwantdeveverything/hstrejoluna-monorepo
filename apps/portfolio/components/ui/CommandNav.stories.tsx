@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { userEvent, within } from "storybook/test";
 import { CommandNav } from "./CommandNav";
+import { navSections } from "@/lib/sections";
 
 const meta = {
   title: "UI/CommandNav",
@@ -12,6 +13,7 @@ const meta = {
       experience: 2,
       certificates: 3,
     },
+    sections: navSections,
     socials: [
       { platform: "github", url: "https://github.com/example", label: "GitHub" },
       { platform: "linkedin", url: "https://linkedin.com/in/example", label: "LinkedIn" },

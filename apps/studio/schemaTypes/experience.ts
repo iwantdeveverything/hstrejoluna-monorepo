@@ -13,7 +13,7 @@ export default defineType({
     defineField({
       name: 'role',
       title: 'Role',
-      type: 'string',
+      type: 'localizedString',
     }),
     defineField({
       name: 'startDate',
@@ -31,7 +31,7 @@ export default defineType({
         Rule.custom((endDate, context) => {
           const { document } = context
           if (!endDate || !document?.startDate) return true
-          return new Date(endDate) >= new Date(document.startDate as string)
+          return new Date(endDate) >= new Date(String(document.startDate))
             ? true
             : 'End date must be after start date'
         }),
@@ -44,13 +44,12 @@ export default defineType({
     defineField({
       name: 'description',
       title: 'Description / Achievements',
-      type: 'array',
-      of: [{ type: 'block' }],
+      type: 'localizedBlock',
     }),
   ],
   preview: {
     select: {
-      title: 'role',
+      title: 'role.en',
       subtitle: 'company',
     }
   }

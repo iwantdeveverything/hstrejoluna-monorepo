@@ -1,4 +1,4 @@
-import type { SyncCertificatesResult } from "@/types/sanity";
+import type { SyncCertificatesResult } from "@hstrejoluna/types-sanity";
 import {
   ApifyCertificatesClient,
   type ApifyAdapter,

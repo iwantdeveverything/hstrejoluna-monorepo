@@ -1,16 +1,30 @@
 import { defineConfig } from 'sanity'
 import { structureTool } from 'sanity/structure'
 import { schemaTypes } from './schemaTypes'
+import { documentInternationalization } from '@sanity/document-internationalization'
+
+const projectId = process.env.SANITY_STUDIO_PROJECT_ID || "73v5iufs";
+const dataset = process.env.SANITY_STUDIO_DATASET || 'production';
 
 export default defineConfig({
   name: 'default',
   title: 'Portfolio Studio',
 
-  // TODO: Create a project at sanity.io and replace this ID
-  projectId: '73v5iufs',
-  dataset: 'production',
+  projectId,
+  dataset,
 
-  plugins: [structureTool()],
+  plugins: [
+    structureTool(),
+    documentInternationalization({
+      // Supported languages
+      supportedLanguages: [
+        { id: 'en', title: 'English' },
+        { id: 'es', title: 'Spanish' }
+      ],
+      // Required for document-level i18n
+      schemaTypes: ['profile'],
+    })
+  ],
 
   schema: {
     types: schemaTypes,

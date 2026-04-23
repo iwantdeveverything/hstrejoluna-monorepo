@@ -5,6 +5,13 @@ export const locales = ['en', 'es'] as const;
 export type Locale = (typeof locales)[number];
 export const defaultLocale: Locale = 'es';
 
+/**
+ * Type guard to verify if a string is a valid supported locale.
+ */
+export function isValidLocale(locale: string): locale is Locale {
+  return (locales as readonly string[]).includes(locale);
+}
+
 export const routing = defineRouting({
   locales,
   defaultLocale,

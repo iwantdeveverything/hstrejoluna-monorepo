@@ -8,7 +8,7 @@ export default defineType({
     defineField({
       name: 'name',
       title: 'Skill Name',
-      type: 'string',
+      type: 'localizedString',
     }),
     defineField({
       name: 'category',

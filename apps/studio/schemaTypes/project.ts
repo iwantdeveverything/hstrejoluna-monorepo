@@ -8,19 +8,20 @@ export default defineType({
     defineField({
       name: 'title',
       title: 'Project Title',
-      type: 'string',
+      type: 'localizedString',
     }),
     defineField({
       name: 'slug',
       title: 'Slug (URL path)',
       type: 'slug',
-      options: { source: 'title' }
+      options: { 
+        source: 'title.en' // Use English title as base for slug
+      }
     }),
     defineField({
       name: 'description',
       title: 'Description',
-      type: 'array',
-      of: [{ type: 'block' }],
+      type: 'localizedBlock',
     }),
     defineField({
       name: 'image',

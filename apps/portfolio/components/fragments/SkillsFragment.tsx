@@ -2,7 +2,8 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { Skill } from "@/types/sanity";
+import { useTranslations } from "next-intl";
+import { Skill } from "@hstrejoluna/types-sanity";
 import { GlitchText } from "@hstrejoluna/ui";
 
 interface SkillsFragmentProps {
@@ -14,7 +15,10 @@ interface SkillsFragmentProps {
  * Displays technical expertise as a 'Neural Map' of technical modules.
  */
 export const SkillsFragment = ({ skills }: SkillsFragmentProps) => {
-  const categories = Array.from(new Set(skills.map(s => s.category)));
+  const t = useTranslations("skills");
+  const categories = Array.from(new Set(skills.map((s) => s.category))).filter(
+    (c): c is string => Boolean(c)
+  );
 
   return (
     <section className="stream-fragment flex items-center justify-center p-6 md:p-24 relative overflow-hidden bg-background">
@@ -33,15 +37,15 @@ export const SkillsFragment = ({ skills }: SkillsFragmentProps) => {
           <div className="lg:col-span-4">
             <div className="font-mono text-[10px] md:text-xs tracking-[0.5em] text-ember mb-8 uppercase flex items-center gap-4">
               <span className="w-8 h-[1px] bg-ember/30" />
-              [NEURAL_MAPPING_V4.2]
+              {t("neural_mapping")}
             </div>
             <h2 className="text-fluid-hero font-black uppercase tracking-tighter mb-8 md:mb-10 leading-[0.8] italic">
-              <GlitchText text="Skill" className="text-white" />
+              <GlitchText text={t("skill_map_title")} className="text-white" />
               <br />
-              <GlitchText text="Map" className="text-white/10" />
+              <GlitchText text={t("skill_map_subtitle")} className="text-white/10" />
             </h2>
             <p className="text-white/30 text-lg font-light leading-relaxed max-w-xs border-l-2 border-white/5 pl-6">
-              SYSTEM_DECOMPOSITION: Systematic breakdown of architectural modules, language fluencies, and ecosystem synchronization.
+              {t("system_decomposition")}
             </p>
           </div>
 
@@ -57,7 +61,7 @@ export const SkillsFragment = ({ skills }: SkillsFragmentProps) => {
               >
                 <div className="flex items-center justify-between border-b border-white/10 pb-4">
                   <h3 className="font-mono text-[11px] tracking-[0.6em] text-ember uppercase font-bold">
-                    {category}_CORE
+                    {category}_{t("core_badge")}
                   </h3>
                   <span className="font-mono text-[9px] text-white/20">V.0{idx + 1}</span>
                 </div>
@@ -86,9 +90,9 @@ export const SkillsFragment = ({ skills }: SkillsFragmentProps) => {
 
       {/* Floating coordinates HUD */}
       <div className="absolute top-12 left-12 hidden lg:block font-mono text-[9px] text-white/10 tracking-[0.3em] uppercase">
-        ACTIVE_NODES: {skills.length}
+        {t("active_nodes")}: {skills.length}
         <br />
-        SYNC_RATE: 99.9%
+        {t("sync_rate")}: 99.9%
       </div>
     </section>
   );

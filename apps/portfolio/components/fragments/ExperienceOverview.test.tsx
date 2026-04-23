@@ -67,10 +67,10 @@ describe("ExperienceOverview — Semantic Time Markup", () => {
     expect(startTime).toHaveAttribute("datetime", "2022-03-15");
   });
 
-  it("does not wrap 'PRESENT' in a <time> element for current jobs", () => {
+  it("does not wrap localized 'present' key in a <time> element for current jobs", () => {
     render(<ExperienceOverview experiences={mockExperiences} />);
 
-    const presentText = screen.getByText("PRESENT");
+    const presentText = screen.getByText("experience.present");
     expect(presentText).toBeInTheDocument();
     expect(presentText.tagName).not.toBe("TIME");
   });

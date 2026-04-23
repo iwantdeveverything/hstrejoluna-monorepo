@@ -4,7 +4,14 @@ export default defineType({
   name: 'profile',
   title: 'Profile',
   type: 'document',
+  // Enable document-level i18n for Profile to allow deep narrative differences
   fields: [
+    defineField({
+      name: 'language',
+      type: 'string',
+      readOnly: true,
+      hidden: true,
+    }),
     defineField({
       name: 'name',
       title: 'Full Name',

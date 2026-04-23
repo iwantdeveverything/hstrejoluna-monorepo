@@ -5,6 +5,19 @@
       "experience": "Experiencia",
       "certificates": "Certificados"
     },
+    "nav_labels": {
+      "initializing": "INICIALIZANDO...",
+      "system_online": "SISTEMA ONLINE",
+      "projects": "PROYECTOS",
+      "experience": "EXPERIENCIA",
+      "neural_map": "MAPA NEURAL",
+      "certificates": "CERTIFICADOS",
+      "accessing_data": "ACCEDIENDO_DATOS...",
+      "menu": "Menú",
+      "close": "Cerrar",
+      "no_socials": "No hay enlaces sociales configurados.",
+      "social_title": "Social"
+    },
     "contact": "Contacto",
     "manage_cookies": "Gestionar Cookies",
     "skip_to_content": "Saltar al contenido principal",
@@ -24,6 +37,16 @@
     }
   },
   "home": {
+    "default_name": "SEBASTIÁN TREJO",
+    "default_bio": "Coding at business: Elevando ecosistemas con una arquitectura de software impecable.",
+    "default_headline": "Arquitecto de Software especializado en IA Generativa y ecosistemas escalables.",
+    "project_description_fallback": "EXTRACTO_DATOS: Documentación clasificada del proyecto pendiente de decodificación.",
+    "availability_badge": "Disponible para nuevos desafíos",
+    "about_title": "Acerca de",
+    "latest_work_badge": "Último Trabajo",
+    "explore_project_button": "Explorar Proyecto",
+    "case_study_link": "CASO DE ESTUDIO",
+    "project_uplink_badge": "[EJEC_ENLACE_PROY]",
     "hero": {
       "system_ready": "[SISTEMA_LISTO]: INICIALIZANDO ENLACE NEURAL",
       "title": "Arquitecto de Software Senior",
@@ -44,17 +67,37 @@
       "experience": "Registro_Experiencia",
       "skills": "Mapa_Neural",
       "certificates": "Certificados"
-    }
-  },
+    },
+    "skills_description": "Un mapeo no lineal de competencias técnicas en la nube, arquitectura frontend y sistemas generativos. Todos los nodos están sincronizados con telemetría de grado de producción.",
+    "telemetry": {
+...
   "experience": {
     "present": "Actualidad",
-    "no_description": "SIN_DESCRIPCION_DISPONIBLE"
+    "stable": "ESTABLE",
+    "no_description": "SIN_DESCRIPCION_DISPONIBLE",
+    "badge_sys_node": "NODO_SIS",
+    "log_entry_decrypted": "[ENTRADA_LOG_DECODIFICADA]",
+    "log_entry_fallback": "ANALISIS_SECTOR: Entrada de log pendiente de autorización de decodificación.",
+    "chrono_log_sync": "ESTADO_SINCRONIZACION_CRONOLOG: 100%_ESTABLE"
   },
   "skills": {
     "sync_rate": "TASA_SINCRONIZACION",
-    "documentation_fragment": "// FRAGMENTO_DOCUMENTACION"
+    "documentation_fragment": "// FRAGMENTO_DOCUMENTACION",
+    "neural_mapping": "[MAPEO_NEURAL_V4.2]",
+    "core_badge": "NUCLEO",
+    "active_nodes": "NODOS_ACTIVOS",
+    "system_decomposition": "DESCOMPOSICION_SISTEMA: Desglose sistemático de módulos arquitectónicos, fluidez de lenguajes y sincronización de ecosistemas.",
+    "skill_map_title": "Mapa",
+    "skill_map_subtitle": "Habilidades",
+    "proficiency_narrative_prefix": "representa una competencia central dentro del clúster de",
+    "proficiency_narrative_mid": ". El nivel de dominio mapeado al",
+    "proficiency_narrative_suffix": "indica maestría activa y capacidad de despliegue en entornos de producción."
   },
   "salmon": {
+    "seo": {
+      "title": "Maestros del Salmón | Calidad de Chef en Cancún",
+      "description": "Entrega de salmón premium para los paladares más exigentes de Cancún. Calidad certificada y logística fresca garantizada."
+    },
     "header": {
       "contact_label": "Atención a Chefs y B2B",
       "contact_aria": "Contactar por WhatsApp"

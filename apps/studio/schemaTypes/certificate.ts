@@ -8,8 +8,7 @@ export default defineType({
     defineField({
       name: "name",
       title: "Certificate Name",
-      type: "string",
-      validation: (rule) => rule.required(),
+      type: "localizedString",
     }),
     defineField({
       name: "issuer",
@@ -49,7 +48,7 @@ export default defineType({
   ],
   preview: {
     select: {
-      title: "name",
+      title: "name.en",
       subtitle: "issuer",
     },
   },

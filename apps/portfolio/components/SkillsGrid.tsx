@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, Variants } from "framer-motion";
-import { Skill } from "@/types/sanity";
+import { Skill } from "@hstrejoluna/types-sanity";
 import { HudChip } from "@hstrejoluna/ui";
 
 interface SkillsGridProps {

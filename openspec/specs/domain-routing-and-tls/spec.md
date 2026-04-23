@@ -8,20 +8,20 @@ Definir el comportamiento esperado para enrutar `hstrejoluna.com` y `www.hstrejo
 
 ### Requirement: Canonical Domain Routing
 
-The system MUST route both apex and `www` hostnames to the production entrypoint in Google Cloud.
+The system MUST route apex/www hostnames to the production entrypoint and handle localized sub-paths consistently with SEO best practices.
 
 #### Scenario: Successful hostname resolution
 
 - GIVEN DNS records are configured in Name.com
-- WHEN users resolve `hstrejoluna.com` or `www.hstrejoluna.com`
+- WHEN users resolve \`hstrejoluna.com\` or \`www.hstrejoluna.com\`
 - THEN both hostnames MUST resolve to the intended GCP endpoint
 - AND requests MUST reach the active production service
 
-#### Scenario: Canonical redirect behavior
+#### Scenario: Localized sub-path resolution
 
-- GIVEN both hostnames are publicly reachable
-- WHEN a request is made to the non-canonical hostname
-- THEN the platform SHOULD redirect to the canonical host strategy
+- GIVEN a user requests \`hstrejoluna.com/es\`
+- WHEN the request reaches the GCP endpoint
+- THEN the application MUST serve the Spanish entry point with correct locale headers.
 
 ### Requirement: Managed TLS Availability
 

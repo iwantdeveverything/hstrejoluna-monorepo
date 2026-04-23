@@ -1,6 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import * as navigation from "@/lib/navigation";
+import { navSections } from "@/lib/sections";
 import { CommandNav } from "./CommandNav";
 
 vi.mock("@hstrejoluna/ui", async (importOriginal) => {
@@ -17,6 +18,7 @@ describe("CommandNav", () => {
       <CommandNav
         activeId="projects"
         counts={{ projects: 4, experience: 2, certificates: 3 }}
+        sections={navSections}
         socials={[{ platform: "github", url: "https://github.com/example" }]}
       />
     );
@@ -35,6 +37,7 @@ describe("CommandNav", () => {
       <CommandNav
         activeId="experience"
         counts={{ projects: 4, experience: 2, certificates: 3 }}
+        sections={navSections}
       />
     );
 
@@ -51,6 +54,7 @@ describe("CommandNav", () => {
       <CommandNav
         activeId="skills"
         counts={{ projects: 4, experience: 2, certificates: 3 }}
+        sections={navSections}
         socials={[
           { platform: "email", email: "dev@example.com", label: "Contact Email" },
         ]}
@@ -74,6 +78,7 @@ describe("CommandNav", () => {
       <CommandNav
         activeId="projects"
         counts={{ projects: 4, experience: 2, certificates: 3 }}
+        sections={navSections}
         socials={[
           { platform: "github", url: "https://github.com/example", label: "GitHub" },
           { platform: "linkedin", url: "https://linkedin.com/in/example", label: "LinkedIn" },
@@ -99,6 +104,7 @@ describe("CommandNav", () => {
       <CommandNav
         activeId="projects"
         counts={{ projects: 4, experience: 2, certificates: 3 }}
+        sections={navSections}
         hideOnScroll
       />
     );

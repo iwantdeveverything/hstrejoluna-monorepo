@@ -81,10 +81,9 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     title: `${resolvedName} | Senior Software Architect`,
     description: resolvedHeadline,
     alternates: {
-      languages: {
-        'en': '/en',
-        'es': '/es',
-      },
+      languages: Object.fromEntries(
+        locales.map((l) => [l, `/${l}`])
+      ),
     },
     openGraph: {
       title: `${resolvedName} | Obsidian Command Portfolio`,
