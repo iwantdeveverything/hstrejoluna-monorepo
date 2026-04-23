@@ -12,11 +12,12 @@
     "sanity": "latest",
     "styled-components": "^6.1.15",
     "react": "latest",
-    "react-dom": "latest"
+    "react-dom": "latest",
+    "@sanity/document-internationalization": "^3.0.0"
   },
   "devDependencies": {
     "@sanity/eslint-config-studio": "latest",
-    "eslint": "^8.0.0",
+    "eslint": "^9.0.0",
     "typescript": "^5.0.0"
   }
 }
