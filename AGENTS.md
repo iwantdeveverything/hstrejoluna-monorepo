@@ -27,6 +27,7 @@ This project uses **Gentleman Guardian Angel** to ensure high code quality and c
 | `branch-pr` | PR creation workflow | When preparing a pull request |
 | `issue-creation` | Issue creation workflow | When reporting bugs or requesting features |
 | `judgment-day` | Adversarial code review | When a deep review is needed |
+| `context7-strict` | Ultra-strict rule to query documentation before coding | When starting a task with a framework or fixing errors |
 | `skill-creator` | Create new AI skills | When a new pattern needs documenting |
 | `task-git-sync` | Enforces automated Git workflow (add, commit, push) | Generating plans or finishing feature tasks |
 

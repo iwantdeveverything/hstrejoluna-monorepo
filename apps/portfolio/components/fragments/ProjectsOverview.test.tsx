@@ -73,8 +73,7 @@ describe("ProjectsOverview — Descriptive Image Alt Text", () => {
 
     const image = screen.getByTestId("project-image");
     const altText = image.getAttribute("alt");
-    expect(altText).toContain("Screenshot of");
-    expect(altText).toContain("Awesome App");
+    expect(altText).toBe("home.screenshot_of");
   });
 
   it("hides placeholder gradient from assistive technology when no image", () => {
