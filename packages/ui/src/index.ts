@@ -1,6 +1,5 @@
 export {
   CommandSurface,
-  type CommandSurfaceCounts,
   type CommandSurfaceProps,
   type CommandSurfaceSection,
   type CommandSurfaceSocialLink,
