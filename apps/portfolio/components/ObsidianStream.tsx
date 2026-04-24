@@ -19,7 +19,7 @@ import { CertificatesOverview } from "./fragments/CertificatesOverview";
 import { SectionDock } from "./ui/SectionDock";
 import { CommandNav } from "./ui/CommandNav";
 import { BootSequence } from "@hstrejoluna/ui";
-import { motion, useScroll, useTransform, AnimatePresence, LazyMotion, domAnimation } from "framer-motion";
+import { m, useScroll, useTransform, AnimatePresence, LazyMotion, domAnimation } from "framer-motion";
 import { navSections, streamSectionIds } from "@/lib/sections";
 import type { NavSectionId, StreamSectionId } from "@/lib/sections";
 import { useTranslations } from "next-intl";
@@ -91,12 +91,12 @@ export const ObsidianStream = ({
 
   useEffect(() => {
     if (!isBooted) {
-      document.body.style.overflow = "hidden";
+      document.body.classList.add("overflow-hidden");
     } else {
-      document.body.style.overflow = "";
+      document.body.classList.remove("overflow-hidden");
     }
     return () => {
-      document.body.style.overflow = "";
+      document.body.classList.remove("overflow-hidden");
     };
   }, [isBooted]);
 
@@ -104,7 +104,6 @@ export const ObsidianStream = ({
     navSections.map(section => {
       // Explicit keys for type safety
       const labelMap: Record<NavSectionId, string> = {
-        hero: tCommon("nav.hero"),
         projects: tCommon("nav.projects"),
         experience: tCommon("nav.experience"),
         skills: tCommon("nav.skills"),
@@ -127,14 +126,14 @@ export const ObsidianStream = ({
         {!isBooted && <BootSequence onComplete={() => setIsBooted(true)} />}
       </AnimatePresence>
 
-      <motion.div 
+      <m.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: isBooted ? 1 : 0 }}
         transition={{ duration: 0.5 }}
       >
         {isBooted && (
           <>
-            <motion.div 
+            <m.div 
               style={{ y: backgroundY }}
               aria-hidden="true"
               className="fixed inset-0 z-0 flex flex-col justify-center items-center pointer-events-none select-none opacity-5 md:opacity-10"
@@ -142,7 +141,7 @@ export const ObsidianStream = ({
               <span className="text-[15vw] font-black uppercase leading-none italic">
                 {profile?.name || tHome("default_name")}
               </span>
-            </motion.div>
+            </m.div>
 
             <SectionDock
               sections={translatedNavSections}
@@ -210,14 +209,14 @@ export const ObsidianStream = ({
             </LazyMotion>
 
             <div aria-hidden="true" className="fixed top-0 left-0 w-full h-[2px] z-[100] bg-white/5 pointer-events-none">
-              <motion.div 
+              <m.div 
                 className="h-full bg-primary origin-left"
                 style={{ scaleX: scrollYProgress }} 
               />
             </div>
           </>
         )}
-      </motion.div>
+      </m.div>
     </div>
   );
 };

@@ -8,6 +8,7 @@ import { type Project } from "@hstrejoluna/types-sanity";
 import { urlFor } from "@/lib/sanity";
 import { HudChip, GlowBorder, MicroInteraction } from "@hstrejoluna/ui";
 import { ExternalLink, Activity } from "lucide-react";
+import { blockToPlainText } from "@/lib/utils";
 
 interface ProjectsOverviewProps {
   projects: Project[];
@@ -52,7 +53,7 @@ export const ProjectsOverview = ({ projects }: { projects: Project[] }) => {
                   <>
                     <Image
                       src={urlFor(project.image).url()}
-                      alt={`Screenshot of ${project.title}`}
+                      alt={t("screenshot_of", { title: project.title })}
                       fill
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       className="object-cover transition-transform duration-700 group-hover:scale-105 filter grayscale group-hover:grayscale-0"
@@ -69,10 +70,10 @@ export const ProjectsOverview = ({ projects }: { projects: Project[] }) => {
                   </h3>
                   <div className="flex justify-between items-end">
                     <span className="font-mono text-xs text-primary bg-primary/10 px-2 py-1 backdrop-blur-sm border border-primary/20">
-                      DEPLOYED
+                      {t("deployed")}
                     </span>
                     <span className="text-primary opacity-0 group-hover:opacity-100 transition-opacity font-mono text-xs animate-pulse">
-                      [CLICK_TO_EXPAND]
+                      {t("click_to_expand")}
                     </span>
                   </div>
                 </div>
@@ -105,7 +106,7 @@ export const ProjectsOverview = ({ projects }: { projects: Project[] }) => {
                         {(project.externalLink || project.micrositePath) && (
                           <a href={project.externalLink || project.micrositePath || "#"} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-on_surface hover:text-primary transition-colors p-3 border border-surface_container_highest hover:border-primary/50 group">
                             <Activity className="w-4 h-4 text-primary group-hover:animate-pulse" />
-                            <span>LIVE DEPLOYMENT</span>
+                            <span>{t("live_deployment")}</span>
                             <ExternalLink className="w-3 h-3 ml-auto opacity-50" />
                           </a>
                         )}
