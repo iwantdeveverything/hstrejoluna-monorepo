@@ -8,7 +8,9 @@ vi.mock('next-intl/server', () => ({
 
 // Mock next/navigation
 vi.mock('next/navigation', () => ({
-  notFound: vi.fn()
+  notFound: vi.fn(),
+  redirect: vi.fn(),
+  permanentRedirect: vi.fn(),
 }));
 
 import { notFound } from 'next/navigation';

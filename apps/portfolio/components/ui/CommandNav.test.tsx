@@ -41,8 +41,8 @@ describe("CommandNav", () => {
       />
     );
 
-    fireEvent.click(screen.getByRole("button", { name: /open navigation menu/i }));
-    expect(screen.getByText(/no social links configured/i)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: /common\.nav_labels\.menu/i }));
+    expect(screen.getByText(/common\.nav_labels\.no_socials/i)).toBeInTheDocument();
   });
 
   it("normalizes plaintext email social links and uses smooth section navigation", () => {

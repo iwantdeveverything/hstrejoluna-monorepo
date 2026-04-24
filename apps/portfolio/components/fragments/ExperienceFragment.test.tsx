@@ -52,7 +52,7 @@ describe("ExperienceFragment — Decorative Content Isolation", () => {
   it("hides side HUD telemetry from assistive technology", () => {
     render(<ExperienceFragment experience={mockExperience} />);
 
-    const sideHUD = screen.queryByText(/CHRONO_LOG_SYNC_STATE/);
+    const sideHUD = screen.queryByText(/experience\.chrono_log_sync/i);
     expect(sideHUD).toBeInTheDocument();
 
     const sideHUDContainer = sideHUD!.closest("[aria-hidden]");
