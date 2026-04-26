@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { Inter, Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import "../globals.css";
 
@@ -7,6 +8,12 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations } from 'next-intl/server';
 import { isValidLocale } from '@hstrejoluna/i18n';
 import { notFound } from 'next/navigation';
+
+export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || "https://hstrejoluna.com"),
+  title: { default: "Sebastián Trejo | Portfolio", template: "%s" },
+  description: "Senior Software Architect specializing in Generative AI and scalable ecosystems.",
+};
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-display" });
