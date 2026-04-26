@@ -1,24 +1,29 @@
 import { test, expect } from "@playwright/test";
 
+// The cookie banner aria-label comes from the i18n key common.cookie_banner.title.
+// In English: "Privacy & Tracking", in Spanish: "Privacidad y Seguimiento".
+// Playwright CI defaults to en-US locale, so next-intl serves English.
+const bannerSelector = 'aside[aria-label="Privacy & Tracking"]';
+
 test.describe("Layer 2: Cookie Consent Banner", () => {
   test("displays the cookie banner on initial load without consent", async ({ page }) => {
     await page.goto("/");
 
     // We shouldn't have any consent preference set yet
-    const banner = page.locator('aside[aria-label="Cookie Consent"]');
+    const banner = page.locator(bannerSelector);
     await expect(banner).toBeVisible();
 
-    const acceptButton = banner.locator('button:has-text("Accept")');
+    const acceptButton = banner.locator('button:has-text("Accept All")');
     await expect(acceptButton).toBeVisible();
   });
 
   test("accepts cookies and dismisses banner persistently", async ({ page }) => {
     await page.goto("/");
 
-    const banner = page.locator('aside[aria-label="Cookie Consent"]');
+    const banner = page.locator(bannerSelector);
     await expect(banner).toBeVisible();
 
-    const acceptButton = banner.locator('button:has-text("Accept")');
+    const acceptButton = banner.locator('button:has-text("Accept All")');
     await acceptButton.click();
 
     // The banner should disappear
@@ -51,7 +56,7 @@ test.describe("Layer 2: Cookie Consent Banner", () => {
     }, { timeout: 5000 }).toContain('"analytics":false');
 
     // The banner should not be displayed because GPC auto-rejected
-    const banner = page.locator('aside[aria-label="Cookie Consent"]');
+    const banner = page.locator(bannerSelector);
     await expect(banner).toBeHidden();
   });
 });

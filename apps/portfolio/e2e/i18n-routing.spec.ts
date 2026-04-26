@@ -1,10 +1,13 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('i18n Routing', () => {
-  test('root serves default locale (es) without redirect', async ({ page }) => {
+  test('root serves default locale (es) without redirect', async ({ browser }) => {
+    const context = await browser.newContext({ locale: 'es-AR' });
+    const page = await context.newPage();
     await page.goto('/');
     await expect(page).toHaveURL('/');
     await expect(page.locator('html')).toHaveAttribute('lang', 'es');
+    await context.close();
   });
 
   test('supports English locale via /en prefix', async ({ page }) => {

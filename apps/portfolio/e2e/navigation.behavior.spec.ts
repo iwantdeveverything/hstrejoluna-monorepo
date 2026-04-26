@@ -31,7 +31,8 @@ test.describe("portfolio navigation behavior", () => {
     test.skip(testInfo.project.name.includes("Mobile"), "Desktop-only flow");
 
     await page.goto("/");
-    await expect(page.getByRole("button", { name: /open navigation menu/i })).toHaveCount(0);
+    // The menu button has aria-label "Menu" (from i18n), only visible on mobile (lg:hidden)
+    await expect(page.getByRole("button", { name: /^menu$/i })).toHaveCount(0);
   });
 
   test("desktop navigation activates certificates and auto-hides on downward scroll", async ({
@@ -79,8 +80,9 @@ test.describe("portfolio navigation behavior", () => {
 
     await page.goto("/");
 
+    // The menu button aria-label is the i18n key common.nav_labels.menu = "Menu" (en)
     const openMenuButton = page.getByRole("button", {
-      name: /open navigation menu/i,
+      name: /^menu$/i,
     });
     await expect(openMenuButton).toBeVisible();
     await openMenuButton.click();
