@@ -2,7 +2,7 @@ module.exports = {
   ci: {
     collect: {
       numberOfRuns: 3,
-      url: ["http://127.0.0.1:4173/"],
+      url: ["http://127.0.0.1:4173/en"],
       startServerCommand: "npm run start -- --port 4173",
       startServerReadyPattern: "Ready",
       startServerReadyTimeout: 120000,
