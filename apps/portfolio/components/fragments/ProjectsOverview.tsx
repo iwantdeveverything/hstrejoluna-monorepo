@@ -1,27 +1,17 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
 import { m, AnimatePresence } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { type Project } from "@hstrejoluna/types-sanity";
 import { urlFor } from "@/lib/sanity";
-import { HudChip, GlowBorder, MicroInteraction } from "@hstrejoluna/ui";
+import { HudChip, GlowBorder, MicroInteraction, useExpandableToggle } from "@hstrejoluna/ui";
 import { ExternalLink, Activity } from "lucide-react";
 import { blockToPlainText } from "@/lib/utils";
 
-interface ProjectsOverviewProps {
-  projects: Project[];
-}
-
 export const ProjectsOverview = ({ projects }: { projects: Project[] }) => {
   const t = useTranslations("home");
-  const [expandedId, setExpandedId] = useState<string | null>(null);
-
-
-  const toggleProject = (id: string) => {
-    setExpandedId(prev => prev === id ? null : id);
-  };
+  const { isExpanded, toggle } = useExpandableToggle();
 
   const getProjectDescription = (description: Project["description"]) => {
     const plainText = blockToPlainText(description);
@@ -39,14 +29,14 @@ export const ProjectsOverview = ({ projects }: { projects: Project[] }) => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-100px" }}
               className={`flex flex-col border-b border-r border-surface_container_highest bg-background relative group ${
-                expandedId === project._id ? "col-span-1 md:col-span-2 lg:col-span-3" : ""
+                isExpanded(project._id) ? "col-span-1 md:col-span-2 lg:col-span-3" : ""
               }`}
             >
               <button
                 type="button"
-                onClick={() => toggleProject(project._id)}
+                onClick={() => toggle(project._id)}
                 className="cursor-pointer relative aspect-video overflow-hidden bg-surface_container_low text-left w-full"
-                aria-expanded={expandedId === project._id}
+                aria-expanded={isExpanded(project._id)}
                 aria-controls={`project-panel-${project._id}`}
               >
                 {project.image ? (
@@ -80,7 +70,7 @@ export const ProjectsOverview = ({ projects }: { projects: Project[] }) => {
               </button>
 
               <AnimatePresence initial={false}>
-                {expandedId === project._id && (
+                {isExpanded(project._id) && (
                   <m.div
                     id={`project-panel-${project._id}`}
                     initial={{ height: 0, opacity: 0 }}

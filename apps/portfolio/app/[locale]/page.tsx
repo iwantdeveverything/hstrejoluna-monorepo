@@ -11,8 +11,9 @@ import type {
   Certificate,
 } from "@hstrejoluna/types-sanity";
 import { ObsidianStream } from "@/components/ObsidianStream";
-import { locales, isValidLocale, type Locale } from '@hstrejoluna/i18n';
+import { locales, isValidLocale } from '@hstrejoluna/i18n';
 import { notFound } from 'next/navigation';
+import { getTranslations } from 'next-intl/server';
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -61,11 +62,7 @@ const certificatesQuery = `
   }
 `;
 
-const defaultHeadline =
-  "Cinematic Portfolio of a Senior Frontend Engineer specializing in Scalable Ecosystems.";
-const defaultName = "Sebastián Trejo";
-
-const getProfile = cache((locale: string) => 
+const getProfile = cache((locale: string) =>
   client.fetch<Profile | null>(profileQuery, { locale })
 );
 
@@ -73,12 +70,16 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const { locale } = await params;
   if (!isValidLocale(locale)) notFound();
 
-  const profile = await getProfile(locale);
-  const resolvedName = profile?.name ?? defaultName;
-  const resolvedHeadline = profile?.headline ?? defaultHeadline;
+  const [profile, tHome, tMeta] = await Promise.all([
+    getProfile(locale),
+    getTranslations({ locale, namespace: 'home' }),
+    getTranslations({ locale, namespace: 'metadata' }),
+  ]);
+  const resolvedName = profile?.name ?? tHome('default_name');
+  const resolvedHeadline = profile?.headline ?? tHome('default_headline');
 
   return {
-    title: `${resolvedName} | Senior Software Architect`,
+    title: `${resolvedName} | ${tMeta('title_suffix')}`,
     description: resolvedHeadline,
     alternates: {
       languages: Object.fromEntries(
@@ -86,7 +87,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       ),
     },
     openGraph: {
-      title: `${resolvedName} | Obsidian Command Portfolio`,
+      title: `${resolvedName} | ${tMeta('og_title_suffix')}`,
       description: resolvedHeadline,
       type: "website",
       images: [
@@ -94,7 +95,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
           url: "/og-image.png",
           width: 1200,
           height: 630,
-          alt: "Obsidian Command Portfolio Preview",
+          alt: tMeta('og_image_alt'),
         },
       ],
     },
@@ -110,19 +111,20 @@ export default async function PortfolioPage({ params }: { params: Promise<{ loca
   const { locale } = await params;
   if (!isValidLocale(locale)) notFound();
 
-  const [profile, projects, skills, experiences, certificates] = await Promise.all([
+  const [profile, projects, skills, experiences, certificates, tHome] = await Promise.all([
     getProfile(locale),
     client.fetch<Project[]>(projectsQuery, { locale }),
     client.fetch<Skill[]>(skillsQuery, { locale }),
     client.fetch<Experience[]>(experiencesQuery, { locale }),
     client.fetch<Certificate[]>(certificatesQuery, { locale }),
+    getTranslations({ locale, namespace: 'home' }),
   ]);
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Person",
-    name: profile?.name ?? defaultName,
-    jobTitle: profile?.headline ?? defaultHeadline,
+    name: profile?.name ?? tHome('default_name'),
+    jobTitle: profile?.headline ?? tHome('default_headline'),
     description: blockToPlainText(profile?.bio),
     url: "https://hstrejoluna.com",
     sameAs: normalizeSocialLinks(profile?.socials).map((social) => social.href),

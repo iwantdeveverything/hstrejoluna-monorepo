@@ -3,7 +3,8 @@
     "nav": {
       "projects": "Proyectos",
       "experience": "Experiencia",
-      "certificates": "Certificados"
+      "certificates": "Certificados",
+      "skills": "Habilidades"
     },
     "nav_labels": {
       "initializing": "INICIALIZANDO...",
@@ -41,6 +42,16 @@
     "default_name": "SEBASTIÁN TREJO",
     "default_bio": "Arquitecto de Software y GDE especializado en ecosistemas escalables y experiencias digitales cinemáticas.",
     "default_headline": "Arquitecto de Software Senior especializado en IA Generativa y ecosistemas escalables.",
+    "sections": {
+      "projects": "Proyectos",
+      "experience": "Experiencia",
+      "skills": "Habilidades",
+      "certificates": "Certificados"
+    },
+    "screenshot_of": "Captura de pantalla de {title}",
+    "deployed": "DESPLEGADO",
+    "click_to_expand": "CLIC PARA EXPANDIR",
+    "live_deployment": "DESPLIEGUE_ACTIVO",
     "project_description_fallback": "EXTRACTO_DATOS: Documentación clasificada del proyecto pendiente de decodificación.",
     "availability_badge": "Disponible para nuevos desafíos",
     "about_title": "Acerca de",
@@ -83,7 +94,13 @@
     "system_decomposition": "DESCOMPOSICION_SISTEMA: Desglose sistemático de módulos arquitectónicos, fluidez de lenguajes y sincronización de ecosistemas.",
     "skill_map_title": "Mapa",
     "skill_map_subtitle": "Habilidades",
-    "proficiency_narrative": "{name} representa una competencia central dentro del clúster de {category}. El nivel de dominio mapeado al {proficiency}% indica maestría activa y capacidad de despliegue en entornos de producción."
+    "proficiency_narrative": "{name} representa una competencia central dentro del clúster de {category}. El nivel de dominio mapeado al {proficiency}% indica maestría activa y capacidad de despliegue en entornos de producción.",
+    "expertise_title": "Especialidades"
+  },
+  "metadata": {
+    "title_suffix": "Arquitecto de Software Senior",
+    "og_title_suffix": "Obsidian Command Portfolio",
+    "og_image_alt": "Vista previa de Obsidian Command Portfolio"
   },
   "salmon": {
     "seo": {

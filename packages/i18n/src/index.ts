@@ -20,27 +20,21 @@ export const routing = defineRouting({
 
 export const { Link, redirect, usePathname, useRouter } = createNavigation(routing);
 
-export type Dictionary = typeof import('./locales/en.json');
+export function resolveLocale(locale: unknown): Locale {
+  return locales.includes(locale as Locale) ? (locale as Locale) : defaultLocale;
+}
 
-/**
- * Factory for next-intl request configuration.
- * Loads the appropriate JSON dictionary from the shared package.
- */
 export async function getI18nConfig(locale: string) {
-  const safeLocale = locales.includes(locale as Locale) ? (locale as Locale) : defaultLocale;
+  const safeLocale = resolveLocale(locale);
 
   try {
-    // Use a static-analysis-friendly dynamic import
-    // The path must be relative to this file in the bundle
     const messages = (await import(`./locales/${safeLocale}.json`)).default;
 
     return {
       locale: safeLocale,
       messages
     };
-  } catch (error) {
-    console.error(`Failed to load dictionary for locale: ${locale}`, error);
-    // Fallback to defaultLocale if the requested (but valid) locale failed to load
+  } catch {
     const fallbackMessages = (await import(`./locales/${defaultLocale}.json`)).default;
     return {
       locale: defaultLocale,
@@ -48,5 +42,3 @@ export async function getI18nConfig(locale: string) {
     };
   }
 }
-
-

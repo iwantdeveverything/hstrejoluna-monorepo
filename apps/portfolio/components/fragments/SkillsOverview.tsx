@@ -1,12 +1,13 @@
-// SkillsOverview.tsx
+"use client";
+
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { type Skill } from "@hstrejoluna/types-sanity";
-import { HudChip } from "@hstrejoluna/ui";
+import { HudChip, useExpandableToggle } from "@hstrejoluna/ui";
 import { useTranslations } from "next-intl";
 
 export const SkillsOverview = ({ skills }: { skills: Skill[] }) => {
-  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const { expandedId, isExpanded, toggle, collapse } = useExpandableToggle();
   const t = useTranslations();
   
   // Create unique categories
@@ -27,7 +28,7 @@ export const SkillsOverview = ({ skills }: { skills: Skill[] }) => {
             key={cat}
             onClick={() => {
               setActiveCategory(cat);
-              setExpandedId(null);
+              collapse();
             }}
             className={`font-mono text-xs md:text-sm uppercase tracking-widest px-4 py-2 transition-colors duration-300 ${
               activeCategory === cat 
@@ -43,18 +44,18 @@ export const SkillsOverview = ({ skills }: { skills: Skill[] }) => {
       {/* Skills Grid */}
       <div className="grid grid-cols-1 gap-0 border-t border-surface_container_highest">
         {filteredSkills.map((skill) => {
-          const isExpanded = expandedId === skill._id;
+          const expanded = isExpanded(skill._id);
           
           return (
             <motion.div
               layout
               key={skill._id}
-              className={`border-b border-surface_container_highest bg-background ${isExpanded ? 'bg-surface_container_lowest' : ''}`}
+              className={`border-b border-surface_container_highest bg-background ${expanded ? 'bg-surface_container_lowest' : ''}`}
             >
               <button 
                 type="button"
-                onClick={() => setExpandedId(isExpanded ? null : skill._id)}
-                aria-expanded={isExpanded}
+                onClick={() => toggle(skill._id)}
+                aria-expanded={expanded}
                 aria-controls={`skill-panel-${skill._id}`}
                 className="w-full text-left cursor-pointer p-4 md:p-6 flex items-center justify-between group hover:bg-surface_container_low transition-colors"
               >
@@ -73,7 +74,7 @@ export const SkillsOverview = ({ skills }: { skills: Skill[] }) => {
               </button>
 
               <AnimatePresence>
-                {isExpanded && (
+                {expanded && (
                   <motion.div
                     id={`skill-panel-${skill._id}`}
                     initial={{ height: 0, opacity: 0 }}

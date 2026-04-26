@@ -3,7 +3,8 @@
     "nav": {
       "projects": "Projects",
       "experience": "Experience",
-      "certificates": "Certificates"
+      "certificates": "Certificates",
+      "skills": "Skills"
     },
     "nav_labels": {
       "initializing": "INITIALIZING...",
@@ -41,6 +42,16 @@
     "default_name": "SEBASTIÁN TREJO",
     "default_bio": "Software Architect & GDE specializing in scalable ecosystems and cinematic digital experiences.",
     "default_headline": "Senior Software Architect specializing in Generative AI and scalable ecosystems.",
+    "sections": {
+      "projects": "Projects",
+      "experience": "Experience",
+      "skills": "Skills",
+      "certificates": "Certificates"
+    },
+    "screenshot_of": "Screenshot of {title}",
+    "deployed": "DEPLOYED",
+    "click_to_expand": "CLICK TO EXPAND",
+    "live_deployment": "LIVE_DEPLOYMENT",
     "project_description_fallback": "DATA_EXTRACT: Classified project documentation pending decryption.",
     "availability_badge": "Available for new challenges",
     "about_title": "About",
@@ -83,7 +94,13 @@
     "system_decomposition": "SYSTEM_DECOMPOSITION: Systematic breakdown of architectural modules, language fluencies, and ecosystem synchronization.",
     "skill_map_title": "Skill",
     "skill_map_subtitle": "Map",
-    "proficiency_narrative": "{name} represents a core competency within the {category} cluster. Proficiency mapped at {proficiency}% indicates active mastery and deployment capability in production environments."
+    "proficiency_narrative": "{name} represents a core competency within the {category} cluster. Proficiency mapped at {proficiency}% indicates active mastery and deployment capability in production environments.",
+    "expertise_title": "Expertise"
+  },
+  "metadata": {
+    "title_suffix": "Senior Software Architect",
+    "og_title_suffix": "Obsidian Command Portfolio",
+    "og_image_alt": "Obsidian Command Portfolio Preview"
   },
   "salmon": {
     "seo": {

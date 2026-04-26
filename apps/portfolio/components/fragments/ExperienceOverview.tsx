@@ -1,17 +1,15 @@
-import { useState } from "react";
+"use client";
+
 import { motion, AnimatePresence } from "framer-motion";
 import { type Experience } from "@hstrejoluna/types-sanity";
 import { PortableText } from "@portabletext/react";
 import { Calendar, Building, ChevronRight } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { useExpandableToggle } from "@hstrejoluna/ui";
 
 export const ExperienceOverview = ({ experiences }: { experiences: Experience[] }) => {
-  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const { isExpanded, toggle } = useExpandableToggle();
   const t = useTranslations("experience");
-
-  const toggleExp = (id: string) => {
-    setExpandedId(prev => prev === id ? null : id);
-  };
 
   const getDescription = (description: Experience["description"]) => {
     if (typeof description === "string") {
@@ -27,23 +25,23 @@ export const ExperienceOverview = ({ experiences }: { experiences: Experience[] 
 
       <div className="space-y-4 relative z-10">
         {experiences.map((exp, index) => {
-          const isExpanded = expandedId === exp._id;
+          const expanded = isExpanded(exp._id);
           const isLeft = index % 2 === 0;
 
           return (
             <div key={exp._id} className={`flex flex-col md:flex-row w-full ${isLeft ? 'md:flex-row' : 'md:flex-row-reverse'} relative`}>
               <div className="absolute left-4 md:left-1/2 top-6 -translate-x-1/2 w-3 h-3 bg-surface_container_highest border border-primary/50 rotate-45 z-20"
-                   style={{ backgroundColor: isExpanded ? 'var(--color-primary)' : '' }} />
+                   style={{ backgroundColor: expanded ? 'var(--color-primary)' : '' }} />
 
               <div className="w-full md:w-1/2 pl-12 md:pl-0 flex">
                 <div className={`w-full max-w-lg ${isLeft ? 'md:mr-auto md:pr-12' : 'md:ml-auto md:pl-12'}`}>
                   <motion.button
                     layout
                     type="button"
-                    onClick={() => toggleExp(exp._id)}
-                    aria-expanded={isExpanded}
+                    onClick={() => toggle(exp._id)}
+                    aria-expanded={expanded}
                     aria-controls={`details-${exp._id}`}
-                    className={`w-full text-left cursor-pointer border border-surface_container_highest bg-background p-6 transition-colors duration-300 hover:border-primary/50 group ${isExpanded ? 'border-primary/50 bg-primary/5' : ''}`}
+                    className={`w-full text-left cursor-pointer border border-surface_container_highest bg-background p-6 transition-colors duration-300 hover:border-primary/50 group ${expanded ? 'border-primary/50 bg-primary/5' : ''}`}
                   >
                     <div className="flex items-center gap-2 text-primary font-mono text-xs mb-3">
                       <Calendar className="w-3 h-3" />
@@ -67,11 +65,11 @@ export const ExperienceOverview = ({ experiences }: { experiences: Experience[] 
                         <Building className="w-3 h-3" />
                         <span>{exp.company}</span>
                       </div>
-                      <ChevronRight className={`w-4 h-4 transition-transform duration-300 ${isExpanded ? 'rotate-90 text-primary' : 'group-hover:translate-x-1'}`} />
+                      <ChevronRight className={`w-4 h-4 transition-transform duration-300 ${expanded ? 'rotate-90 text-primary' : 'group-hover:translate-x-1'}`} />
                     </div>
 
                     <AnimatePresence>
-                      {isExpanded && (
+                      {expanded && (
                         <motion.div
                           initial={{ height: 0, opacity: 0 }}
                           animate={{ height: "auto", opacity: 1 }}

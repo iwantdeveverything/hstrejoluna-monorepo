@@ -63,8 +63,10 @@ export default async function RootLayout({
   if (!isValidLocale(locale)) {
     notFound();
   }
-  // DESIGN DECISION: Loading all messages globally for this small application to enable client-side interactivity without prop drilling.
-  const messages = await getMessages();
+  const [messages, tCommon] = await Promise.all([
+    getMessages(),
+    getTranslations({ locale, namespace: 'common' }),
+  ]);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -82,10 +84,9 @@ export default async function RootLayout({
         />
       </head>
       <body className={`${inter.className} text-brand-marine bg-brand-sand min-h-screen flex flex-col`}>
-        <a href="#main" className="sr-only focus:not-sr-only">Skip to content</a>
+        <a href="#main" className="sr-only focus:not-sr-only">{tCommon('skip_to_content')}</a>
         <NextIntlClientProvider messages={messages}>
           <FacebookPixel />
-          <header className="sr-only"><span>Maestros del Salmón</span></header>
           <main id="main" className="flex-grow">
             {children}
           </main>

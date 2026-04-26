@@ -38,6 +38,7 @@ Thumbs.db
 # Sanity
 apps/studio/dist
 apps/studio/node_modules
+**/.sanity/
 
 # Editor folders
 .vscode/

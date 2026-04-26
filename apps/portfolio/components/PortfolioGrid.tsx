@@ -7,7 +7,7 @@ import { Link } from "@hstrejoluna/i18n";
 import { normalizeSocialLinks, getProjectUrl } from "@/lib/navigation";
 import { getExternalLinkProps } from "@hstrejoluna/ui";
 import { blockToPlainText } from "@/lib/utils";
-import { PortableTextBlock, Profile, Project, Skill } from "@hstrejoluna/types-sanity";
+import { Profile, Project, Skill } from "@hstrejoluna/types-sanity";
 import { SkillsGrid } from "@/components/SkillsGrid";
 
 const containerVariants: Variants = {
@@ -72,7 +72,7 @@ export const PortfolioGrid = ({ profile, projects, skills }: PortfolioGridProps)
           className="text-6xl md:text-9xl font-black tracking-tighter leading-[0.9] text-white"
         >
           {nameParts.map(({ word, key }, i) => (
-            <m.span key={key} className={i === 0 ? "block" : "block text-brand-salmon"}>
+            <m.span key={key} className={`block${i !== 0 ? " text-brand-salmon" : ""}`}>
               {word}
             </m.span>
           ))}

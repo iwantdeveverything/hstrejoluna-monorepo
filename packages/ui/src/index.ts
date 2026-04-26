@@ -24,4 +24,5 @@ export * from "./components/BootSequence";
 export * from "./components/TelemetryHUD";
 export * from "./components/LegalPageShell";
 export * from "./hooks/useReducedMotion";
+export * from "./hooks/useExpandableToggle";
 export * from "./lib/utils";

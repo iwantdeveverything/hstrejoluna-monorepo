@@ -9,7 +9,6 @@ export default function LandingPage() {
 
   const handlePurchaseClick = () => {
     event("Lead", { content_name: t("hero.cta_buy"), currency: "MXN" });
-    console.info("Initiating purchase flow...");
   };
 
   const handleWhatsAppClick = () => {
@@ -26,6 +25,7 @@ export default function LandingPage() {
           </h1>
           <nav>
             <button
+              type="button"
               onClick={handleWhatsAppClick}
               className="text-sm border border-brand-salmon text-brand-salmon px-4 py-2 rounded-full hover:bg-brand-salmon hover:text-white transition-colors"
               aria-label={t("header.contact_aria")}
@@ -103,6 +103,7 @@ export default function LandingPage() {
               {t("cta_section.desc")}
             </p>
             <button
+              type="button"
               onClick={handlePurchaseClick}
               className="bg-brand-marine hover:bg-brand-marineLight text-white font-bold py-4 px-10 rounded-lg shadow-xl transition-all"
               aria-label={t("cta_section.button")}
