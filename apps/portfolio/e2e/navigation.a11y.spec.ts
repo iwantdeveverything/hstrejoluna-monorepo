@@ -67,19 +67,21 @@ test.describe("portfolio accessibility", () => {
         focusedOutlineWidths.push(focusedInfo.outlineWidth);
       }
 
-      if (focusedNavLabels.length >= 4) {
+      if (focusedNavLabels.length >= 6) {
         break;
       }
     }
 
-    expect(focusedNavLabels.slice(0, 4)).toEqual([
+    expect(focusedNavLabels.slice(0, 6)).toEqual([
+      "en",
+      "es",
       "Projects",
       "Experience",
       "Skills",
       "Certificates",
     ]);
 
-    focusedOutlineWidths.slice(0, 4).forEach((outlineWidth) => {
+    focusedOutlineWidths.slice(0, 6).forEach((outlineWidth) => {
       expect(outlineWidth).toBeGreaterThan(0);
     });
   });
