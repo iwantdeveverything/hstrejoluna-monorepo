@@ -4,22 +4,40 @@ schema: spec-driven
 context: |
   Tech stack: TypeScript, React 19, Next.js 16, Sanity Studio, Turborepo.
   Architecture: Monorepo with NPM workspaces. Portfolio and Landing apps connected to Sanity CMS.
-  Testing: No test runner detected (Vitest/Jest/Playwright not found).
+  Testing: Vitest (unit), Testing Library (integration), Playwright (e2e) detected in apps/portfolio.
   Style: Clean Code, Type Safety (no any), DRY, KISS. camelCase (vars/fns), PascalCase (components).
 
 strict_tdd: false
 
 testing:
-  runner: null
+  detected: "2026-04-27"
+  runner:
+    available: true
+    framework: vitest
+    command: npm run test --workspace=apps/portfolio
   layers:
-    unit: false
-    integration: false
-    e2E: false
-  coverage: false
+    unit:
+      available: true
+      tool: vitest
+    integration:
+      available: true
+      tool: "@testing-library/react + jsdom"
+    e2E:
+      available: true
+      tool: playwright
+  coverage:
+    available: false
+    command: null
   quality_tools:
-    linter: true
-    type_checker: true
-    formatter: true
+    linter:
+      available: true
+      command: npm run lint
+    type_checker:
+      available: true
+      command: npm run typecheck
+    formatter:
+      available: true
+      command: npm run format
 
 rules:
   proposal:
@@ -39,7 +57,7 @@ rules:
     - Follow existing code patterns and conventions (AGENTS.md)
     - Load relevant coding skills for the project stack (Next.js, React, Sanity)
   verify:
-    - Run tests if test infrastructure exists (none detected)
+    - Run tests if test infrastructure exists
     - Compare implementation against every spec scenario
   archive:
     - Warn before merging destructive deltas (large removals)
