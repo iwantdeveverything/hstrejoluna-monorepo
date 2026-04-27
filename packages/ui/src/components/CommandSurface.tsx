@@ -30,6 +30,7 @@ export interface CommandSurfaceProps {
   hideOnScroll?: boolean;
   onSectionNavigate?: (sectionId: string) => void;
   labels?: Partial<CommandSurfaceLabels>;
+  children?: React.ReactNode;
 }
 
 export interface CommandSurfaceLabels {
@@ -94,6 +95,7 @@ export const CommandSurface = ({
   hideOnScroll = false,
   onSectionNavigate,
   labels,
+  children,
 }: CommandSurfaceProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const resolvedLabels = { ...defaultLabels, ...labels };
@@ -144,20 +146,23 @@ export const CommandSurface = ({
           </AnimatePresence>
         </div>
 
-        <button
-          type="button"
-          className="lg:hidden rounded border border-surface_container_highest px-3 py-1 text-[11px] font-mono uppercase tracking-wider text-on_surface focus-visible:outline-none"
-          aria-expanded={isMenuOpen}
-          aria-controls="mobile-navigation-panel"
-          aria-label={
-            isMenuOpen
-              ? resolvedLabels.closeNavigationMenuAria
-              : resolvedLabels.openNavigationMenuAria
-          }
-          onClick={() => setIsMenuOpen((previous) => !previous)}
-        >
-          {isMenuOpen ? resolvedLabels.close : resolvedLabels.menu}
-        </button>
+        <div className="flex items-center gap-3">
+          {children}
+          <button
+            type="button"
+            className="lg:hidden rounded border border-surface_container_highest px-3 py-1 text-[11px] font-mono uppercase tracking-wider text-on_surface focus-visible:outline-none"
+            aria-expanded={isMenuOpen}
+            aria-controls="mobile-navigation-panel"
+            aria-label={
+              isMenuOpen
+                ? resolvedLabels.closeNavigationMenuAria
+                : resolvedLabels.openNavigationMenuAria
+            }
+            onClick={() => setIsMenuOpen((previous) => !previous)}
+          >
+            {isMenuOpen ? resolvedLabels.close : resolvedLabels.menu}
+          </button>
+        </div>
       </div>
 
       <nav
