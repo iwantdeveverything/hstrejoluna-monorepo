@@ -10,6 +10,7 @@ const REQUIRED_NAMESPACES = [
   "seo",
   "brand",
   "legal",
+  "fragments",
 ] as const;
 
 describe("messages/en.json", () => {

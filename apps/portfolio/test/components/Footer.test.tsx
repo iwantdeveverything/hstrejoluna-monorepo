@@ -1,25 +1,21 @@
 /** @vitest-environment jsdom */
 import React from "react";
 import { render, screen, cleanup } from "@testing-library/react";
-import { describe, it, expect, afterEach } from "vitest";
+import { describe, it, expect, afterEach, vi } from "vitest";
 import Footer from "../../components/fragments/Footer";
+import { NextIntlClientProvider } from "next-intl";
+import messages from "../../messages/en.json";
 
-import { vi } from "vitest";
-
-vi.mock("next-intl", () => ({
-  useTranslations: (namespace: string) => (key: string) => {
-    const messages: Record<string, Record<string, string>> = {
-      footer: {
-        freeFork: "Free to fork.",
-        privacyPolicy: "Privacy Policy",
-        cookiePolicy: "Cookie Policy",
-        legalNotice: "Legal Notice",
-        manageCookies: "Manage Cookies",
-      },
-    };
-
-    return messages[namespace]?.[key] ?? key;
-  },
+// Mock next-intl navigation to avoid actual routing in unit tests
+vi.mock("@/i18n/navigation", () => ({
+  Link: ({ children, href }: { children: React.ReactNode; href: string }) => (
+    <a href={href}>{children}</a>
+  ),
+  useRouter: () => ({
+    push: vi.fn(),
+    replace: vi.fn(),
+  }),
+  usePathname: () => "/",
 }));
 
 describe("Footer Component (Legal)", () => {
@@ -28,7 +24,11 @@ describe("Footer Component (Legal)", () => {
   });
 
   it("renders all mandatory legal links", () => {
-    render(<Footer />);
+    render(
+      <NextIntlClientProvider locale="en" messages={messages}>
+        <Footer />
+      </NextIntlClientProvider>,
+    );
 
     const privacyLink = screen.getByRole("link", { name: /Privacy Policy/i });
     const cookiesLink = screen.getByRole("link", { name: /Cookie Policy/i });
@@ -40,7 +40,11 @@ describe("Footer Component (Legal)", () => {
   });
 
   it("renders a button to manage cookie preferences", () => {
-    render(<Footer />);
+    render(
+      <NextIntlClientProvider locale="en" messages={messages}>
+        <Footer />
+      </NextIntlClientProvider>,
+    );
 
     const manageButton = screen.getByRole("button", {
       name: /Manage Cookies/i,
@@ -49,7 +53,11 @@ describe("Footer Component (Legal)", () => {
   });
 
   it("displays the brand/copyright with a year", () => {
-    render(<Footer />);
+    render(
+      <NextIntlClientProvider locale="en" messages={messages}>
+        <Footer />
+      </NextIntlClientProvider>,
+    );
     // Match text regardless of spans, looking for YYYY Dark Kinetic
     expect(
       screen.getByText(

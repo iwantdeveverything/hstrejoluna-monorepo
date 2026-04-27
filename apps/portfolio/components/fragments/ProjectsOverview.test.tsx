@@ -1,6 +1,8 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { ProjectsOverview } from "./ProjectsOverview";
+import { NextIntlClientProvider } from "next-intl";
+import messages from "../../messages/en.json";
 
 vi.mock("next/image", () => ({
   __esModule: true,
@@ -17,9 +19,15 @@ vi.mock("@hstrejoluna/ui", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@hstrejoluna/ui")>();
   return {
     ...actual,
-    HudChip: ({ children }: React.PropsWithChildren) => <span>{children}</span>,
-    GlowBorder: ({ children }: React.PropsWithChildren) => <div>{children}</div>,
-    MicroInteraction: ({ children }: React.PropsWithChildren) => <div>{children}</div>,
+    HudChip: ({ children }: React.PropsWithChildren) => (
+      <span>{children}</span>
+    ),
+    GlowBorder: ({ children }: React.PropsWithChildren) => (
+      <div>{children}</div>
+    ),
+    MicroInteraction: ({ children }: React.PropsWithChildren) => (
+      <div>{children}</div>
+    ),
   };
 });
 
@@ -29,14 +37,24 @@ vi.mock("framer-motion", async (importOriginal) => {
     ...actual,
     AnimatePresence: ({ children }: React.PropsWithChildren) => <>{children}</>,
     m: {
-      div: ({ children, ...props }: React.PropsWithChildren<Record<string, unknown>>) => (
-        <div {...(props as React.HTMLAttributes<HTMLDivElement>)}>{children}</div>
+      div: ({
+        children,
+        ...props
+      }: React.PropsWithChildren<Record<string, unknown>>) => (
+        <div {...(props as React.HTMLAttributes<HTMLDivElement>)}>
+          {children}
+        </div>
       ),
     },
     motion: {
       ...actual.motion,
-      div: ({ children, ...props }: React.PropsWithChildren<Record<string, unknown>>) => (
-        <div {...(props as React.HTMLAttributes<HTMLDivElement>)}>{children}</div>
+      div: ({
+        children,
+        ...props
+      }: React.PropsWithChildren<Record<string, unknown>>) => (
+        <div {...(props as React.HTMLAttributes<HTMLDivElement>)}>
+          {children}
+        </div>
       ),
     },
   };
@@ -69,7 +87,11 @@ const projectWithoutImage = {
 
 describe("ProjectsOverview — Descriptive Image Alt Text", () => {
   it("uses descriptive alt text on project images, not just the title", () => {
-    render(<ProjectsOverview projects={[projectWithImage]} />);
+    render(
+      <NextIntlClientProvider locale="en" messages={messages}>
+        <ProjectsOverview projects={[projectWithImage]} />
+      </NextIntlClientProvider>,
+    );
 
     const image = screen.getByTestId("project-image");
     const altText = image.getAttribute("alt");
@@ -78,7 +100,11 @@ describe("ProjectsOverview — Descriptive Image Alt Text", () => {
   });
 
   it("hides placeholder gradient from assistive technology when no image", () => {
-    const { container } = render(<ProjectsOverview projects={[projectWithoutImage]} />);
+    const { container } = render(
+      <NextIntlClientProvider locale="en" messages={messages}>
+        <ProjectsOverview projects={[projectWithoutImage]} />
+      </NextIntlClientProvider>,
+    );
 
     const gradientDiv = container.querySelector(".bg-gradient-to-br");
     expect(gradientDiv).toBeInTheDocument();

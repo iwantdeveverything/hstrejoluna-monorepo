@@ -1,5 +1,6 @@
 {
   "common": {
+    "fullName": "Sebastián Trejo",
     "skipToContent": "Skip to main content",
     "present": "Present",
     "deployed": "Deployed"
@@ -14,6 +15,7 @@
       "viewCredential": "View Credential"
     },
     "portfolioGrid": {
+      "activeNodes": "ACTIVE_NODES",
       "status": "Available for new challenges",
       "about": "About",
       "latestWork": "Latest Work",
@@ -74,8 +76,6 @@
     "description": "Portfolio of {name} — Senior Software Architect specializing in clean architecture, performance engineering, and immersive digital experiences."
   },
   "brand": {
-    "fullName": "Sebastián Trejo",
-    "activeNodes": "ACTIVE_NODES",
     "systemOverride": "SYSTEM_OVERRIDE",
     "systemReady": "[SYSTEM_READY]: INITIALIZING_NEURAL_UPLINK",
     "uplink": "UPLINK_STATUS: OPTIMAL",

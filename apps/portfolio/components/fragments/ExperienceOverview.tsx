@@ -33,7 +33,7 @@ export const ExperienceOverview = ({ experiences }: { experiences: Experience[] 
 
           return (
             <div key={exp._id} className={`flex flex-col md:flex-row w-full ${isLeft ? 'md:flex-row' : 'md:flex-row-reverse'} relative`}>
-              <div className="absolute left-4 md:left-1/2 top-6 -translate-x-1/2 w-3 h-3 bg-surface_container_highest border border-primary/50 rotate-45 z-20"
+              <div className="absolute left-4 md:left-1/2 top-6 -translate-x-1/2 w-3 h-3 bg-surface_container_highest border border-primary/50 rotate-45 z-20 pointer-events-none"
                    style={{ backgroundColor: isExpanded ? 'var(--color-primary)' : '' }} />
 
               <div className="w-full md:w-1/2 pl-12 md:pl-0 flex">

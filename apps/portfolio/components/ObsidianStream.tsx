@@ -78,8 +78,10 @@ export const ObsidianStream = ({
   experiences,
   certificates,
 }: ObsidianStreamProps) => {
+  const tCommon = useTranslations("common");
   const tBrand = useTranslations("brand");
   const tNav = useTranslations("nav");
+  const tPortfolioGrid = useTranslations("fragments.portfolioGrid");
   const skipBootSequence = process.env.NEXT_PUBLIC_SKIP_BOOT_SEQUENCE === "1";
   const [isBooted, setIsBooted] = useState(skipBootSequence);
   const isReducedMotion = useReducedMotion();
@@ -130,7 +132,7 @@ export const ObsidianStream = ({
                 className="fixed inset-0 z-0 flex flex-col justify-center items-center pointer-events-none select-none opacity-5 md:opacity-10"
               >
                 <span className="text-[15vw] font-black uppercase leading-none italic">
-                  {profile?.name || tBrand("fullName")}
+                  {profile?.name || tCommon("fullName")}
                 </span>
               </m.div>
 
@@ -180,7 +182,7 @@ export const ObsidianStream = ({
                   sectionClassName="stream-section bg-surface_container_lowest"
                   wrapperClassName={fullSectionWrapperClass}
                   title={tBrand("neuralMap")}
-                  countLabel={`[${tBrand("activeNodes")}: ${skills.length}]`}
+                  countLabel={`[${tPortfolioGrid("activeNodes")}: ${skills.length}]`}
                 >
                   <SkillsOverview skills={skills} />
                 </StreamSection>

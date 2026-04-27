@@ -3,21 +3,19 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import CookieBanner from "../../components/fragments/CookieBanner";
 import { useCookieConsent } from "@hstrejoluna/compliance";
+import { NextIntlClientProvider } from "next-intl";
+import messages from "../../messages/en.json";
 
-vi.mock("next-intl", () => ({
-  useTranslations: (namespace: string) => (key: string) => {
-    const messages: Record<string, Record<string, string>> = {
-      cookie: {
-        message:
-          "We use cookies to ensure you get the best experience. We respect global privacy control signals.",
-        privacyLink: "Read our Privacy Policy",
-        reject: "Reject",
-        accept: "Accept",
-      },
-    };
-
-    return messages[namespace]?.[key] ?? key;
-  },
+// Mock next-intl navigation
+vi.mock("@/i18n/navigation", () => ({
+  Link: ({ children, href }: { children: React.ReactNode; href: string }) => (
+    <a href={href}>{children}</a>
+  ),
+  useRouter: () => ({
+    push: vi.fn(),
+    replace: vi.fn(),
+  }),
+  usePathname: () => "/",
 }));
 
 // Mock the hook
@@ -43,7 +41,11 @@ describe("CookieBanner Component", () => {
       isGpcActive: false,
     });
 
-    const { container } = render(<CookieBanner />);
+    const { container } = render(
+      <NextIntlClientProvider locale="en" messages={messages}>
+        <CookieBanner />
+      </NextIntlClientProvider>,
+    );
     expect(container.firstChild).toBeNull();
   });
 
@@ -58,7 +60,11 @@ describe("CookieBanner Component", () => {
       isGpcActive: false,
     });
 
-    render(<CookieBanner />);
+    render(
+      <NextIntlClientProvider locale="en" messages={messages}>
+        <CookieBanner />
+      </NextIntlClientProvider>,
+    );
 
     const banner = screen.getByRole("complementary", {
       name: /Cookie Consent/i,
@@ -78,7 +84,11 @@ describe("CookieBanner Component", () => {
       isGpcActive: false,
     });
 
-    render(<CookieBanner />);
+    render(
+      <NextIntlClientProvider locale="en" messages={messages}>
+        <CookieBanner />
+      </NextIntlClientProvider>,
+    );
 
     const acceptButton = screen.getByRole("button", { name: /Accept/i });
     fireEvent.click(acceptButton);

@@ -2,24 +2,12 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import * as navigation from "@/lib/navigation";
 import { CommandNav } from "./CommandNav";
+import { NextIntlClientProvider } from "next-intl";
+import messages from "../../messages/en.json";
 
-vi.mock("next-intl", () => ({
-  useTranslations: (namespace: string) => (key: string) => {
-    const messages: Record<string, Record<string, string>> = {
-      brand: {
-        initializing: "INITIALIZING...",
-        systemOnline: "SYSTEM ONLINE",
-        neuralMap: "NEURAL MAP",
-      },
-      nav: {
-        projects: "Projects",
-        experience: "Experience",
-        certificates: "Certificates",
-      },
-    };
-
-    return messages[namespace]?.[key] ?? key;
-  },
+// Mock LocaleSwitcher to avoid its own dependencies
+vi.mock("./LocaleSwitcher", () => ({
+  LocaleSwitcher: () => <div data-testid="locale-switcher">LocaleSwitcher</div>,
 }));
 
 vi.mock("@hstrejoluna/ui", async (importOriginal) => {
@@ -33,52 +21,55 @@ vi.mock("@hstrejoluna/ui", async (importOriginal) => {
 describe("CommandNav", () => {
   it("renders semantic navigation and marks active section with aria-current", () => {
     render(
-      <CommandNav
-        activeId="projects"
-        counts={{ projects: 4, experience: 2, certificates: 3 }}
-        socials={[{ platform: "github", url: "https://github.com/example" }]}
-      />,
+      <NextIntlClientProvider locale="en" messages={messages}>
+        <CommandNav
+          activeId="projects"
+          counts={{ projects: 4, experience: 2, certificates: 3 }}
+          socials={[{ platform: "github", url: "https://github.com/example" }]}
+        />
+      </NextIntlClientProvider>,
     );
 
     expect(
       screen.getByRole("navigation", { name: /primary section navigation/i }),
     ).toBeInTheDocument();
-    expect(
-      screen.getAllByRole("link", { name: /projects/i })[0],
-    ).toHaveAttribute("aria-current", "location");
+    expect(screen.getAllByRole("link", { name: /projects/i })[0]).toHaveAttribute(
+      "aria-current",
+      "location",
+    );
   });
 
   it("shows fallback text in mobile menu when socials are missing", () => {
     render(
-      <CommandNav
-        activeId="experience"
-        counts={{ projects: 4, experience: 2, certificates: 3 }}
-      />,
+      <NextIntlClientProvider locale="en" messages={messages}>
+        <CommandNav
+          activeId="experience"
+          counts={{ projects: 4, experience: 2, certificates: 3 }}
+        />
+      </NextIntlClientProvider>,
     );
 
-    fireEvent.click(
-      screen.getByRole("button", { name: /open navigation menu/i }),
-    );
+    fireEvent.click(screen.getByRole("button", { name: /open navigation menu/i }));
     expect(screen.getByText(/no social links configured/i)).toBeInTheDocument();
   });
 
   it("normalizes plaintext email social links and uses smooth section navigation", () => {
-    const scrollSpy = vi
-      .spyOn(navigation, "scrollToSection")
-      .mockReturnValue(true);
+    const scrollSpy = vi.spyOn(navigation, "scrollToSection").mockReturnValue(true);
 
     render(
-      <CommandNav
-        activeId="skills"
-        counts={{ projects: 4, experience: 2, certificates: 3 }}
-        socials={[
-          {
-            platform: "email",
-            email: "dev@example.com",
-            label: "Contact Email",
-          },
-        ]}
-      />,
+      <NextIntlClientProvider locale="en" messages={messages}>
+        <CommandNav
+          activeId="skills"
+          counts={{ projects: 4, experience: 2, certificates: 3 }}
+          socials={[
+            {
+              platform: "email",
+              email: "dev@example.com",
+              label: "Contact Email",
+            },
+          ]}
+        />
+      </NextIntlClientProvider>,
     );
 
     expect(
@@ -94,23 +85,25 @@ describe("CommandNav", () => {
 
   it("renders all supported social links with safe external semantics", () => {
     render(
-      <CommandNav
-        activeId="projects"
-        counts={{ projects: 4, experience: 2, certificates: 3 }}
-        socials={[
-          {
-            platform: "github",
-            url: "https://github.com/example",
-            label: "GitHub",
-          },
-          {
-            platform: "linkedin",
-            url: "https://linkedin.com/in/example",
-            label: "LinkedIn",
-          },
-          { platform: "email", email: "dev@example.com", label: "Email" },
-        ]}
-      />,
+      <NextIntlClientProvider locale="en" messages={messages}>
+        <CommandNav
+          activeId="projects"
+          counts={{ projects: 4, experience: 2, certificates: 3 }}
+          socials={[
+            {
+              platform: "github",
+              url: "https://github.com/example",
+              label: "GitHub",
+            },
+            {
+              platform: "linkedin",
+              url: "https://linkedin.com/in/example",
+              label: "LinkedIn",
+            },
+            { platform: "email", email: "dev@example.com", label: "Email" },
+          ]}
+        />
+      </NextIntlClientProvider>,
     );
 
     const githubLink = screen.getAllByRole("link", { name: /github/i })[0];
@@ -130,11 +123,13 @@ describe("CommandNav", () => {
 
   it("hides the command nav when hideOnScroll is enabled", () => {
     render(
-      <CommandNav
-        activeId="projects"
-        counts={{ projects: 4, experience: 2, certificates: 3 }}
-        hideOnScroll
-      />,
+      <NextIntlClientProvider locale="en" messages={messages}>
+        <CommandNav
+          activeId="projects"
+          counts={{ projects: 4, experience: 2, certificates: 3 }}
+          hideOnScroll
+        />
+      </NextIntlClientProvider>,
     );
 
     expect(screen.getByTestId("command-nav")).toHaveAttribute(

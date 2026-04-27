@@ -47,10 +47,10 @@ const buildNameParts = (name: string) => {
 
 export const PortfolioGrid = ({ profile, projects, skills }: PortfolioGridProps) => {
   const t = useTranslations("fragments.portfolioGrid");
-  const tBrand = useTranslations("brand");
+  const tCommon = useTranslations("common");
   const featuredProject = projects.find(p => p.isFeatured);
   const otherProjects = projects.filter(p => !p.isFeatured);
-  const nameParts = buildNameParts(profile?.name ?? tBrand("fullName"));
+  const nameParts = buildNameParts(profile?.name ?? tCommon("fullName"));
   const socialLinks = normalizeSocialLinks(profile?.socials);
 
   return (
