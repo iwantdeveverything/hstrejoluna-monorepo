@@ -16,7 +16,6 @@
     "portfolioGrid": {
       "status": "Disponible para nuevos desafíos",
       "about": "Sobre mí",
-  ...
       "latestWork": "Último Trabajo",
       "exploreProject": "Explorar Proyecto",
       "caseStudy": "CASO DE ESTUDIO"
@@ -76,6 +75,7 @@
   },
   "brand": {
     "fullName": "Sebastián Trejo",
+    "activeNodes": "NODOS_ACTIVOS",
     "systemOverride": "SYSTEM_OVERRIDE",
     "systemReady": "[SYSTEM_READY]: INITIALIZING_NEURAL_UPLINK",
     "uplink": "UPLINK_STATUS: OPTIMAL",

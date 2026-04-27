@@ -75,6 +75,7 @@
   },
   "brand": {
     "fullName": "Sebastián Trejo",
+    "activeNodes": "ACTIVE_NODES",
     "systemOverride": "SYSTEM_OVERRIDE",
     "systemReady": "[SYSTEM_READY]: INITIALIZING_NEURAL_UPLINK",
     "uplink": "UPLINK_STATUS: OPTIMAL",
