@@ -49,21 +49,71 @@
     "systemOnline": "SYSTEM ONLINE"
   },
   "legal": {
+    "lastUpdatedPrefix": "Last updated:",
+    "contactHeading": "Contact Information",
+    "contactDescription": "If you have any questions or concerns about this policy or our practices, please contact us at:",
     "privacyPolicy": {
+      "metaTitle": "Privacy Policy | Dark Kinetic",
+      "metaDescription": "Privacy policy and GDPR compliance information for Dark Kinetic.",
       "title": "Privacy Policy",
       "lastUpdated": "April 2026",
+      "sections": {
+        "introduction": {
+          "heading": "1. Introduction",
+          "body": "Welcome to the Dark Kinetic Portfolio. We respect your privacy and are committed to protecting your personal data. This privacy policy will inform you as to how we look after your personal data when you visit our website and tell you about your privacy rights."
+        },
+        "dataCollection": {
+          "heading": "2. Data We Collect",
+          "body": "We operate under a strict data minimization principle. We only collect basic anonymous telemetry (if consented) to understand page load performance. We do not collect identifying Personally Identifiable Information (PII) through this front-end portfolio."
+        },
+        "gpc": {
+          "heading": "3. Global Privacy Control (GPC)",
+          "body": "We natively respect the Global Privacy Control signal. If your browser supports and injects navigator.globalPrivacyControl, we automatically opt you out of all non-essential scripts and cookies without showing you a disruptive banner."
+        }
+      },
       "intro": "Welcome to the Dark Kinetic Portfolio. We respect your privacy and are committed to protecting your personal data. This privacy policy will inform you as to how we look after your personal data when you visit our website and tell you about your privacy rights.",
       "dataCollection": "We operate under a strict data minimization principle. We only collect basic anonymous telemetry (if consented) to understand page load performance. We do not collect identifying Personally Identifiable Information (PII) through this front-end portfolio.",
       "gpc": "We natively respect the Global Privacy Control signal. If your browser supports and injects navigator.globalPrivacyControl, we automatically opt you out of all non-essential scripts and cookies without showing you a disruptive banner."
     },
     "cookiePolicy": {
+      "metaTitle": "Cookie Policy | Dark Kinetic",
+      "metaDescription": "Cookie policy and tracking information for Dark Kinetic.",
       "title": "Cookie Policy",
-      "lastUpdated": "April 2026"
+      "lastUpdated": "April 2026",
+      "sections": {
+        "whatAreCookies": {
+          "heading": "1. What Are Cookies?",
+          "body": "Cookies are small text files that are placed on your computer or mobile device when you visit a website. They are widely used to make websites work, or work more efficiently, as well as to provide information to the owners of the site."
+        },
+        "howWeUseCookies": {
+          "heading": "2. How We Use Cookies",
+          "body": "We use a single consent_preferences item in your local storage to remember your choice regarding analytics. We do not use third-party marketing cookies, cross-site trackers, or invasive CMP bloatware. Our philosophy is maximum performance and maximum privacy."
+        },
+        "managingPreferences": {
+          "heading": "3. Managing Your Preferences",
+          "body": "If you have enabled Global Privacy Control (GPC) in your browser, your preferences are already strictly managed by your browser and respected by our site. If you accepted our banner, you can clear your browser's local storage to reset your consent state."
+        }
+      }
     },
     "legalNotice": {
+      "metaTitle": "Legal Notice | Dark Kinetic",
+      "metaDescription": "Legal notice and ownership information for Dark Kinetic.",
       "title": "Legal Notice",
-      "lastUpdated": "April 2026"
-    },
-    "contactLabel": "Contact"
+      "lastUpdated": "April 2026",
+      "sections": {
+        "ownership": {
+          "heading": "1. Ownership",
+          "body": "This portfolio and its microsites are owned and operated by Héctor Sebastián Trejo Luna. The project is intended for professional showcasing and educational purposes."
+        },
+        "intellectualProperty": {
+          "heading": "2. Intellectual Property",
+          "body": "The code for this project is open-source and available on GitHub. However, the personal data, branding assets, and specific content within the Dark Kinetic identity are reserved for professional representation."
+        },
+        "disclaimers": {
+          "heading": "3. Disclaimers",
+          "body": "The information provided on this site is for general informational purposes only. While we strive for accuracy, we make no warranties about the completeness or reliability of the information."
+        }
+      }
+    }
   }
 }

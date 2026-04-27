@@ -3,6 +3,25 @@ import { describe, expect, it, vi } from "vitest";
 import * as navigation from "@/lib/navigation";
 import { CommandNav } from "./CommandNav";
 
+vi.mock("next-intl", () => ({
+  useTranslations: (namespace: string) => (key: string) => {
+    const messages: Record<string, Record<string, string>> = {
+      brand: {
+        initializing: "INITIALIZING...",
+        systemOnline: "SYSTEM ONLINE",
+        neuralMap: "NEURAL MAP",
+      },
+      nav: {
+        projects: "Projects",
+        experience: "Experience",
+        certificates: "Certificates",
+      },
+    };
+
+    return messages[namespace]?.[key] ?? key;
+  },
+}));
+
 vi.mock("@hstrejoluna/ui", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@hstrejoluna/ui")>();
   return {
@@ -18,16 +37,15 @@ describe("CommandNav", () => {
         activeId="projects"
         counts={{ projects: 4, experience: 2, certificates: 3 }}
         socials={[{ platform: "github", url: "https://github.com/example" }]}
-      />
+      />,
     );
 
     expect(
-      screen.getByRole("navigation", { name: /primary section navigation/i })
+      screen.getByRole("navigation", { name: /primary section navigation/i }),
     ).toBeInTheDocument();
-    expect(screen.getAllByRole("link", { name: /projects/i })[0]).toHaveAttribute(
-      "aria-current",
-      "location"
-    );
+    expect(
+      screen.getAllByRole("link", { name: /projects/i })[0],
+    ).toHaveAttribute("aria-current", "location");
   });
 
   it("shows fallback text in mobile menu when socials are missing", () => {
@@ -35,10 +53,12 @@ describe("CommandNav", () => {
       <CommandNav
         activeId="experience"
         counts={{ projects: 4, experience: 2, certificates: 3 }}
-      />
+      />,
     );
 
-    fireEvent.click(screen.getByRole("button", { name: /open navigation menu/i }));
+    fireEvent.click(
+      screen.getByRole("button", { name: /open navigation menu/i }),
+    );
     expect(screen.getByText(/no social links configured/i)).toBeInTheDocument();
   });
 
@@ -52,15 +72,18 @@ describe("CommandNav", () => {
         activeId="skills"
         counts={{ projects: 4, experience: 2, certificates: 3 }}
         socials={[
-          { platform: "email", email: "dev@example.com", label: "Contact Email" },
+          {
+            platform: "email",
+            email: "dev@example.com",
+            label: "Contact Email",
+          },
         ]}
-      />
+      />,
     );
 
-    expect(screen.getAllByRole("link", { name: /contact email/i })[0]).toHaveAttribute(
-      "href",
-      "mailto:dev@example.com"
-    );
+    expect(
+      screen.getAllByRole("link", { name: /contact email/i })[0],
+    ).toHaveAttribute("href", "mailto:dev@example.com");
 
     fireEvent.click(screen.getAllByRole("link", { name: /skills/i })[0]);
     expect(scrollSpy).toHaveBeenCalledWith({
@@ -75,11 +98,19 @@ describe("CommandNav", () => {
         activeId="projects"
         counts={{ projects: 4, experience: 2, certificates: 3 }}
         socials={[
-          { platform: "github", url: "https://github.com/example", label: "GitHub" },
-          { platform: "linkedin", url: "https://linkedin.com/in/example", label: "LinkedIn" },
+          {
+            platform: "github",
+            url: "https://github.com/example",
+            label: "GitHub",
+          },
+          {
+            platform: "linkedin",
+            url: "https://linkedin.com/in/example",
+            label: "LinkedIn",
+          },
           { platform: "email", email: "dev@example.com", label: "Email" },
         ]}
-      />
+      />,
     );
 
     const githubLink = screen.getAllByRole("link", { name: /github/i })[0];
@@ -88,7 +119,10 @@ describe("CommandNav", () => {
 
     expect(githubLink).toHaveAttribute("href", "https://github.com/example");
     expect(githubLink).toHaveAttribute("rel", "noopener noreferrer external");
-    expect(linkedinLink).toHaveAttribute("href", "https://linkedin.com/in/example");
+    expect(linkedinLink).toHaveAttribute(
+      "href",
+      "https://linkedin.com/in/example",
+    );
     expect(linkedinLink).toHaveAttribute("rel", "noopener noreferrer external");
     expect(emailLink).toHaveAttribute("href", "mailto:dev@example.com");
     expect(emailLink).not.toHaveAttribute("rel");
@@ -100,9 +134,12 @@ describe("CommandNav", () => {
         activeId="projects"
         counts={{ projects: 4, experience: 2, certificates: 3 }}
         hideOnScroll
-      />
+      />,
     );
 
-    expect(screen.getByTestId("command-nav")).toHaveAttribute("data-hidden", "true");
+    expect(screen.getByTestId("command-nav")).toHaveAttribute(
+      "data-hidden",
+      "true",
+    );
   });
 });

@@ -1,41 +1,67 @@
 import type { Metadata } from "next";
 import { LegalPageShell } from "@hstrejoluna/ui";
+import { getTranslations } from "next-intl/server";
 
-export const metadata: Metadata = {
-  title: "Legal Notice | Dark Kinetic",
-  description: "Legal notice and ownership information for Dark Kinetic.",
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "legal.legalNotice" });
 
-export default function LegalNotice() {
+  return {
+    title: t("metaTitle"),
+    description: t("metaDescription"),
+  };
+}
+
+export default async function LegalNotice({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const tLegal = await getTranslations({ locale, namespace: "legal" });
+  const tNotice = await getTranslations({
+    locale,
+    namespace: "legal.legalNotice",
+  });
+
   return (
-    <LegalPageShell title="Legal Notice" lastUpdated="April 2026">
+    <LegalPageShell
+      title={tNotice("title")}
+      lastUpdated={tNotice("lastUpdated")}
+      labels={{
+        lastUpdatedPrefix: tLegal("lastUpdatedPrefix"),
+        contactHeading: tLegal("contactHeading"),
+        contactDescription: tLegal("contactDescription"),
+      }}
+    >
       <section className="mt-10">
-        <h2 className="text-2xl font-semibold text-white">1. Ownership</h2>
+        <h2 className="text-2xl font-semibold text-white">
+          {tNotice("sections.ownership.heading")}
+        </h2>
         <p className="mt-4 text-gray-300">
-          This portfolio and its microsites are owned and operated by Héctor
-          Sebastián Trejo Luna. The project is intended for professional
-          showcasing and educational purposes.
+          {tNotice("sections.ownership.body")}
         </p>
       </section>
 
       <section className="mt-10">
         <h2 className="text-2xl font-semibold text-white">
-          2. Intellectual Property
+          {tNotice("sections.intellectualProperty.heading")}
         </h2>
         <p className="mt-4 text-gray-300">
-          The code for this project is open-source and available on GitHub.
-          However, the personal data, branding assets, and specific content
-          within the "Dark Kinetic" identity are reserved for professional
-          representation.
+          {tNotice("sections.intellectualProperty.body")}
         </p>
       </section>
 
       <section className="mt-10">
-        <h2 className="text-2xl font-semibold text-white">3. Disclaimers</h2>
+        <h2 className="text-2xl font-semibold text-white">
+          {tNotice("sections.disclaimers.heading")}
+        </h2>
         <p className="mt-4 text-gray-300">
-          The information provided on this site is for general informational
-          purposes only. While we strive for accuracy, we make no warranties
-          about the completeness or reliability of the information.
+          {tNotice("sections.disclaimers.body")}
         </p>
       </section>
     </LegalPageShell>

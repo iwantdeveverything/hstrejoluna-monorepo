@@ -13,6 +13,7 @@ export interface SectionTimelineProps {
   activeId: string;
   hideOnScroll?: boolean;
   onSectionNavigate?: (sectionId: string) => void;
+  scrollLabel?: string;
 }
 
 export const SectionTimeline = ({
@@ -20,10 +21,14 @@ export const SectionTimeline = ({
   activeId,
   hideOnScroll = false,
   onSectionNavigate,
+  scrollLabel = "SCROLL_TO_EXPLORE",
 }: SectionTimelineProps) => {
   const shouldHide = hideOnScroll;
 
-  const handleSectionNavigation = (event: MouseEvent<HTMLAnchorElement>, sectionId: string) => {
+  const handleSectionNavigation = (
+    event: MouseEvent<HTMLAnchorElement>,
+    sectionId: string,
+  ) => {
     if (onSectionNavigate) {
       event.preventDefault();
       onSectionNavigate(sectionId);
@@ -43,7 +48,7 @@ export const SectionTimeline = ({
       transition={{ type: "spring", stiffness: 220, damping: 26 }}
     >
       <span className="[writing-mode:vertical-rl] text-xs font-mono text-on_surface_variant mb-4 uppercase tracking-[0.2em]">
-        SCROLL_TO_EXPLORE
+        {scrollLabel}
       </span>
       <ul className="flex flex-col items-center gap-6">
         {sections.map((section) => {
