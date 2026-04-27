@@ -12,7 +12,8 @@ describe("middleware.ts", () => {
   describe("createMiddleware configuration", () => {
     it("passes the routing config to createMiddleware", async () => {
       await import("./middleware");
-      const config = mockCreateMiddleware.mock.calls[0][0];
+      const calls = (mockCreateMiddleware as any).mock.calls;
+      const config = calls[0][0];
       expect(config).toHaveProperty("locales", ["en", "es"]);
       expect(config).toHaveProperty("defaultLocale", "en");
       expect(config).toHaveProperty("localePrefix", "always");

@@ -66,7 +66,7 @@ describe("LocaleLayout — Locale-Aware Rendering", () => {
 
     // jsdom does not allow <html> inside a <div>, so we render to a
     // custom container attached to documentElement and inspect the raw HTML.
-    const jsx = Layout as React.ReactElement;
+    const jsx = Layout as React.ReactElement<{ lang: string }>;
     // Verify the JSX tree contains the correct lang attribute
     expect(jsx.props.lang).toBe("en");
   });
@@ -78,7 +78,7 @@ describe("LocaleLayout — Locale-Aware Rendering", () => {
       params,
     });
 
-    const jsx = Layout as React.ReactElement;
+    const jsx = Layout as React.ReactElement<{ lang: string }>;
     expect(jsx.props.lang).toBe("es");
   });
 
