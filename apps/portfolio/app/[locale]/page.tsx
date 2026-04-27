@@ -55,13 +55,14 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function PortfolioPage() {
-  const [profile, projects, skills, experiences, certificates] = await Promise.all([
-    getProfile(),
-    client.fetch<Project[]>(projectsQuery),
-    client.fetch<Skill[]>(skillsQuery),
-    client.fetch<Experience[]>(experiencesQuery),
-    client.fetch<Certificate[]>(certificatesQuery),
-  ]);
+  const [profile, projects, skills, experiences, certificates] =
+    await Promise.all([
+      getProfile(),
+      client.fetch<Project[]>(projectsQuery),
+      client.fetch<Skill[]>(skillsQuery),
+      client.fetch<Experience[]>(experiencesQuery),
+      client.fetch<Certificate[]>(certificatesQuery),
+    ]);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -83,11 +84,11 @@ export default async function PortfolioPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      
-      <ObsidianStream 
-        profile={profile} 
-        projects={projects} 
-        skills={skills} 
+
+      <ObsidianStream
+        profile={profile}
+        projects={projects}
+        skills={skills}
         experiences={experiences}
         certificates={certificates}
       />
