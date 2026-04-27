@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { useCookieConsent } from "@hstrejoluna/compliance";
 import { motion, AnimatePresence } from "framer-motion";
 import { ShieldAlert } from "lucide-react";
@@ -19,7 +19,7 @@ export default function CookieBanner() {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: "100%", opacity: 0 }}
           transition={{ type: "spring", stiffness: 260, damping: 20 }}
-          aria-label="Cookie Consent"
+          aria-label={tCookie("bannerLabel")}
           role="complementary"
           className="fixed bottom-0 left-0 right-0 z-[100] border-t border-white/10 bg-black/80 p-4 text-sm text-gray-300 backdrop-blur-md md:p-6"
         >

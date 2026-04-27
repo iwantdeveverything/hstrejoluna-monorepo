@@ -8,6 +8,7 @@ import { navSectionIds, navSections } from "@/lib/sections";
 import type { NavSectionId, StreamSectionId } from "@/lib/sections";
 import type { ProfileSocialLink } from "@/types/sanity";
 import { useTranslations } from "next-intl";
+import { LocaleSwitcher } from "./LocaleSwitcher";
 
 interface CommandNavCounts {
   projects: number;
@@ -60,6 +61,8 @@ export const CommandNav = ({
         skills: tBrand("neuralMap"),
         certificatesPrefix: tNav("certificates").toUpperCase(),
       }}
-    />
+    >
+      <LocaleSwitcher />
+    </CommandSurface>
   );
 };

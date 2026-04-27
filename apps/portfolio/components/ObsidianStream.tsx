@@ -21,6 +21,7 @@ import { CommandNav } from "./ui/CommandNav";
 import { BootSequence } from "@hstrejoluna/ui";
 import {
   motion,
+  m,
   useScroll,
   useTransform,
   AnimatePresence,
@@ -114,22 +115,22 @@ export const ObsidianStream = ({
         {!isBooted && <BootSequence onComplete={() => setIsBooted(true)} />}
       </AnimatePresence>
 
-      <motion.div
+      <m.div
         initial={{ opacity: 0 }}
         animate={{ opacity: isBooted ? 1 : 0 }}
         transition={{ duration: 0.5 }}
       >
         {isBooted && (
           <>
-            <motion.div
+            <m.div
               style={{ y: backgroundY }}
               aria-hidden="true"
               className="fixed inset-0 z-0 flex flex-col justify-center items-center pointer-events-none select-none opacity-5 md:opacity-10"
             >
               <span className="text-[15vw] font-black uppercase leading-none italic">
-                {profile?.name || "SEBASTIÁN TREJO"}
+                {profile?.name || tBrand("fullName")}
               </span>
-            </motion.div>
+            </m.div>
 
             <SectionDock
               sections={navSections}
@@ -148,7 +149,7 @@ export const ObsidianStream = ({
             />
 
             <LazyMotion features={domAnimation}>
-              <main className="relative z-10 flex flex-col w-full">
+              <main id="main-content" className="relative z-10 flex flex-col w-full">
                 <section id="hero" className="stream-section">
                   <HeroFragment profile={profile} />
                 </section>

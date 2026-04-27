@@ -1,5 +1,5 @@
 import type { NavSectionId } from "@/lib/sections";
-import type { ProfileSocialLink } from "@/types/sanity";
+import type { ProfileSocialLink, Project } from "@/types/sanity";
 
 export interface NavigationSocialLink {
   kind: "github" | "linkedin" | "email";
@@ -152,4 +152,11 @@ export const scrollToSection = ({ id, reducedMotion }: ScrollToSectionOptions): 
   }
 
   return true;
+};
+
+export const getProjectUrl = (project: Project): string => {
+  if (project.micrositePath) {
+    return project.micrositePath;
+  }
+  return project.externalLink || "#";
 };

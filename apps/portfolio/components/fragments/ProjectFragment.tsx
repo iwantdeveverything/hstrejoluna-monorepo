@@ -3,12 +3,14 @@
 import React from "react";
 import { m } from "framer-motion";
 import Image from "next/image";
-import Link from "next/link";
+import { Link as LocalizedLink } from "@/i18n/navigation";
 import { Project } from "@/types/sanity";
 import { urlFor } from "@/lib/sanity";
 import { GlitchText } from "@hstrejoluna/ui";
 import { TelemetryHUD } from "@hstrejoluna/ui";
 import { blockToPlainText } from "@/lib/utils";
+import { useTranslations } from "next-intl";
+import { getProjectUrl } from "@/lib/navigation";
 
 interface ProjectFragmentProps {
   project: Project;
@@ -20,10 +22,8 @@ interface ProjectFragmentProps {
  * Displays a single project as an asymmetric cinematic fragment with HUD data.
  */
 export const ProjectFragment = ({ project, index }: ProjectFragmentProps) => {
-  const getProjectUrl = () => {
-    if (project.micrositePath) return project.micrositePath;
-    return project.externalLink || "#";
-  };
+  const tFragments = useTranslations("fragments.projects");
+  const tProject = useTranslations("fragments.project");
 
   return (
     <section className="stream-fragment flex items-center justify-center p-6 md:p-24 relative overflow-hidden bg-background">
@@ -53,16 +53,16 @@ export const ProjectFragment = ({ project, index }: ProjectFragmentProps) => {
             </h2>
 
             <div className="text-white/30 text-base md:text-lg font-light leading-relaxed max-w-md mb-12 border-l-2 border-primary/10 pl-6">
-              {blockToPlainText(project.description) || 'DATA_EXTRACT: Classified project documentation pending decryption.'}
+              {blockToPlainText(project.description) || tFragments("noDescription")}
             </div>
 
-            <Link 
-              href={getProjectUrl()} 
+            <LocalizedLink 
+              href={getProjectUrl(project)} 
               target={project.externalLink ? "_blank" : "_self"}
               className="group inline-flex items-center gap-4 md:gap-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-4"
             >
               <span className="font-mono text-[10px] md:text-xs tracking-[0.3em] md:tracking-[0.4em] uppercase text-primary border-b border-primary/20 pb-2 group-hover:border-primary group-hover:text-white transition-all duration-300">
-                [EXEC_UPLINK_PROJ]
+                {tProject("uplink")}
               </span>
               <m.span 
                 className="text-primary text-2xl"
@@ -71,7 +71,7 @@ export const ProjectFragment = ({ project, index }: ProjectFragmentProps) => {
               >
                 →
               </m.span>
-            </Link>
+            </LocalizedLink>
           </m.div>
         </div>
 

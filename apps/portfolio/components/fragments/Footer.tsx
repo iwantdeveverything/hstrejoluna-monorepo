@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { Copyleft } from "lucide-react";
 import { clearConsentState } from "@hstrejoluna/compliance";
 import { useTranslations } from "next-intl";

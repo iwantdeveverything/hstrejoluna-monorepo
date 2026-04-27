@@ -1,6 +1,42 @@
 {
   "common": {
-    "skipToContent": "Ir al contenido principal"
+    "skipToContent": "Ir al contenido principal",
+    "present": "PRESENTE",
+    "deployed": "DESPLEGADO"
+  },
+  "fragments": {
+    "certificates": {
+      "dateUnavailable": "FECHA_NO_DISPONIBLE",
+      "streamEmpty": "FLUJO_CERTIFICADOS: VACÍO",
+      "noCertificates": "Aún no hay certificados sincronizados. Inicia la sincronización y las últimas credenciales de LinkedIn aparecerán aquí.",
+      "issuerUnavailable": "Emisor no disponible",
+      "issued": "EMITIDO",
+      "viewCredential": "Ver Credencial"
+    },
+    "portfolioGrid": {
+      "status": "Disponible para nuevos desafíos",
+      "about": "Sobre mí",
+  ...
+      "latestWork": "Último Trabajo",
+      "exploreProject": "Explorar Proyecto",
+      "caseStudy": "CASO DE ESTUDIO"
+    },
+    "projects": {
+      "clickToExpand": "[CLIC_PARA_EXPANDIR]",
+      "liveDeployment": "DESPLIEGUE EN VIVO",
+      "noDescription": "EXTRACCIÓN_DATOS: Documentación de proyecto clasificada pendiente de descifrado."
+    },
+    "experience": {
+      "noDescription": "[NO_SE_PROPORCIONÓ_DESCRIPCIÓN]",
+      "present": "PRESENTE",
+      "stable": "ESTABLE",
+      "logEntry": "[ENTRADA_REGISTRO_DESCIFRADA]",
+      "noLogEntry": "ANÁLISIS_SECTORIAL: Entrada de registro pendiente de autorización de descifrado.",
+      "chronoLogSync": "ESTADO_SINCRONIZACIÓN_CRONO_LOG: 100%_ESTABLE"
+    },
+    "project": {
+      "uplink": "[EXEC_ENLACE_PROY]"
+    }
   },
   "hero": {
     "headline": "Arquitectura de ecosistemas de latencia cero y vacíos digitales inmersivos.",
@@ -27,6 +63,7 @@
     "manageCookies": "Gestionar Cookies"
   },
   "cookie": {
+    "bannerLabel": "Consentimiento de Cookies",
     "message": "Usamos cookies para asegurar la mejor experiencia. Respetamos las señales de control global de privacidad.",
     "accept": "Aceptar",
     "reject": "Rechazar",
@@ -38,6 +75,7 @@
     "description": "Portfolio de {name} — Arquitecto de Software Senior especializado en arquitectura limpia, ingeniería de rendimiento y experiencias digitales inmersivas."
   },
   "brand": {
+    "fullName": "Sebastián Trejo",
     "systemOverride": "SYSTEM_OVERRIDE",
     "systemReady": "[SYSTEM_READY]: INITIALIZING_NEURAL_UPLINK",
     "uplink": "UPLINK_STATUS: OPTIMAL",

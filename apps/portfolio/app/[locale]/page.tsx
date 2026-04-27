@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { cache } from "react";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { normalizeSocialLinks } from "@/lib/navigation";
 import { client } from "@/lib/sanity";
 import {
@@ -20,22 +21,25 @@ const skillsQuery = '*[_type == "skill"] | order(proficiency desc)';
 const experiencesQuery = '*[_type == "experience"] | order(startDate desc)';
 const certificatesQuery =
   '*[_type == "certificate"] | order(issueDate desc, _createdAt desc)';
-const defaultHeadline =
-  "Cinematic Portfolio of a Senior Frontend Engineer specializing in Scalable Ecosystems.";
 const defaultName = "Sebastián Trejo";
 const getProfile = cache(() => client.fetch<Profile | null>(profileQuery));
 
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "seo" });
   const profile = await getProfile();
   const resolvedName = profile?.name ?? defaultName;
-  const resolvedHeadline = profile?.headline ?? defaultHeadline;
 
   return {
-    title: `${resolvedName} | Senior Software Architect`,
-    description: resolvedHeadline,
+    title: t("title", { name: resolvedName }),
+    description: t("description", { name: resolvedName }),
     openGraph: {
-      title: `${resolvedName} | Obsidian Command Portfolio`,
-      description: resolvedHeadline,
+      title: t("ogTitle", { name: resolvedName }),
+      description: t("description", { name: resolvedName }),
       type: "website",
       images: [
         {
@@ -49,12 +53,26 @@ export async function generateMetadata(): Promise<Metadata> {
     twitter: {
       card: "summary_large_image",
       title: resolvedName,
-      description: resolvedHeadline,
+      description: t("description", { name: resolvedName }),
+    },
+    alternates: {
+      canonical: `/${locale}`,
+      languages: {
+        en: "/en",
+        es: "/es",
+      },
     },
   };
 }
 
-export default async function PortfolioPage() {
+export default async function PortfolioPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+
   const [profile, projects, skills, experiences, certificates] =
     await Promise.all([
       getProfile(),
@@ -76,10 +94,7 @@ export default async function PortfolioPage() {
   };
 
   return (
-    <main
-      id="main-content"
-      className="min-h-screen bg-void text-white selection:bg-ember selection:text-void"
-    >
+    <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -92,6 +107,6 @@ export default async function PortfolioPage() {
         experiences={experiences}
         certificates={certificates}
       />
-    </main>
+    </>
   );
 }
