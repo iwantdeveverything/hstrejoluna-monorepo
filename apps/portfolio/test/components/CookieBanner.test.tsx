@@ -1,22 +1,38 @@
-import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import CookieBanner from '../../components/fragments/CookieBanner';
-import { useCookieConsent } from '@hstrejoluna/compliance';
+import React from "react";
+import { render, screen, fireEvent } from "@testing-library/react";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import CookieBanner from "../../components/fragments/CookieBanner";
+import { useCookieConsent } from "@hstrejoluna/compliance";
+
+vi.mock("next-intl", () => ({
+  useTranslations: (namespace: string) => (key: string) => {
+    const messages: Record<string, Record<string, string>> = {
+      cookie: {
+        message:
+          "We use cookies to ensure you get the best experience. We respect global privacy control signals.",
+        privacyLink: "Read our Privacy Policy",
+        reject: "Reject",
+        accept: "Accept",
+      },
+    };
+
+    return messages[namespace]?.[key] ?? key;
+  },
+}));
 
 // Mock the hook
-vi.mock('@hstrejoluna/compliance', () => ({
-  useCookieConsent: vi.fn()
+vi.mock("@hstrejoluna/compliance", () => ({
+  useCookieConsent: vi.fn(),
 }));
 
 const mockUseCookieConsent = vi.mocked(useCookieConsent);
 
-describe('CookieBanner Component', () => {
+describe("CookieBanner Component", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it('does not render if shouldShowBanner is false', () => {
+  it("does not render if shouldShowBanner is false", () => {
     mockUseCookieConsent.mockReturnValue({
       shouldShowBanner: false,
       acceptCookies: vi.fn(),
@@ -24,14 +40,14 @@ describe('CookieBanner Component', () => {
       acceptAll: vi.fn(),
       rejectAll: vi.fn(),
       consentState: { necessary: true, analytics: false, marketing: false },
-      isGpcActive: false
+      isGpcActive: false,
     });
 
     const { container } = render(<CookieBanner />);
     expect(container.firstChild).toBeNull();
   });
 
-  it('renders correctly when shouldShowBanner is true, includes correct ARIA attributes', () => {
+  it("renders correctly when shouldShowBanner is true, includes correct ARIA attributes", () => {
     mockUseCookieConsent.mockReturnValue({
       shouldShowBanner: true,
       acceptCookies: vi.fn(),
@@ -39,16 +55,18 @@ describe('CookieBanner Component', () => {
       acceptAll: vi.fn(),
       rejectAll: vi.fn(),
       consentState: { necessary: true, analytics: false, marketing: false },
-      isGpcActive: false
+      isGpcActive: false,
     });
 
     render(<CookieBanner />);
-    
-    const banner = screen.getByRole('complementary', { name: /Cookie Consent/i });
+
+    const banner = screen.getByRole("complementary", {
+      name: /Cookie Consent/i,
+    });
     expect(banner).toBeInTheDocument();
   });
 
-  it('calls acceptCookies when the user clicks the Accept button', () => {
+  it("calls acceptCookies when the user clicks the Accept button", () => {
     const acceptCookiesMock = vi.fn();
     mockUseCookieConsent.mockReturnValue({
       shouldShowBanner: true,
@@ -57,12 +75,12 @@ describe('CookieBanner Component', () => {
       acceptAll: vi.fn(),
       rejectAll: vi.fn(),
       consentState: { necessary: true, analytics: false, marketing: false },
-      isGpcActive: false
+      isGpcActive: false,
     });
 
     render(<CookieBanner />);
-    
-    const acceptButton = screen.getByRole('button', { name: /Accept/i });
+
+    const acceptButton = screen.getByRole("button", { name: /Accept/i });
     fireEvent.click(acceptButton);
     expect(acceptCookiesMock).toHaveBeenCalledTimes(1);
   });

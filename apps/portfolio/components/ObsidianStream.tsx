@@ -19,9 +19,17 @@ import { CertificatesOverview } from "./fragments/CertificatesOverview";
 import { SectionDock } from "./ui/SectionDock";
 import { CommandNav } from "./ui/CommandNav";
 import { BootSequence } from "@hstrejoluna/ui";
-import { motion, useScroll, useTransform, AnimatePresence, LazyMotion, domAnimation } from "framer-motion";
+import {
+  motion,
+  useScroll,
+  useTransform,
+  AnimatePresence,
+  LazyMotion,
+  domAnimation,
+} from "framer-motion";
 import { navSections, streamSectionIds } from "@/lib/sections";
 import type { NavSectionId, StreamSectionId } from "@/lib/sections";
+import { useTranslations } from "next-intl";
 
 interface ObsidianStreamProps {
   profile: Profile | null;
@@ -51,7 +59,10 @@ const StreamSection = ({
   <section id={id} className={sectionClassName}>
     <div className={wrapperClassName}>
       <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tighter mb-12 italic text-on_surface border-b border-surface_container_highest pb-4">
-        {title} <span className="text-primary text-sm tracking-widest align-top ml-4">{countLabel}</span>
+        {title}{" "}
+        <span className="text-primary text-sm tracking-widest align-top ml-4">
+          {countLabel}
+        </span>
       </h2>
       {children}
     </div>
@@ -65,11 +76,13 @@ export const ObsidianStream = ({
   experiences,
   certificates,
 }: ObsidianStreamProps) => {
+  const tBrand = useTranslations("brand");
+  const tNav = useTranslations("nav");
   const skipBootSequence = process.env.NEXT_PUBLIC_SKIP_BOOT_SEQUENCE === "1";
   const [isBooted, setIsBooted] = useState(skipBootSequence);
   const isReducedMotion = useReducedMotion();
   const isNavigationHidden = useAutoHideNavigation(isBooted);
-  
+
   const activeId = useActiveSection<StreamSectionId>(streamSectionIds, 0.4);
 
   const { scrollYProgress } = useScroll();
@@ -79,9 +92,9 @@ export const ObsidianStream = ({
   const fullSectionWrapperClass = `${sectionBaseWrapperClass} pb-32`;
 
   const backgroundY = useTransform(
-    scrollYProgress, 
-    [0, 1], 
-    isReducedMotion ? ["0%", "0%"] : ["5%", "-30%"]
+    scrollYProgress,
+    [0, 1],
+    isReducedMotion ? ["0%", "0%"] : ["5%", "-30%"],
   );
 
   useEffect(() => {
@@ -101,14 +114,14 @@ export const ObsidianStream = ({
         {!isBooted && <BootSequence onComplete={() => setIsBooted(true)} />}
       </AnimatePresence>
 
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: isBooted ? 1 : 0 }}
         transition={{ duration: 0.5 }}
       >
         {isBooted && (
           <>
-            <motion.div 
+            <motion.div
               style={{ y: backgroundY }}
               aria-hidden="true"
               className="fixed inset-0 z-0 flex flex-col justify-center items-center pointer-events-none select-none opacity-5 md:opacity-10"
@@ -123,8 +136,8 @@ export const ObsidianStream = ({
               activeId={activeId}
               hideOnScroll={isNavigationHidden}
             />
-            <CommandNav 
-              activeId={activeId} 
+            <CommandNav
+              activeId={activeId}
               counts={{
                 projects: projects.length,
                 experience: experiences.length,
@@ -144,7 +157,7 @@ export const ObsidianStream = ({
                   id="projects"
                   sectionClassName="stream-section bg-surface_container_lowest"
                   wrapperClassName={compactSectionWrapperClass}
-                  title="PROJECTS"
+                  title={tNav("projects").toUpperCase()}
                   countLabel={`[0${projects.length}]`}
                 >
                   <ProjectsOverview projects={projects} />
@@ -154,7 +167,7 @@ export const ObsidianStream = ({
                   id="experience"
                   sectionClassName="stream-section relative bg-background"
                   wrapperClassName={compactSectionWrapperClass}
-                  title="EXPERIENCE_LOG"
+                  title={tBrand("experienceLog")}
                   countLabel={`[0${experiences.length}]`}
                 >
                   <ExperienceOverview experiences={experiences} />
@@ -164,7 +177,7 @@ export const ObsidianStream = ({
                   id="skills"
                   sectionClassName="stream-section bg-surface_container_lowest"
                   wrapperClassName={fullSectionWrapperClass}
-                  title="NEURAL_MAP"
+                  title={tBrand("neuralMap")}
                   countLabel={`[ACTIVE_NODES: ${skills.length}]`}
                 >
                   <SkillsOverview skills={skills} />
@@ -174,7 +187,7 @@ export const ObsidianStream = ({
                   id="certificates"
                   sectionClassName="stream-section relative bg-background"
                   wrapperClassName={fullSectionWrapperClass}
-                  title="CERTIFICATES"
+                  title={tNav("certificates").toUpperCase()}
                   countLabel={`[0${certificates.length}]`}
                 >
                   <CertificatesOverview certificates={certificates} />
@@ -182,10 +195,13 @@ export const ObsidianStream = ({
               </main>
             </LazyMotion>
 
-            <div aria-hidden="true" className="fixed top-0 left-0 w-full h-[2px] z-[100] bg-white/5 pointer-events-none">
-              <motion.div 
+            <div
+              aria-hidden="true"
+              className="fixed top-0 left-0 w-full h-[2px] z-[100] bg-white/5 pointer-events-none"
+            >
+              <motion.div
                 className="h-full bg-primary origin-left"
-                style={{ scaleX: scrollYProgress }} 
+                style={{ scaleX: scrollYProgress }}
               />
             </div>
           </>
