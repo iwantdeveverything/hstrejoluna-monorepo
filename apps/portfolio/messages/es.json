@@ -1,0 +1,166 @@
+{
+  "common": {
+    "fullName": "Sebastián Trejo",
+    "skipToContent": "Ir al contenido principal",
+    "present": "PRESENTE",
+    "deployed": "DESPLEGADO"
+  },
+  "fragments": {
+    "certificates": {
+      "dateUnavailable": "FECHA_NO_DISPONIBLE",
+      "streamEmpty": "FLUJO_CERTIFICADOS: VACÍO",
+      "noCertificates": "Aún no hay certificados sincronizados. Inicia la sincronización y las últimas credenciales de LinkedIn aparecerán aquí.",
+      "issuerUnavailable": "Emisor no disponible",
+      "issued": "EMITIDO",
+      "viewCredential": "Ver Credencial"
+    },
+    "portfolioGrid": {
+      "activeNodes": "NODOS_ACTIVOS",
+      "status": "Disponible para nuevos desafíos",
+      "about": "Sobre mí",
+      "latestWork": "Último Trabajo",
+      "exploreProject": "Explorar Proyecto",
+      "caseStudy": "CASO DE ESTUDIO"
+    },
+    "projects": {
+      "clickToExpand": "[CLIC_PARA_EXPANDIR]",
+      "liveDeployment": "DESPLIEGUE EN VIVO",
+      "noDescription": "EXTRACCIÓN_DATOS: Documentación de proyecto clasificada pendiente de descifrado."
+    },
+    "experience": {
+      "noDescription": "[NO_SE_PROPORCIONÓ_DESCRIPCIÓN]",
+      "present": "PRESENTE",
+      "stable": "ESTABLE",
+      "logEntry": "[ENTRADA_REGISTRO_DESCIFRADA]",
+      "noLogEntry": "ANÁLISIS_SECTORIAL: Entrada de registro pendiente de autorización de descifrado.",
+      "chronoLogSync": "ESTADO_SINCRONIZACIÓN_CRONO_LOG: 100%_ESTABLE"
+    },
+    "project": {
+      "uplink": "[EXEC_ENLACE_PROY]"
+    }
+  },
+  "hero": {
+    "headline": "Arquitectura de ecosistemas de latencia cero y vacíos digitales inmersivos.",
+    "subheadline": "Transformo restricciones complejas en arte funcional, cinético y puro.",
+    "cta": "INICIAR SECUENCIA",
+    "titleLine1": "SYSTEM",
+    "titleLine2": "ARCHITECT",
+    "telemetryLatency": "LATENCIA: 0.00MS",
+    "telemetryFramework": "FRAMEWORK: KINETIC_V2",
+    "coords": "COORDS: 0.00.00° ALPHA",
+    "os": "OS: THE_VOID"
+  },
+  "nav": {
+    "projects": "Proyectos",
+    "experience": "Experiencia",
+    "skills": "Habilidades",
+    "certificates": "Certificados"
+  },
+  "footer": {
+    "freeFork": "Libre para forkear.",
+    "privacyPolicy": "Política de Privacidad",
+    "cookiePolicy": "Política de Cookies",
+    "legalNotice": "Aviso Legal",
+    "manageCookies": "Gestionar Cookies"
+  },
+  "cookie": {
+    "bannerLabel": "Consentimiento de Cookies",
+    "message": "Usamos cookies para asegurar la mejor experiencia. Respetamos las señales de control global de privacidad.",
+    "accept": "Aceptar",
+    "reject": "Rechazar",
+    "privacyLink": "Leer nuestra Política de Privacidad"
+  },
+  "seo": {
+    "title": "{name} | Arquitecto de Software Senior",
+    "ogTitle": "{name} | Portfolio Obsidian Command",
+    "description": "Portfolio de {name} — Arquitecto de Software Senior especializado en arquitectura limpia, ingeniería de rendimiento y experiencias digitales inmersivas."
+  },
+  "brand": {
+    "systemOverride": "SYSTEM_OVERRIDE",
+    "systemReady": "[SYSTEM_READY]: INITIALIZING_NEURAL_UPLINK",
+    "uplink": "UPLINK_STATUS: OPTIMAL",
+    "descent": "DESCENT",
+    "scrollToExplore": "SCROLL_TO_EXPLORE",
+    "neuralMap": "NEURAL_MAP",
+    "experienceLog": "EXPERIENCE_LOG",
+    "initializing": "INITIALIZING...",
+    "systemOnline": "SYSTEM ONLINE"
+  },
+  "legal": {
+    "lastUpdatedPrefix": "Última actualización:",
+    "contactHeading": "Información de contacto",
+    "contactDescription": "Si tenés preguntas o inquietudes sobre esta política o nuestras prácticas, contactanos en:",
+    "privacyPolicy": {
+      "metaTitle": "Política de Privacidad | Dark Kinetic",
+      "metaDescription": "Política de privacidad e información de cumplimiento GDPR para Dark Kinetic.",
+      "title": "Política de Privacidad",
+      "lastUpdated": "Abril 2026",
+      "sections": {
+        "introduction": {
+          "heading": "1. Introducción",
+          "body": "Bienvenido al Portfolio Dark Kinetic. Respetamos tu privacidad y estamos comprometidos con la protección de tus datos personales. Esta política de privacidad te informará sobre cómo cuidamos tus datos personales cuando visitás nuestro sitio web y te contará sobre tus derechos de privacidad."
+        },
+        "dataCollection": {
+          "heading": "2. Datos que recopilamos",
+          "body": "Operamos bajo un principio estricto de minimización de datos. Solo recopilamos telemetría anónima básica (si se consiente) para entender el rendimiento de carga de página. No recopilamos información personal identificable (PII) a través de este portfolio front-end."
+        },
+        "gpc": {
+          "heading": "3. Global Privacy Control (GPC)",
+          "body": "Respetamos nativamente la señal de Global Privacy Control. Si tu navegador soporta e inyecta navigator.globalPrivacyControl, te excluimos automáticamente de todos los scripts y cookies no esenciales sin mostrarte un banner disruptivo."
+        }
+      },
+      "intro": "Bienvenido al Portfolio Dark Kinetic. Respetamos tu privacidad y estamos comprometidos con la protección de tus datos personales. Esta política de privacidad te informará sobre cómo cuidamos tus datos personales cuando visitás nuestro sitio web y te contará sobre tus derechos de privacidad.",
+      "dataCollection": "Operamos bajo un principio estricto de minimización de datos. Solo recopilamos telemetría anónima básica (si se consiente) para entender el rendimiento de carga de página. No recopilamos información personal identificable (PII) a través de este portfolio front-end.",
+      "gpc": "Respetamos nativamente la señal de Global Privacy Control. Si tu navegador soporta e inyecta navigator.globalPrivacyControl, te excluimos automáticamente de todos los scripts y cookies no esenciales sin mostrarte un banner disruptivo.",
+      "_meta": {
+        "needsReview": true
+      }
+    },
+    "cookiePolicy": {
+      "metaTitle": "Política de Cookies | Dark Kinetic",
+      "metaDescription": "Política de cookies e información de rastreo para Dark Kinetic.",
+      "title": "Política de Cookies",
+      "lastUpdated": "Abril 2026",
+      "sections": {
+        "whatAreCookies": {
+          "heading": "1. ¿Qué son las cookies?",
+          "body": "Las cookies son pequeños archivos de texto que se guardan en tu computadora o dispositivo móvil cuando visitás un sitio web. Se usan ampliamente para que los sitios funcionen, o funcionen de forma más eficiente, y para brindar información a los propietarios del sitio."
+        },
+        "howWeUseCookies": {
+          "heading": "2. Cómo usamos las cookies",
+          "body": "Usamos un único elemento consent_preferences en tu almacenamiento local para recordar tu decisión sobre analíticas. No usamos cookies de marketing de terceros, rastreadores cross-site ni CMP invasivos. Nuestra filosofía es máximo rendimiento y máxima privacidad."
+        },
+        "managingPreferences": {
+          "heading": "3. Gestión de tus preferencias",
+          "body": "Si habilitaste Global Privacy Control (GPC) en tu navegador, tus preferencias ya quedan estrictamente gestionadas por el navegador y respetadas por nuestro sitio. Si aceptaste nuestro banner, podés limpiar el almacenamiento local del navegador para reiniciar el estado de consentimiento."
+        }
+      },
+      "_meta": {
+        "needsReview": true
+      }
+    },
+    "legalNotice": {
+      "metaTitle": "Aviso Legal | Dark Kinetic",
+      "metaDescription": "Aviso legal e información de titularidad de Dark Kinetic.",
+      "title": "Aviso Legal",
+      "lastUpdated": "Abril 2026",
+      "sections": {
+        "ownership": {
+          "heading": "1. Titularidad",
+          "body": "Este portfolio y sus micrositios son propiedad y están operados por Héctor Sebastián Trejo Luna. El proyecto está orientado a exhibición profesional y fines educativos."
+        },
+        "intellectualProperty": {
+          "heading": "2. Propiedad intelectual",
+          "body": "El código de este proyecto es open-source y está disponible en GitHub. Sin embargo, los datos personales, assets de marca y contenido específico dentro de la identidad Dark Kinetic están reservados para representación profesional."
+        },
+        "disclaimers": {
+          "heading": "3. Descargos",
+          "body": "La información provista en este sitio es solo para fines informativos generales. Aunque buscamos precisión, no otorgamos garantías sobre la integridad o confiabilidad de la información."
+        }
+      },
+      "_meta": {
+        "needsReview": true
+      }
+    }
+  }
+}

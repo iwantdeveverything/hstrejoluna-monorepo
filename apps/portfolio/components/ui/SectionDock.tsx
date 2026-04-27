@@ -3,7 +3,12 @@
 import { SectionTimeline } from "@hstrejoluna/ui";
 import { useReducedMotion } from "@hstrejoluna/ui";
 import { scrollToSection } from "@/lib/navigation";
-import type { NavSectionDefinition, NavSectionId, StreamSectionId } from "@/lib/sections";
+import type {
+  NavSectionDefinition,
+  NavSectionId,
+  StreamSectionId,
+} from "@/lib/sections";
+import { useTranslations } from "next-intl";
 
 interface SectionDockProps {
   sections: readonly NavSectionDefinition[];
@@ -16,10 +21,14 @@ export const SectionDock = ({
   activeId,
   hideOnScroll = false,
 }: SectionDockProps) => {
+  const tBrand = useTranslations("brand");
   const isReducedMotion = useReducedMotion();
 
   const handleSectionNavigation = (sectionId: string) => {
-    scrollToSection({ id: sectionId as NavSectionId, reducedMotion: isReducedMotion });
+    scrollToSection({
+      id: sectionId as NavSectionId,
+      reducedMotion: isReducedMotion,
+    });
   };
 
   return (
@@ -28,6 +37,7 @@ export const SectionDock = ({
       activeId={activeId}
       hideOnScroll={hideOnScroll}
       onSectionNavigate={handleSectionNavigation}
+      scrollLabel={tBrand("scrollToExplore")}
     />
   );
 };

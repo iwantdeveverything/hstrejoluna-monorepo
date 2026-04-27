@@ -1,10 +1,12 @@
 "use client";
 
 import { motion, Variants } from "framer-motion";
-import Link from "next/link";
-import { normalizeSocialLinks } from "@/lib/navigation";
+import { Link as LocalizedLink } from "@/i18n/navigation";
+import { normalizeSocialLinks, getProjectUrl } from "@/lib/navigation";
 import { PortableTextBlock, Profile, Project, Skill } from "@/types/sanity";
 import { SkillsGrid } from "@/components/SkillsGrid";
+import { useTranslations } from "next-intl";
+import { blockToPlainText } from "@/lib/utils";
 
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
@@ -21,24 +23,6 @@ const itemVariants: Variants = {
     opacity: 1,
     transition: { type: "spring", stiffness: 100, damping: 12 }
   },
-};
-
-const getProjectUrl = (project: Project) => {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "";
-  if (project.micrositePath) return `${baseUrl}${project.micrositePath}`;
-  return project.externalLink || "#";
-};
-
-const blockContentToText = (blocks: string | PortableTextBlock[] | undefined): string => {
-  if (!blocks) return "";
-  if (typeof blocks === "string") return blocks;
-
-  return blocks
-    .map((block) => {
-      if (block._type !== "block" || !block.children) return "";
-      return block.children.map((child) => child.text).join("");
-    })
-    .join("\n");
 };
 
 interface PortfolioGridProps {
@@ -62,9 +46,11 @@ const buildNameParts = (name: string) => {
 };
 
 export const PortfolioGrid = ({ profile, projects, skills }: PortfolioGridProps) => {
+  const t = useTranslations("fragments.portfolioGrid");
+  const tCommon = useTranslations("common");
   const featuredProject = projects.find(p => p.isFeatured);
   const otherProjects = projects.filter(p => !p.isFeatured);
-  const nameParts = buildNameParts(profile?.name ?? "SEBASTIÁN TREJO");
+  const nameParts = buildNameParts(profile?.name ?? tCommon("fullName"));
   const socialLinks = normalizeSocialLinks(profile?.socials);
 
   return (
@@ -76,7 +62,7 @@ export const PortfolioGrid = ({ profile, projects, skills }: PortfolioGridProps)
     >
       <motion.header variants={itemVariants} className="mb-20 space-y-4">
         <div className="inline-block px-4 py-1.5 rounded-none bg-primary/10 border border-outline_variant/10 text-primary font-mono text-label-sm uppercase tracking-widest mb-4">
-          Available for new challenges
+          {t("status")}
         </div>
         <h1 className="text-6xl md:text-9xl font-black tracking-tighter leading-[0.9] text-white">
           {nameParts.map(({ word, key }, i) => (
@@ -97,7 +83,7 @@ export const PortfolioGrid = ({ profile, projects, skills }: PortfolioGridProps)
         >
           <div className="absolute top-0 right-0 w-96 h-96 bg-brand-salmon/10 rounded-full blur-[100px] -mr-32 -mt-32 group-hover:bg-brand-salmon/20 transition-colors duration-700" />
           <div className="relative z-10">
-            <h2 className="text-3xl font-bold text-white mb-6">About</h2>
+            <h2 className="text-3xl font-bold text-white mb-6">{t("about")}</h2>
             <p className="text-xl text-gray-300 leading-relaxed font-light">
               {profile?.bio || "Coding at business: Elevating ecosystems with impeccable software architecture."}
             </p>
@@ -125,20 +111,20 @@ export const PortfolioGrid = ({ profile, projects, skills }: PortfolioGridProps)
           >
             <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity" />
             <div className="relative z-10">
-              <span className="text-on_surface_variant text-label-sm font-mono uppercase tracking-widest mb-2 block">Latest Work</span>
+              <span className="text-on_surface_variant text-label-sm font-mono uppercase tracking-widest mb-2 block">{t("latestWork")}</span>
               <h3 className="text-4xl md:text-5xl font-black text-on_surface tracking-tighter leading-none mb-6">
                 {featuredProject.title}
               </h3>
               <p className="text-on_surface/80 text-lg font-medium max-w-xs">
-                {blockContentToText(featuredProject.description)}
+                {blockToPlainText(featuredProject.description)}
               </p>
             </div>
-            <Link
+            <LocalizedLink
               href={getProjectUrl(featuredProject)}
               className="relative z-10 w-fit px-8 py-4 bg-gradient-to-r from-primary to-primary_container text-on_primary shadow-[0_0_20px_var(--color-primary)] rounded-none font-bold hover:shadow-[0_0_40px_var(--color-primary)] transition-shadow"
             >
-              Explore Project
-            </Link>
+              {t("exploreProject")}
+            </LocalizedLink>
           </motion.div>
         )}
 
@@ -156,15 +142,16 @@ export const PortfolioGrid = ({ profile, projects, skills }: PortfolioGridProps)
                 {project.title}
               </h3>
               <p className="text-gray-400 text-lg font-light leading-snug">
-                {blockContentToText(project.description)}
+                {blockToPlainText(project.description)}
               </p>
             </div>
-            <Link
+            <LocalizedLink
               href={getProjectUrl(project)}
               className="mt-8 text-white font-bold inline-flex items-center gap-2 hover:gap-4 transition-all"
             >
-              CASE STUDY <span className="text-brand-salmon">→</span>
-            </Link>
+              {t("caseStudy")} <span className="text-brand-salmon">→</span>
+            </LocalizedLink>
+
           </motion.div>
         ))}
 

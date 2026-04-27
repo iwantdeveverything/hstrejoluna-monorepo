@@ -7,12 +7,15 @@ import { type Project } from "@/types/sanity";
 import { urlFor } from "@/lib/sanity";
 import { HudChip, GlowBorder, MicroInteraction } from "@hstrejoluna/ui";
 import { ExternalLink, Activity } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface ProjectsOverviewProps {
   projects: Project[];
 }
 
 export const ProjectsOverview = ({ projects }: ProjectsOverviewProps) => {
+  const tCommon = useTranslations("common");
+  const tFragments = useTranslations("fragments.projects");
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const toggleProject = (id: string) => {
@@ -24,7 +27,7 @@ export const ProjectsOverview = ({ projects }: ProjectsOverviewProps) => {
       return description;
     }
 
-    return "DATA_EXTRACT: Classified";
+    return tFragments("noDescription");
   };
 
   return (
@@ -41,12 +44,8 @@ export const ProjectsOverview = ({ projects }: ProjectsOverviewProps) => {
                 expandedId === project._id ? "col-span-1 md:col-span-2 lg:col-span-3" : ""
               }`}
             >
-              <button
-                type="button"
-                onClick={() => toggleProject(project._id)}
-                className="cursor-pointer relative aspect-video overflow-hidden bg-surface_container_low text-left w-full"
-                aria-expanded={expandedId === project._id}
-                aria-controls={`project-panel-${project._id}`}
+              <div
+                className="relative aspect-video overflow-hidden bg-surface_container_low text-left w-full"
               >
                 {project.image ? (
                   <>
@@ -63,20 +62,34 @@ export const ProjectsOverview = ({ projects }: ProjectsOverviewProps) => {
                   <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-br from-surface_container_low to-void opacity-50" />
                 )}
                 
-                <div className="absolute inset-0 p-6 flex flex-col justify-end pointer-events-none">
-                  <h3 className="text-xl md:text-2xl font-bold tracking-tight text-on_surface uppercase mb-2">
+                <div className="absolute inset-0 p-6 flex flex-col justify-end">
+                  <h3 className="text-xl md:text-2xl font-bold tracking-tight text-on_surface uppercase mb-2 pointer-events-none">
                     {project.title}
                   </h3>
                   <div className="flex justify-between items-end">
-                    <span className="font-mono text-xs text-primary bg-primary/10 px-2 py-1 backdrop-blur-sm border border-primary/20">
-                      DEPLOYED
+                    <span className="font-mono text-xs text-primary bg-primary/10 px-2 py-1 backdrop-blur-sm border border-primary/20 pointer-events-none">
+                      {tCommon("deployed")}
                     </span>
-                    <span className="text-primary opacity-0 group-hover:opacity-100 transition-opacity font-mono text-xs animate-pulse">
-                      [CLICK_TO_EXPAND]
-                    </span>
+                    <button
+                      type="button"
+                      onClick={() => toggleProject(project._id)}
+                      className="cursor-pointer text-primary opacity-0 group-hover:opacity-100 transition-opacity font-mono text-xs animate-pulse focus:opacity-100 focus:outline-none"
+                      aria-expanded={expandedId === project._id}
+                      aria-controls={`project-panel-${project._id}`}
+                    >
+                      {tFragments("clickToExpand")}
+                    </button>
                   </div>
                 </div>
-              </button>
+                {/* Overlay link for the whole area while maintaining accessibility */}
+                <button 
+                  type="button"
+                  className="absolute inset-0 z-0 cursor-pointer focus:outline-none"
+                  onClick={() => toggleProject(project._id)}
+                  aria-hidden="true"
+                  tabIndex={-1}
+                />
+              </div>
 
               <AnimatePresence initial={false}>
                 {expandedId === project._id && (
@@ -105,7 +118,7 @@ export const ProjectsOverview = ({ projects }: ProjectsOverviewProps) => {
                         {(project.externalLink || project.micrositePath) && (
                           <a href={project.externalLink || project.micrositePath || "#"} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-on_surface hover:text-primary transition-colors p-3 border border-surface_container_highest hover:border-primary/50 group">
                             <Activity className="w-4 h-4 text-primary group-hover:animate-pulse" />
-                            <span>LIVE DEPLOYMENT</span>
+                            <span>{tFragments("liveDeployment")}</span>
                             <ExternalLink className="w-3 h-3 ml-auto opacity-50" />
                           </a>
                         )}

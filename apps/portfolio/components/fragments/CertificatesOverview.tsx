@@ -1,5 +1,6 @@
 import { CertificatesPanel } from "@hstrejoluna/ui";
 import type { Certificate } from "@/types/sanity";
+import { useTranslations } from "next-intl";
 
 interface CertificatesOverviewProps {
   certificates: Certificate[];
@@ -8,5 +9,19 @@ interface CertificatesOverviewProps {
 export const CertificatesOverview = ({
   certificates,
 }: CertificatesOverviewProps) => {
-  return <CertificatesPanel certificates={certificates} />;
+  const t = useTranslations("fragments.certificates");
+
+  return (
+    <CertificatesPanel
+      certificates={certificates}
+      labels={{
+        dateUnavailable: t("dateUnavailable"),
+        streamEmpty: t("streamEmpty"),
+        noCertificates: t("noCertificates"),
+        issuerUnavailable: t("issuerUnavailable"),
+        issued: t("issued"),
+        viewCredential: t("viewCredential"),
+      }}
+    />
+  );
 };

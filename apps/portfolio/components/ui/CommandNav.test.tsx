@@ -2,6 +2,13 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import * as navigation from "@/lib/navigation";
 import { CommandNav } from "./CommandNav";
+import { NextIntlClientProvider } from "next-intl";
+import messages from "../../messages/en.json";
+
+// Mock LocaleSwitcher to avoid its own dependencies
+vi.mock("./LocaleSwitcher", () => ({
+  LocaleSwitcher: () => <div data-testid="locale-switcher">LocaleSwitcher</div>,
+}));
 
 vi.mock("@hstrejoluna/ui", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@hstrejoluna/ui")>();
@@ -14,28 +21,32 @@ vi.mock("@hstrejoluna/ui", async (importOriginal) => {
 describe("CommandNav", () => {
   it("renders semantic navigation and marks active section with aria-current", () => {
     render(
-      <CommandNav
-        activeId="projects"
-        counts={{ projects: 4, experience: 2, certificates: 3 }}
-        socials={[{ platform: "github", url: "https://github.com/example" }]}
-      />
+      <NextIntlClientProvider locale="en" messages={messages}>
+        <CommandNav
+          activeId="projects"
+          counts={{ projects: 4, experience: 2, certificates: 3 }}
+          socials={[{ platform: "github", url: "https://github.com/example" }]}
+        />
+      </NextIntlClientProvider>,
     );
 
     expect(
-      screen.getByRole("navigation", { name: /primary section navigation/i })
+      screen.getByRole("navigation", { name: /primary section navigation/i }),
     ).toBeInTheDocument();
     expect(screen.getAllByRole("link", { name: /projects/i })[0]).toHaveAttribute(
       "aria-current",
-      "location"
+      "location",
     );
   });
 
   it("shows fallback text in mobile menu when socials are missing", () => {
     render(
-      <CommandNav
-        activeId="experience"
-        counts={{ projects: 4, experience: 2, certificates: 3 }}
-      />
+      <NextIntlClientProvider locale="en" messages={messages}>
+        <CommandNav
+          activeId="experience"
+          counts={{ projects: 4, experience: 2, certificates: 3 }}
+        />
+      </NextIntlClientProvider>,
     );
 
     fireEvent.click(screen.getByRole("button", { name: /open navigation menu/i }));
@@ -43,24 +54,27 @@ describe("CommandNav", () => {
   });
 
   it("normalizes plaintext email social links and uses smooth section navigation", () => {
-    const scrollSpy = vi
-      .spyOn(navigation, "scrollToSection")
-      .mockReturnValue(true);
+    const scrollSpy = vi.spyOn(navigation, "scrollToSection").mockReturnValue(true);
 
     render(
-      <CommandNav
-        activeId="skills"
-        counts={{ projects: 4, experience: 2, certificates: 3 }}
-        socials={[
-          { platform: "email", email: "dev@example.com", label: "Contact Email" },
-        ]}
-      />
+      <NextIntlClientProvider locale="en" messages={messages}>
+        <CommandNav
+          activeId="skills"
+          counts={{ projects: 4, experience: 2, certificates: 3 }}
+          socials={[
+            {
+              platform: "email",
+              email: "dev@example.com",
+              label: "Contact Email",
+            },
+          ]}
+        />
+      </NextIntlClientProvider>,
     );
 
-    expect(screen.getAllByRole("link", { name: /contact email/i })[0]).toHaveAttribute(
-      "href",
-      "mailto:dev@example.com"
-    );
+    expect(
+      screen.getAllByRole("link", { name: /contact email/i })[0],
+    ).toHaveAttribute("href", "mailto:dev@example.com");
 
     fireEvent.click(screen.getAllByRole("link", { name: /skills/i })[0]);
     expect(scrollSpy).toHaveBeenCalledWith({
@@ -71,15 +85,25 @@ describe("CommandNav", () => {
 
   it("renders all supported social links with safe external semantics", () => {
     render(
-      <CommandNav
-        activeId="projects"
-        counts={{ projects: 4, experience: 2, certificates: 3 }}
-        socials={[
-          { platform: "github", url: "https://github.com/example", label: "GitHub" },
-          { platform: "linkedin", url: "https://linkedin.com/in/example", label: "LinkedIn" },
-          { platform: "email", email: "dev@example.com", label: "Email" },
-        ]}
-      />
+      <NextIntlClientProvider locale="en" messages={messages}>
+        <CommandNav
+          activeId="projects"
+          counts={{ projects: 4, experience: 2, certificates: 3 }}
+          socials={[
+            {
+              platform: "github",
+              url: "https://github.com/example",
+              label: "GitHub",
+            },
+            {
+              platform: "linkedin",
+              url: "https://linkedin.com/in/example",
+              label: "LinkedIn",
+            },
+            { platform: "email", email: "dev@example.com", label: "Email" },
+          ]}
+        />
+      </NextIntlClientProvider>,
     );
 
     const githubLink = screen.getAllByRole("link", { name: /github/i })[0];
@@ -88,7 +112,10 @@ describe("CommandNav", () => {
 
     expect(githubLink).toHaveAttribute("href", "https://github.com/example");
     expect(githubLink).toHaveAttribute("rel", "noopener noreferrer external");
-    expect(linkedinLink).toHaveAttribute("href", "https://linkedin.com/in/example");
+    expect(linkedinLink).toHaveAttribute(
+      "href",
+      "https://linkedin.com/in/example",
+    );
     expect(linkedinLink).toHaveAttribute("rel", "noopener noreferrer external");
     expect(emailLink).toHaveAttribute("href", "mailto:dev@example.com");
     expect(emailLink).not.toHaveAttribute("rel");
@@ -96,13 +123,18 @@ describe("CommandNav", () => {
 
   it("hides the command nav when hideOnScroll is enabled", () => {
     render(
-      <CommandNav
-        activeId="projects"
-        counts={{ projects: 4, experience: 2, certificates: 3 }}
-        hideOnScroll
-      />
+      <NextIntlClientProvider locale="en" messages={messages}>
+        <CommandNav
+          activeId="projects"
+          counts={{ projects: 4, experience: 2, certificates: 3 }}
+          hideOnScroll
+        />
+      </NextIntlClientProvider>,
     );
 
-    expect(screen.getByTestId("command-nav")).toHaveAttribute("data-hidden", "true");
+    expect(screen.getByTestId("command-nav")).toHaveAttribute(
+      "data-hidden",
+      "true",
+    );
   });
 });

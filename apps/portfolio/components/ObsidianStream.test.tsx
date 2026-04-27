@@ -2,6 +2,23 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
+vi.mock("next-intl", () => ({
+  useTranslations: (namespace: string) => (key: string) => {
+    const messages: Record<string, Record<string, string>> = {
+      nav: {
+        projects: "Projects",
+        certificates: "Certificates",
+      },
+      brand: {
+        experienceLog: "EXPERIENCE_LOG",
+        neuralMap: "NEURAL_MAP",
+      },
+    };
+
+    return messages[namespace]?.[key] ?? key;
+  },
+}));
+
 vi.mock("@hstrejoluna/ui", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@hstrejoluna/ui")>();
   return {
@@ -21,8 +38,14 @@ vi.mock("framer-motion", async (importOriginal) => {
     LazyMotion: ({ children }: React.PropsWithChildren) => <>{children}</>,
     motion: {
       ...actual.motion,
-      div: ({ children, style, ...props }: React.PropsWithChildren<Record<string, unknown>>) => (
-        <div {...(props as React.HTMLAttributes<HTMLDivElement>)}>{children}</div>
+      div: ({
+        children,
+        style,
+        ...props
+      }: React.PropsWithChildren<Record<string, unknown>>) => (
+        <div {...(props as React.HTMLAttributes<HTMLDivElement>)}>
+          {children}
+        </div>
       ),
     },
   };
@@ -61,7 +84,14 @@ vi.mock("./ui/CommandNav", () => ({
 import { ObsidianStream } from "./ObsidianStream";
 
 const defaultProps = {
-  profile: { _id: "1", _type: "profile" as const, name: "Test User", headline: "Test", bio: "", socials: [] },
+  profile: {
+    _id: "1",
+    _type: "profile" as const,
+    name: "Test User",
+    headline: "Test",
+    bio: "",
+    socials: [],
+  },
   projects: [],
   skills: [],
   experiences: [],
@@ -87,7 +117,9 @@ describe("ObsidianStream — Decorative Content Isolation", () => {
     const { container } = render(<ObsidianStream {...defaultProps} />);
 
     // The progress bar is a fixed div at the top with bg-white/5
-    const progressBarWrapper = container.querySelector(".fixed.top-0.left-0.w-full");
+    const progressBarWrapper = container.querySelector(
+      ".fixed.top-0.left-0.w-full",
+    );
     expect(progressBarWrapper).toBeInTheDocument();
     expect(progressBarWrapper).toHaveAttribute("aria-hidden", "true");
   });

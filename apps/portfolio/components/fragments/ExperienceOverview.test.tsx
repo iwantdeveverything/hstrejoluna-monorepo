@@ -1,9 +1,13 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { ExperienceOverview } from "./ExperienceOverview";
+import { NextIntlClientProvider } from "next-intl";
+import messages from "../../messages/en.json";
 
 vi.mock("@portabletext/react", () => ({
-  PortableText: ({ value }: { value: unknown }) => <div>{JSON.stringify(value)}</div>,
+  PortableText: ({ value }: { value: unknown }) => (
+    <div>{JSON.stringify(value)}</div>
+  ),
 }));
 
 vi.mock("framer-motion", async (importOriginal) => {
@@ -13,11 +17,21 @@ vi.mock("framer-motion", async (importOriginal) => {
     AnimatePresence: ({ children }: React.PropsWithChildren) => <>{children}</>,
     motion: {
       ...actual.motion,
-      div: ({ children, ...props }: React.PropsWithChildren<Record<string, unknown>>) => (
-        <div {...(props as React.HTMLAttributes<HTMLDivElement>)}>{children}</div>
+      div: ({
+        children,
+        ...props
+      }: React.PropsWithChildren<Record<string, unknown>>) => (
+        <div {...(props as React.HTMLAttributes<HTMLDivElement>)}>
+          {children}
+        </div>
       ),
-      button: ({ children, ...props }: React.PropsWithChildren<Record<string, unknown>>) => (
-        <button {...(props as React.ButtonHTMLAttributes<HTMLButtonElement>)}>{children}</button>
+      button: ({
+        children,
+        ...props
+      }: React.PropsWithChildren<Record<string, unknown>>) => (
+        <button {...(props as React.ButtonHTMLAttributes<HTMLButtonElement>)}>
+          {children}
+        </button>
       ),
     },
   };
@@ -54,33 +68,45 @@ const mockExperiences = [
 
 describe("ExperienceOverview — Semantic Time Markup", () => {
   it("wraps start and end dates in <time> elements with datetime attributes", () => {
-    render(<ExperienceOverview experiences={mockExperiences} />);
+    render(
+      <NextIntlClientProvider locale="en" messages={messages}>
+        <ExperienceOverview experiences={mockExperiences} />
+      </NextIntlClientProvider>,
+    );
 
     const timeElements = document.querySelectorAll("time");
     expect(timeElements.length).toBeGreaterThanOrEqual(2);
 
     // Find the time element for 2022 start date
-    const startTime = Array.from(timeElements).find(el =>
-      el.getAttribute("datetime")?.includes("2022")
+    const startTime = Array.from(timeElements).find((el) =>
+      el.getAttribute("datetime")?.includes("2022"),
     );
     expect(startTime).toBeInTheDocument();
     expect(startTime).toHaveAttribute("datetime", "2022-03-15");
   });
 
-  it("does not wrap 'PRESENT' in a <time> element for current jobs", () => {
-    render(<ExperienceOverview experiences={mockExperiences} />);
+  it("does not wrap 'Present' in a <time> element for current jobs", () => {
+    render(
+      <NextIntlClientProvider locale="en" messages={messages}>
+        <ExperienceOverview experiences={mockExperiences} />
+      </NextIntlClientProvider>,
+    );
 
-    const presentText = screen.getByText("PRESENT");
+    const presentText = screen.getByText("Present");
     expect(presentText).toBeInTheDocument();
     expect(presentText.tagName).not.toBe("TIME");
   });
 
   it("uses <time> for the start date of current jobs", () => {
-    render(<ExperienceOverview experiences={mockExperiences} />);
+    render(
+      <NextIntlClientProvider locale="en" messages={messages}>
+        <ExperienceOverview experiences={mockExperiences} />
+      </NextIntlClientProvider>,
+    );
 
     const timeElements = document.querySelectorAll("time");
-    const currentJobStart = Array.from(timeElements).find(el =>
-      el.getAttribute("datetime")?.includes("2024")
+    const currentJobStart = Array.from(timeElements).find((el) =>
+      el.getAttribute("datetime")?.includes("2024"),
     );
     expect(currentJobStart).toBeInTheDocument();
     expect(currentJobStart).toHaveAttribute("datetime", "2024-01-01");

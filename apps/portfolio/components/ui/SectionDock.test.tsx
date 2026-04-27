@@ -4,6 +4,16 @@ import * as navigation from "@/lib/navigation";
 import { navSections } from "@/lib/sections";
 import { SectionDock } from "./SectionDock";
 
+vi.mock("next-intl", () => ({
+  useTranslations: (namespace: string) => (key: string) => {
+    if (namespace === "brand" && key === "scrollToExplore") {
+      return "SCROLL_TO_EXPLORE";
+    }
+
+    return key;
+  },
+}));
+
 vi.mock("@hstrejoluna/ui", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@hstrejoluna/ui")>();
   return {
@@ -17,13 +27,12 @@ describe("SectionDock", () => {
     render(<SectionDock sections={navSections} activeId="projects" />);
 
     expect(
-      screen.getByRole("navigation", { name: /section timeline navigation/i })
+      screen.getByRole("navigation", { name: /section timeline navigation/i }),
     ).toBeInTheDocument();
 
-    expect(screen.getByRole("link", { name: /navigate to projects/i })).toHaveAttribute(
-      "aria-current",
-      "location"
-    );
+    expect(
+      screen.getByRole("link", { name: /navigate to projects/i }),
+    ).toHaveAttribute("aria-current", "location");
   });
 
   it("uses shared smooth-scroll helper when selecting a section", () => {
@@ -42,10 +51,12 @@ describe("SectionDock", () => {
   });
 
   it("hides the section dock when hideOnScroll is enabled", () => {
-    render(<SectionDock sections={navSections} activeId="projects" hideOnScroll />);
+    render(
+      <SectionDock sections={navSections} activeId="projects" hideOnScroll />,
+    );
 
     expect(
-      screen.getByRole("navigation", { name: /section timeline navigation/i })
+      screen.getByRole("navigation", { name: /section timeline navigation/i }),
     ).toHaveAttribute("data-hidden", "true");
   });
 });

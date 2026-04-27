@@ -7,6 +7,8 @@ import { normalizeSocialLinks, scrollToSection } from "@/lib/navigation";
 import { navSectionIds, navSections } from "@/lib/sections";
 import type { NavSectionId, StreamSectionId } from "@/lib/sections";
 import type { ProfileSocialLink } from "@/types/sanity";
+import { useTranslations } from "next-intl";
+import { LocaleSwitcher } from "./LocaleSwitcher";
 
 interface CommandNavCounts {
   projects: number;
@@ -27,6 +29,8 @@ export const CommandNav = ({
   socials,
   hideOnScroll = false,
 }: CommandNavProps) => {
+  const tBrand = useTranslations("brand");
+  const tNav = useTranslations("nav");
   const isReducedMotion = useReducedMotion();
   const socialLinks = useMemo(() => normalizeSocialLinks(socials), [socials]);
 
@@ -35,7 +39,10 @@ export const CommandNav = ({
       return;
     }
 
-    scrollToSection({ id: sectionId as NavSectionId, reducedMotion: isReducedMotion });
+    scrollToSection({
+      id: sectionId as NavSectionId,
+      reducedMotion: isReducedMotion,
+    });
   };
 
   return (
@@ -46,6 +53,16 @@ export const CommandNav = ({
       socials={socialLinks}
       hideOnScroll={hideOnScroll}
       onSectionNavigate={handleSectionNavigation}
-    />
+      labels={{
+        initializing: tBrand("initializing"),
+        systemOnline: tBrand("systemOnline"),
+        projectsPrefix: tNav("projects").toUpperCase(),
+        experiencePrefix: tNav("experience").toUpperCase(),
+        skills: tBrand("neuralMap"),
+        certificatesPrefix: tNav("certificates").toUpperCase(),
+      }}
+    >
+      <LocaleSwitcher />
+    </CommandSurface>
   );
 };

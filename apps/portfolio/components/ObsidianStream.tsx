@@ -19,9 +19,17 @@ import { CertificatesOverview } from "./fragments/CertificatesOverview";
 import { SectionDock } from "./ui/SectionDock";
 import { CommandNav } from "./ui/CommandNav";
 import { BootSequence } from "@hstrejoluna/ui";
-import { motion, useScroll, useTransform, AnimatePresence, LazyMotion, domAnimation } from "framer-motion";
+import {
+  m,
+  useScroll,
+  useTransform,
+  AnimatePresence,
+  LazyMotion,
+  domAnimation,
+} from "framer-motion";
 import { navSections, streamSectionIds } from "@/lib/sections";
 import type { NavSectionId, StreamSectionId } from "@/lib/sections";
+import { useTranslations } from "next-intl";
 
 interface ObsidianStreamProps {
   profile: Profile | null;
@@ -51,12 +59,17 @@ const StreamSection = ({
   <section id={id} className={sectionClassName}>
     <div className={wrapperClassName}>
       <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tighter mb-12 italic text-on_surface border-b border-surface_container_highest pb-4">
-        {title} <span className="text-primary text-sm tracking-widest align-top ml-4">{countLabel}</span>
+        {title}{" "}
+        <span className="text-primary text-sm tracking-widest align-top ml-4">
+          {countLabel}
+        </span>
       </h2>
       {children}
     </div>
   </section>
 );
+
+const formatLabelCount = (count: number) => count.toString().padStart(2, "0");
 
 export const ObsidianStream = ({
   profile,
@@ -65,11 +78,15 @@ export const ObsidianStream = ({
   experiences,
   certificates,
 }: ObsidianStreamProps) => {
+  const tCommon = useTranslations("common");
+  const tBrand = useTranslations("brand");
+  const tNav = useTranslations("nav");
+  const tPortfolioGrid = useTranslations("fragments.portfolioGrid");
   const skipBootSequence = process.env.NEXT_PUBLIC_SKIP_BOOT_SEQUENCE === "1";
   const [isBooted, setIsBooted] = useState(skipBootSequence);
   const isReducedMotion = useReducedMotion();
   const isNavigationHidden = useAutoHideNavigation(isBooted);
-  
+
   const activeId = useActiveSection<StreamSectionId>(streamSectionIds, 0.4);
 
   const { scrollYProgress } = useScroll();
@@ -79,9 +96,9 @@ export const ObsidianStream = ({
   const fullSectionWrapperClass = `${sectionBaseWrapperClass} pb-32`;
 
   const backgroundY = useTransform(
-    scrollYProgress, 
-    [0, 1], 
-    isReducedMotion ? ["0%", "0%"] : ["5%", "-30%"]
+    scrollYProgress,
+    [0, 1],
+    isReducedMotion ? ["0%", "0%"] : ["5%", "-30%"],
   );
 
   useEffect(() => {
@@ -96,46 +113,46 @@ export const ObsidianStream = ({
   }, [isBooted]);
 
   return (
-    <div className="relative bg-background w-full min-h-screen font-sans overflow-x-hidden">
-      <AnimatePresence>
-        {!isBooted && <BootSequence onComplete={() => setIsBooted(true)} />}
-      </AnimatePresence>
+    <LazyMotion features={domAnimation}>
+      <div className="relative bg-background w-full min-h-screen font-sans overflow-x-hidden">
+        <AnimatePresence>
+          {!isBooted && <BootSequence onComplete={() => setIsBooted(true)} />}
+        </AnimatePresence>
 
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: isBooted ? 1 : 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        {isBooted && (
-          <>
-            <motion.div 
-              style={{ y: backgroundY }}
-              aria-hidden="true"
-              className="fixed inset-0 z-0 flex flex-col justify-center items-center pointer-events-none select-none opacity-5 md:opacity-10"
-            >
-              <span className="text-[15vw] font-black uppercase leading-none italic">
-                {profile?.name || "SEBASTIÁN TREJO"}
-              </span>
-            </motion.div>
+        <m.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: isBooted ? 1 : 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          {isBooted && (
+            <>
+              <m.div
+                style={{ y: backgroundY }}
+                aria-hidden="true"
+                className="fixed inset-0 z-0 flex flex-col justify-center items-center pointer-events-none select-none opacity-5 md:opacity-10"
+              >
+                <span className="text-[15vw] font-black uppercase leading-none italic">
+                  {profile?.name || tCommon("fullName")}
+                </span>
+              </m.div>
 
-            <SectionDock
-              sections={navSections}
-              activeId={activeId}
-              hideOnScroll={isNavigationHidden}
-            />
-            <CommandNav 
-              activeId={activeId} 
-              counts={{
-                projects: projects.length,
-                experience: experiences.length,
-                certificates: certificates.length,
-              }}
-              socials={profile?.socials}
-              hideOnScroll={isNavigationHidden}
-            />
+              <SectionDock
+                sections={navSections}
+                activeId={activeId}
+                hideOnScroll={isNavigationHidden}
+              />
+              <CommandNav
+                activeId={activeId}
+                counts={{
+                  projects: projects.length,
+                  experience: experiences.length,
+                  certificates: certificates.length,
+                }}
+                socials={profile?.socials}
+                hideOnScroll={isNavigationHidden}
+              />
 
-            <LazyMotion features={domAnimation}>
-              <main className="relative z-10 flex flex-col w-full">
+              <main id="main-content" className="relative z-10 flex flex-col w-full">
                 <section id="hero" className="stream-section">
                   <HeroFragment profile={profile} />
                 </section>
@@ -144,8 +161,8 @@ export const ObsidianStream = ({
                   id="projects"
                   sectionClassName="stream-section bg-surface_container_lowest"
                   wrapperClassName={compactSectionWrapperClass}
-                  title="PROJECTS"
-                  countLabel={`[0${projects.length}]`}
+                  title={tNav("projects").toUpperCase()}
+                  countLabel={`[${formatLabelCount(projects.length)}]`}
                 >
                   <ProjectsOverview projects={projects} />
                 </StreamSection>
@@ -154,8 +171,8 @@ export const ObsidianStream = ({
                   id="experience"
                   sectionClassName="stream-section relative bg-background"
                   wrapperClassName={compactSectionWrapperClass}
-                  title="EXPERIENCE_LOG"
-                  countLabel={`[0${experiences.length}]`}
+                  title={tBrand("experienceLog")}
+                  countLabel={`[${formatLabelCount(experiences.length)}]`}
                 >
                   <ExperienceOverview experiences={experiences} />
                 </StreamSection>
@@ -164,8 +181,8 @@ export const ObsidianStream = ({
                   id="skills"
                   sectionClassName="stream-section bg-surface_container_lowest"
                   wrapperClassName={fullSectionWrapperClass}
-                  title="NEURAL_MAP"
-                  countLabel={`[ACTIVE_NODES: ${skills.length}]`}
+                  title={tBrand("neuralMap")}
+                  countLabel={`[${tPortfolioGrid("activeNodes")}: ${skills.length}]`}
                 >
                   <SkillsOverview skills={skills} />
                 </StreamSection>
@@ -174,23 +191,26 @@ export const ObsidianStream = ({
                   id="certificates"
                   sectionClassName="stream-section relative bg-background"
                   wrapperClassName={fullSectionWrapperClass}
-                  title="CERTIFICATES"
-                  countLabel={`[0${certificates.length}]`}
+                  title={tNav("certificates").toUpperCase()}
+                  countLabel={`[${formatLabelCount(certificates.length)}]`}
                 >
                   <CertificatesOverview certificates={certificates} />
                 </StreamSection>
               </main>
-            </LazyMotion>
 
-            <div aria-hidden="true" className="fixed top-0 left-0 w-full h-[2px] z-[100] bg-white/5 pointer-events-none">
-              <motion.div 
-                className="h-full bg-primary origin-left"
-                style={{ scaleX: scrollYProgress }} 
-              />
-            </div>
-          </>
-        )}
-      </motion.div>
-    </div>
+              <div
+                aria-hidden="true"
+                className="fixed top-0 left-0 w-full h-[2px] z-[100] bg-white/5 pointer-events-none"
+              >
+                <m.div
+                  className="h-full bg-primary origin-left"
+                  style={{ scaleX: scrollYProgress }}
+                />
+              </div>
+            </>
+          )}
+        </m.div>
+      </div>
+    </LazyMotion>
   );
 };
