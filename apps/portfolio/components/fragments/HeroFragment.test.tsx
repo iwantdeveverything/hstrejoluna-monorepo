@@ -2,6 +2,30 @@ import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { HeroFragment } from "./HeroFragment";
 
+vi.mock("next-intl", () => ({
+  useTranslations: (namespace: string) => (key: string) => {
+    const messages: Record<string, Record<string, string>> = {
+      brand: {
+        systemReady: "[SYSTEM_READY]: INITIALIZING_NEURAL_UPLINK",
+        uplink: "UPLINK_STATUS: OPTIMAL",
+        descent: "DESCENT",
+      },
+      hero: {
+        titleLine1: "SYSTEM",
+        titleLine2: "ARCHITECT",
+        headline: "Test Headline",
+        subheadline:
+          "I transform complex constraints into pure, kinetic functional art.",
+        cta: "INITIATE SEQUENCE",
+        telemetryLatency: "LATENCY: 0.00MS",
+        telemetryFramework: "FRAMEWORK: KINETIC_V2",
+      },
+    };
+
+    return messages[namespace]?.[key] ?? key;
+  },
+}));
+
 vi.mock("@hstrejoluna/ui", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@hstrejoluna/ui")>();
   return {
@@ -18,11 +42,21 @@ vi.mock("framer-motion", async (importOriginal) => {
     ...actual,
     motion: {
       ...actual.motion,
-      div: ({ children, ...props }: React.PropsWithChildren<Record<string, unknown>>) => (
-        <div {...(props as React.HTMLAttributes<HTMLDivElement>)}>{children}</div>
+      div: ({
+        children,
+        ...props
+      }: React.PropsWithChildren<Record<string, unknown>>) => (
+        <div {...(props as React.HTMLAttributes<HTMLDivElement>)}>
+          {children}
+        </div>
       ),
-      button: ({ children, ...props }: React.PropsWithChildren<Record<string, unknown>>) => (
-        <button {...(props as React.ButtonHTMLAttributes<HTMLButtonElement>)}>{children}</button>
+      button: ({
+        children,
+        ...props
+      }: React.PropsWithChildren<Record<string, unknown>>) => (
+        <button {...(props as React.ButtonHTMLAttributes<HTMLButtonElement>)}>
+          {children}
+        </button>
       ),
     },
   };
