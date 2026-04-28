@@ -65,6 +65,13 @@ export async function generateMetadata({ params }: ProjectPageProps): Promise<Me
       description,
       images: project.image ? [urlFor(project.image).url()] : [],
     },
+    alternates: {
+      canonical: `/${locale}/projects/${slug}`,
+      languages: {
+        en: `/en/projects/${slug}`,
+        es: `/es/projects/${slug}`,
+      },
+    },
   };
 }
 
