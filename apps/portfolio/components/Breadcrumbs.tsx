@@ -1,6 +1,5 @@
-"use client";
-
 import { Link as LocalizedLink } from "@/i18n/navigation";
+import { safeJsonLd } from "@/lib/safe-json-ld";
 
 interface BreadcrumbItem {
   label: string;
@@ -39,7 +38,7 @@ export const Breadcrumbs = ({ items }: BreadcrumbsProps) => {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
+          __html: safeJsonLd({
             "@context": "https://schema.org",
             "@type": "BreadcrumbList",
             "itemListElement": items.map((item, index) => ({
