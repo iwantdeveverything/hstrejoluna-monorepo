@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { cache } from "react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { normalizeSocialLinks } from "@/lib/navigation";
+import { safeJsonLd } from "@/lib/safe-json-ld";
 import { client } from "@/lib/sanity";
 import {
   Profile,
@@ -97,7 +98,7 @@ export default async function PortfolioPage({
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
       />
 
       <ObsidianStream
