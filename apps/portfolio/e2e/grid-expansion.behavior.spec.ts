@@ -46,12 +46,12 @@ test.describe("in-place expansion grids", () => {
     const first = projectButtons.nth(0);
     const second = projectButtons.nth(1);
 
-    await first.click({ force: true });
+    await first.click();
     await expect(first).toHaveAttribute("aria-expanded", "true");
     const firstPanelId = await first.getAttribute("aria-controls");
     await expect(page.locator(`#${firstPanelId}`)).toBeVisible();
 
-    await second.click({ force: true });
+    await second.click();
     await expect(first).toHaveAttribute("aria-expanded", "false");
     await expect(second).toHaveAttribute("aria-expanded", "true");
   });
@@ -69,14 +69,14 @@ test.describe("in-place expansion grids", () => {
     const second = experienceButtons.nth(1);
 
     await first.scrollIntoViewIfNeeded();
-    await first.click({ force: true });
+    await first.click();
     await expect(first).toHaveAttribute("aria-expanded", "true", { timeout: 15000 });
 
     // Wait for animation or layout shift
     await page.waitForTimeout(500);
 
     await second.scrollIntoViewIfNeeded();
-    await second.click({ force: true });
+    await second.click();
     await expect(first).toHaveAttribute("aria-expanded", "false", { timeout: 15000 });
     await expect(second).toHaveAttribute("aria-expanded", "true", { timeout: 15000 });
   });

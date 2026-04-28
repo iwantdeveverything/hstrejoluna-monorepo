@@ -9,24 +9,67 @@ export default defineType({
       name: 'title',
       title: 'Project Title',
       type: 'string',
+      validation: Rule => Rule.required(),
     }),
     defineField({
       name: 'slug',
       title: 'Slug (URL path)',
       type: 'slug',
-      options: { source: 'title' }
+      options: { source: 'title' },
+      validation: Rule => Rule.required(),
     }),
     defineField({
       name: 'description',
-      title: 'Description',
+      title: 'Short Description',
       type: 'array',
       of: [{ type: 'block' }],
+    }),
+    defineField({
+      name: 'content',
+      title: 'Full Case Study Content',
+      type: 'array',
+      of: [{ type: 'block' }],
+    }),
+    defineField({
+      name: 'year',
+      title: 'Year',
+      type: 'string',
+    }),
+    defineField({
+      name: 'role',
+      title: 'Role',
+      type: 'string',
+    }),
+    defineField({
+      name: 'gallery',
+      title: 'Project Gallery',
+      type: 'array',
+      of: [{ 
+        type: 'image', 
+        options: { hotspot: true },
+        fields: [
+          {
+            name: 'alt',
+            title: 'Alternative Text',
+            type: 'string',
+            validation: Rule => Rule.required(),
+          }
+        ]
+      }],
     }),
     defineField({
       name: 'image',
       title: 'Project Image / Mockup',
       type: 'image',
-      options: { hotspot: true }
+      options: { hotspot: true },
+      fields: [
+        {
+          name: 'alt',
+          title: 'Alternative Text',
+          type: 'string',
+          validation: Rule => Rule.required(),
+        }
+      ]
     }),
     defineField({
       name: 'isFeatured',

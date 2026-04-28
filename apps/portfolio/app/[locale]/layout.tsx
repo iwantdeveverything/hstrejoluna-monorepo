@@ -19,6 +19,7 @@ const jetBrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || "https://hstrejoluna.com"),
   title: "Héctor Trejo Luna | Senior Software Architect",
   description:
     "Cinematic Portfolio of a Senior Frontend Engineer specializing in Scalable Ecosystems.",
@@ -74,13 +75,13 @@ export default async function LocaleLayout({
                   <a href="#main-content">Home</a>
                 </li>
                 <li>
-                  <a href="/privacy">Privacy</a>
+                  <a href={`/${locale}/privacy`}>Privacy</a>
                 </li>
                 <li>
-                  <a href="/cookies">Cookies</a>
+                  <a href={`/${locale}/cookies`}>Cookies</a>
                 </li>
                 <li>
-                  <a href="/legal">Legal</a>
+                  <a href={`/${locale}/legal`}>Legal</a>
                 </li>
               </ul>
             </nav>

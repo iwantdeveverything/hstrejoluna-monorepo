@@ -62,7 +62,7 @@ export const ProjectsOverview = ({ projects }: ProjectsOverviewProps) => {
                   <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-br from-surface_container_low to-void opacity-50" />
                 )}
                 
-                <div className="absolute inset-0 p-6 flex flex-col justify-end">
+                <div className="absolute inset-0 p-6 flex flex-col justify-end z-10">
                   <h3 className="text-xl md:text-2xl font-bold tracking-tight text-on_surface uppercase mb-2 pointer-events-none">
                     {project.title}
                   </h3>
@@ -77,18 +77,12 @@ export const ProjectsOverview = ({ projects }: ProjectsOverviewProps) => {
                       aria-expanded={expandedId === project._id}
                       aria-controls={`project-panel-${project._id}`}
                     >
-                      {tFragments("clickToExpand")}
+                      {/* Stretched link to make the whole area clickable */}
+                      <span className="absolute inset-0 z-0" aria-hidden="true" />
+                      <span className="relative z-10">{tFragments("clickToExpand")}</span>
                     </button>
                   </div>
                 </div>
-                {/* Overlay link for the whole area while maintaining accessibility */}
-                <button 
-                  type="button"
-                  className="absolute inset-0 z-0 cursor-pointer focus:outline-none"
-                  onClick={() => toggleProject(project._id)}
-                  aria-hidden="true"
-                  tabIndex={-1}
-                />
               </div>
 
               <AnimatePresence initial={false}>

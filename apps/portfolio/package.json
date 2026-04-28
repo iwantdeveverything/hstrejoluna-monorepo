@@ -15,7 +15,7 @@
     "qa:e2e:install": "playwright install chromium firefox webkit",
     "qa:e2e": "playwright test",
     "qa:e2e:headed": "playwright test --headed",
-    "qa:lighthouse": "npm run build && lhci autorun --config=./lighthouserc.cjs",
+    "qa:lighthouse": "NEXT_PUBLIC_BASE_URL=http://127.0.0.1:4173 npm run build && lhci autorun --config=./lighthouserc.cjs",
     "qa:gate": "npm run lint && npm run test && npm run qa:e2e && npm run qa:lighthouse"
   },
   "dependencies": {

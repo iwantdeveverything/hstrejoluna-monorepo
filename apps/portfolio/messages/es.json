@@ -36,7 +36,16 @@
       "chronoLogSync": "ESTADO_SINCRONIZACIÓN_CRONO_LOG: 100%_ESTABLE"
     },
     "project": {
-      "uplink": "[EXEC_ENLACE_PROY]"
+      "uplink": "[EXEC_ENLACE_PROY]",
+      "home": "Inicio",
+      "projects": "Proyectos",
+      "role": "Rol",
+      "year": "Año",
+      "visitSite": "Visitar Sitio",
+      "viewGitHub": "Ver en GitHub",
+      "techStack": "Tecnologías",
+      "gallery": "Galería del Proyecto",
+      "caseStudy": "Caso de Estudio"
     }
   },
   "hero": {

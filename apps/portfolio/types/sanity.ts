@@ -18,6 +18,7 @@ export interface SanityImage {
     _ref: string;
     _type: "reference";
   };
+  alt?: string;
 }
 
 export interface PortableTextSpan {
@@ -43,6 +44,10 @@ export interface Project {
   title: string;
   slug?: { current: string };
   description: string | PortableTextBlock[];
+  content?: PortableTextBlock[];
+  year?: string;
+  role?: string;
+  gallery?: SanityImage[];
   image?: SanityImage;
   techStack?: Skill[];
   micrositePath?: string;
