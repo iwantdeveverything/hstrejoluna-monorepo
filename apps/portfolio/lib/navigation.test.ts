@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { normalizeSocialLinks, scrollToSection } from "./navigation";
+import { normalizeSocialLinks, scrollToSection, getProjectUrl } from "./navigation";
 
 describe("normalizeSocialLinks", () => {
   it("normalizes and orders supported social links", () => {
@@ -98,5 +98,42 @@ describe("scrollToSection", () => {
       behavior: "auto",
       block: "start",
     });
+  });
+});
+
+describe("getProjectUrl", () => {
+  it("prioritizes internal slug when available", () => {
+    const project = {
+      _id: "1",
+      title: "Project A",
+      slug: { current: "project-a" },
+      micrositePath: "/microsite",
+      externalLink: "https://external.com",
+    } as any;
+    expect(getProjectUrl(project)).toBe("/projects/project-a");
+  });
+
+  it("falls back to micrositePath if slug is missing", () => {
+    const project = {
+      _id: "2",
+      title: "Project B",
+      micrositePath: "/microsite",
+      externalLink: "https://external.com",
+    } as any;
+    expect(getProjectUrl(project)).toBe("/microsite");
+  });
+
+  it("falls back to externalLink if slug and micrositePath are missing", () => {
+    const project = {
+      _id: "3",
+      title: "Project C",
+      externalLink: "https://external.com",
+    } as any;
+    expect(getProjectUrl(project)).toBe("https://external.com");
+  });
+
+  it("returns '#' as a last resort", () => {
+    const project = { _id: "4", title: "Project D" } as any;
+    expect(getProjectUrl(project)).toBe("#");
   });
 });

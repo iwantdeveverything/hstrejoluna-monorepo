@@ -39,15 +39,18 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: ProjectPageProps): Promise<Metadata> {
   const { locale, slug } = await params;
   const project = await getProject(slug);
-  const t = await getTranslations({ locale, namespace: "seo" });
+  const [tSeo, tCommon] = await Promise.all([
+    getTranslations({ locale, namespace: "seo" }),
+    getTranslations({ locale, namespace: "common" }),
+  ]);
 
   if (!project) return {};
 
   const description = blockToPlainText(project.description);
-  const name = t("fullName") || AUTHOR_NAME;
+  const name = tCommon("fullName") || AUTHOR_NAME;
 
   return {
-    title: `${project.title} | ${t("title", { name })}`,
+    title: `${project.title} | ${tSeo("title", { name })}`,
     description,
     openGraph: {
       title: project.title,
@@ -83,7 +86,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "SoftwareSourceCode",
+    "@type": ["SoftwareSourceCode", "CreativeWork"],
     "name": project.title,
     "description": blockToPlainText(project.description),
     "genre": "Software Development",
@@ -91,8 +94,10 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
       "@type": "Person",
       "name": authorName
     },
-    "programmingLanguage": project.techStack?.map(s => s.name),
-    "codeRepository": project.externalLink,
+    "datePublished": project.year,
+    "programmingLanguage": project.techStack?.filter(Boolean).map(s => s.name),
+    "codeRepository": project.externalLink?.includes('github.com') ? project.externalLink : undefined,
+    "url": project.externalLink,
   };
 
   const breadcrumbs = [
@@ -125,7 +130,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
             <TelemetryHUD 
               identifier={project.slug?.current || "PROJECT_UPLINK"}
               status="STABLE"
-              techStack={project.techStack?.map(s => s.name) || []}
+              techStack={project.techStack?.filter(Boolean).map(s => s.name) || []}
               className="mb-8"
             />
             <h1 className="text-6xl md:text-8xl font-black uppercase tracking-tighter italic leading-none mb-8">
@@ -147,14 +152,16 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
               )}
               {project.externalLink && (
                 <div>
-                  <span className="block opacity-40 mb-2">{t("visitSite")}</span>
+                  <span className="block opacity-40 mb-2">
+                    {project.externalLink.includes('github.com') ? t("viewGitHub") : t("visitSite")}
+                  </span>
                   <a 
                     href={project.externalLink} 
                     target="_blank" 
                     rel="noopener noreferrer external"
                     className="text-primary font-bold hover:text-white transition-colors"
                   >
-                    {project.externalLink.replace(/^https?:\/\//, '')} ↗
+                    {project.externalLink.replace(/^https?:\/\//, '').replace(/\/$/, '')} ↗
                   </a>
                 </div>
               )}
@@ -202,7 +209,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
             <div className="p-8 border border-white/5 bg-white/[0.02]">
               <h3 className="text-2xl font-black uppercase italic tracking-tighter mb-6">{t("techStack")}</h3>
               <div className="flex flex-wrap gap-3">
-                {project.techStack?.map((skill) => (
+                {project.techStack?.filter(Boolean).map((skill) => (
                   <span 
                     key={skill._id}
                     className="px-3 py-1 bg-white/5 border border-white/10 text-[10px] font-mono uppercase tracking-widest text-on_surface_variant"
