@@ -1,0 +1,291 @@
+name: CD Staging
+
+on:
+  pull_request:
+    branches:
+      - master
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - closed
+
+permissions:
+  contents: read
+  id-token: write
+  pull-requests: write
+
+concurrency:
+  group: cd-staging-pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
+  GCP_REGION: ${{ vars.GCP_REGION || 'us-central1' }}
+  GAR_REPOSITORY: ${{ vars.GAR_REPOSITORY || 'apps' }}
+  PR_TAG: pr-${{ github.event.pull_request.number }}
+
+jobs:
+  # ─────────────────────────────────────────────────────────────
+  # Build the portfolio image and deploy a tagged staging revision
+  # with --no-traffic so production is never touched.
+  # ─────────────────────────────────────────────────────────────
+  deploy-staging:
+    name: Build & Deploy Staging
+    if: github.event.action != 'closed'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      SERVICE_NAME: ${{ vars.CLOUD_RUN_SERVICE_PORTFOLIO || 'portfolio' }}
+      SALMON_ORIGIN: ${{ vars.SALMON_ORIGIN || '' }}
+      SANITY_API_READ_SECRET: ${{ vars.CLOUD_RUN_SECRET_SANITY_API_READ_TOKEN || 'portfolio-sanity-api-read-token' }}
+    outputs:
+      staging_url: ${{ steps.get-url.outputs.staging_url }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WIF_PROVIDER }}
+          service_account: ${{ secrets.GCP_WIF_SERVICE_ACCOUNT }}
+
+      - name: Setup gcloud
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure Docker auth for Artifact Registry
+        run: gcloud auth configure-docker "${GCP_REGION}-docker.pkg.dev" --quiet
+
+      - name: Validate required runtime configuration
+        run: |
+          missing=()
+          [ -z "${SALMON_ORIGIN}" ]            && missing+=("SALMON_ORIGIN (repo variable)")
+          [ -z "${SANITY_API_READ_SECRET}" ]   && missing+=("CLOUD_RUN_SECRET_SANITY_API_READ_TOKEN (repo variable)")
+
+          if [ ${#missing[@]} -gt 0 ]; then
+            echo "Missing required runtime configuration for staging deploy:"
+            printf ' - %s\n' "${missing[@]}"
+            exit 1
+          fi
+
+          gcloud secrets describe "${SANITY_API_READ_SECRET}" \
+            --project "${GCP_PROJECT_ID}" > /dev/null
+
+      - name: Build and push staging image
+        run: |
+          IMAGE_BASE="${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/${GAR_REPOSITORY}/portfolio"
+          IMAGE_TAG="${IMAGE_BASE}:staging-${PR_TAG}"
+          docker build -f apps/portfolio/Dockerfile -t "${IMAGE_TAG}" .
+          docker push "${IMAGE_TAG}"
+          DIGEST="$(docker inspect --format='{{index .RepoDigests 0}}' "${IMAGE_TAG}")"
+          echo "IMAGE_DIGEST=${DIGEST}" >> "${GITHUB_ENV}"
+
+      - name: Deploy staging revision (no-traffic)
+        run: |
+          gcloud run deploy "${SERVICE_NAME}" \
+            --project   "${GCP_PROJECT_ID}" \
+            --region    "${GCP_REGION}" \
+            --platform  managed \
+            --image     "${IMAGE_DIGEST}" \
+            --tag       "${PR_TAG}" \
+            --no-traffic \
+            --min-instances 0 \
+            --max-instances 1 \
+            --concurrency 80 \
+            --cpu 1 \
+            --memory 512Mi \
+            --timeout 60 \
+            --update-env-vars "SALMON_ORIGIN=${SALMON_ORIGIN}" \
+            --set-secrets "SANITY_API_READ_TOKEN=${SANITY_API_READ_SECRET}:latest" \
+            --cpu-throttling \
+            --no-cpu-boost \
+            --allow-unauthenticated \
+            --quiet
+
+      - name: Get staging URL
+        id: get-url
+        run: |
+          STAGING_URL="$(gcloud run services describe "${SERVICE_NAME}" \
+            --project "${GCP_PROJECT_ID}" \
+            --region  "${GCP_REGION}" \
+            --format  "json" | \
+            jq -r --arg tag "${PR_TAG}" '.status.traffic[] | select(.tag == $tag) | .url // ""')"
+          if [ -z "${STAGING_URL}" ]; then
+            echo "ERROR: could not resolve staging URL for tag ${PR_TAG}"
+            exit 1
+          fi
+          echo "staging_url=${STAGING_URL}" >> "${GITHUB_OUTPUT}"
+          echo "STAGING_URL=${STAGING_URL}"
+
+      - name: Smoke check staging URL
+        run: |
+          STAGING_URL="${{ steps.get-url.outputs.staging_url }}"
+          echo "Smoke checking ${STAGING_URL} ..."
+          curl --fail --silent --show-error --retry 5 --retry-delay 5 "${STAGING_URL}" > /dev/null
+          echo "Staging smoke check passed."
+
+  # ─────────────────────────────────────────────────────────────
+  # Run the full Playwright suite against the live staging URL.
+  # No local Next.js build — PLAYWRIGHT_BASE_URL points directly
+  # at the Cloud Run revision tagged for this PR.
+  # ─────────────────────────────────────────────────────────────
+  e2e-staging:
+    name: E2E on Staging (real browsers)
+    needs: deploy-staging
+    if: github.event.action != 'closed'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Get Playwright version
+        id: pw-version
+        run: |
+          echo "PLAYWRIGHT_VERSION=$(npx playwright --version | awk '{print $2}')" >> "${GITHUB_ENV}"
+        working-directory: apps/portfolio
+
+      - name: Cache Playwright browsers
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ env.PLAYWRIGHT_VERSION }}
+
+      - name: Install Playwright browsers
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps chromium firefox webkit
+        working-directory: apps/portfolio
+
+      - name: Install Playwright OS dependencies
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium firefox webkit
+        working-directory: apps/portfolio
+
+      - name: E2E against staging URL
+        run: npm run qa:e2e --workspace=apps/portfolio
+        env:
+          CI: "true"
+          PLAYWRIGHT_BASE_URL: ${{ needs.deploy-staging.outputs.staging_url }}
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-staging-report-pr-${{ github.event.pull_request.number }}
+          path: |
+            apps/portfolio/playwright-report
+            apps/portfolio/test-results
+          if-no-files-found: ignore
+
+  # ─────────────────────────────────────────────────────────────
+  # Post (or update) a single PR comment with the staging URL
+  # and E2E result badge so reviewers always see the latest state.
+  # ─────────────────────────────────────────────────────────────
+  notify-pr:
+    name: Notify PR
+    needs: [deploy-staging, e2e-staging]
+    if: always() && github.event.action != 'closed'
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+      REPO: ${{ github.repository }}
+      RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+    steps:
+      - name: Post or update staging comment
+        run: |
+          STAGING_URL="${{ needs.deploy-staging.outputs.staging_url }}"
+          DEPLOY_STATUS="${{ needs.deploy-staging.result }}"
+          E2E_STATUS="${{ needs.e2e-staging.result }}"
+
+          if [ "${DEPLOY_STATUS}" = "success" ]; then
+            DEPLOY_BADGE="✅ Deployed"
+            URL_LINE="| **Staging URL** | [${STAGING_URL}](${STAGING_URL}) |"
+          else
+            DEPLOY_BADGE="❌ Deploy failed — see [logs](${RUN_URL})"
+            URL_LINE="| **Staging URL** | — deploy did not complete |"
+          fi
+
+          if [ "${E2E_STATUS}" = "success" ]; then
+            E2E_BADGE="✅ All browsers passed"
+          elif [ "${E2E_STATUS}" = "skipped" ]; then
+            E2E_BADGE="⏭️ Skipped (deploy failed)"
+          else
+            E2E_BADGE="❌ Failed — [Playwright report](${RUN_URL})"
+          fi
+
+          COMMENT_BODY="## 🚀 Staging Deployment
+
+| | |
+|---|---|
+${URL_LINE}
+| **Deploy** | ${DEPLOY_BADGE} |
+| **E2E Results** | ${E2E_BADGE} |
+| **Browsers** | Chrome · Firefox · Safari · Mobile Chrome · Mobile Safari |
+| **Commit** | \`${{ github.event.pull_request.head.sha }}\` |
+
+> Revision tagged \`${PR_TAG}\` with \`--no-traffic\`. Zero production impact."
+
+          # Update existing comment from this bot, or create a new one.
+          EXISTING_ID="$(gh api "repos/${REPO}/issues/${PR_NUMBER}/comments" \
+            --jq '[.[] | select(.user.login == "github-actions[bot]" and (.body | startswith("## 🚀 Staging Deployment")))] | last | .id // ""')"
+
+          if [ -n "${EXISTING_ID}" ]; then
+            gh api --method PATCH \
+              "repos/${REPO}/issues/comments/${EXISTING_ID}" \
+              --field body="${COMMENT_BODY}"
+          else
+            gh pr comment "${PR_NUMBER}" \
+              --repo "${REPO}" \
+              --body "${COMMENT_BODY}"
+          fi
+        env:
+          PR_TAG: ${{ env.PR_TAG }}
+
+  # ─────────────────────────────────────────────────────────────
+  # When a PR is closed (merged or abandoned) remove the revision
+  # tag so no ephemeral URLs linger in the service traffic config.
+  # ─────────────────────────────────────────────────────────────
+  cleanup-staging:
+    name: Remove Staging Revision Tag
+    if: github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      SERVICE_NAME: ${{ vars.CLOUD_RUN_SERVICE_PORTFOLIO || 'portfolio' }}
+
+    steps:
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WIF_PROVIDER }}
+          service_account: ${{ secrets.GCP_WIF_SERVICE_ACCOUNT }}
+
+      - name: Setup gcloud
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Remove staging revision tag
+        run: |
+          echo "Removing tag ${PR_TAG} from ${SERVICE_NAME} ..."
+          gcloud run services update-traffic "${SERVICE_NAME}" \
+            --project      "${GCP_PROJECT_ID}" \
+            --region       "${GCP_REGION}" \
+            --remove-tags  "${PR_TAG}" \
+            --quiet \
+          && echo "Tag ${PR_TAG} removed." \
+          || echo "Tag ${PR_TAG} not found or already removed — skipping."
