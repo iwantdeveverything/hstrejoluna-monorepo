@@ -42,6 +42,12 @@ vi.mock("../../components/fragments/CookieBanner", () => ({
   default: () => <div data-testid="cookie-banner">CookieBanner</div>,
 }));
 
+vi.mock("../../components/tracking/GoogleTagManager", () => ({
+  default: ({ gtmId }: { gtmId: string }) => (
+    <div data-testid="gtm" data-gtm-id={gtmId}>GTM</div>
+  ),
+}));
+
 import { getMessages, setRequestLocale } from "next-intl/server";
 import LocaleLayout from "./layout";
 

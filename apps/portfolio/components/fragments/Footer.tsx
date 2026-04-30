@@ -5,6 +5,7 @@ import { Link } from "@/i18n/navigation";
 import { Copyleft } from "lucide-react";
 import { clearConsentState } from "@hstrejoluna/compliance";
 import { useTranslations } from "next-intl";
+import { pushConsentDenial } from "@/components/tracking/gtm-utils";
 
 export default function Footer() {
   const tFooter = useTranslations("footer");
@@ -13,6 +14,7 @@ export default function Footer() {
     "transition-colors hover:text-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-black";
 
   const handleManageCookies = () => {
+    pushConsentDenial();
     clearConsentState();
     window.location.reload();
   };

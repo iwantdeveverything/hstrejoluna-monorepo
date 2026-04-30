@@ -50,29 +50,23 @@ describe("messages/es.json", () => {
     });
   });
 
-  describe("legal namespace review flags", () => {
-    it("includes _meta.needsReview: true in legal.privacyPolicy", () => {
+  describe("legal namespace review flags removed", () => {
+    it("does not contain _meta markers in legal.privacyPolicy", () => {
       const legal = (es as MessageObject).legal as MessageObject;
       const privacy = legal.privacyPolicy as MessageObject;
-      const meta = privacy._meta as MessageObject;
-      expect(meta).toBeDefined();
-      expect(meta.needsReview).toBe(true);
+      expect(privacy._meta).toBeUndefined();
     });
 
-    it("includes _meta.needsReview: true in legal.cookiePolicy", () => {
+    it("does not contain _meta markers in legal.cookiePolicy", () => {
       const legal = (es as MessageObject).legal as MessageObject;
       const cookie = legal.cookiePolicy as MessageObject;
-      const meta = cookie._meta as MessageObject;
-      expect(meta).toBeDefined();
-      expect(meta.needsReview).toBe(true);
+      expect(cookie._meta).toBeUndefined();
     });
 
-    it("includes _meta.needsReview: true in legal.legalNotice", () => {
+    it("does not contain _meta markers in legal.legalNotice", () => {
       const legal = (es as MessageObject).legal as MessageObject;
       const notice = legal.legalNotice as MessageObject;
-      const meta = notice._meta as MessageObject;
-      expect(meta).toBeDefined();
-      expect(meta.needsReview).toBe(true);
+      expect(notice._meta).toBeUndefined();
     });
   });
 

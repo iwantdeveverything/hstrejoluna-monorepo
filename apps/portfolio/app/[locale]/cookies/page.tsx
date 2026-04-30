@@ -58,6 +58,23 @@ export default async function CookiePolicy({
 
       <section className="mt-10">
         <h2 className="text-2xl font-semibold text-white">
+          {tCookie("sections.cookieTable.heading")}
+        </h2>
+        <div className="mt-4 space-y-4">
+          <p className="text-gray-300">
+            {tCookie("sections.cookieTable.analyticsCookies")}
+          </p>
+          <p className="text-gray-300">
+            {tCookie("sections.cookieTable.marketingCookies")}
+          </p>
+          <p className="text-gray-300">
+            {tCookie("sections.cookieTable.essentialStorage")}
+          </p>
+        </div>
+      </section>
+
+      <section className="mt-10">
+        <h2 className="text-2xl font-semibold text-white">
           {tCookie("sections.managingPreferences.heading")}
         </h2>
         <p className="mt-4 text-gray-300">

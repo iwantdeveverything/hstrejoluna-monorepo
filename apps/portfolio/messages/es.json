@@ -111,19 +111,21 @@
         },
         "dataCollection": {
           "heading": "2. Datos que recopilamos",
-          "body": "Operamos bajo un principio estricto de minimización de datos. Solo recopilamos telemetría anónima básica (si se consiente) para entender el rendimiento de carga de página. No recopilamos información personal identificable (PII) a través de este portfolio front-end."
+          "body": "Recopilamos datos de analítica y marketing solo después de que otorgues tu consentimiento explícito. Cuando aceptás analíticas, Google Analytics 4 (GA4) recopila datos de uso anonimizados como páginas visitadas, duración de sesión y región geográfica general. Cuando aceptás marketing, Meta (Facebook) Pixel recopila datos de interacción para medir la efectividad de anuncios. No recopilamos información personal identificable (PII) a través de este portfolio front-end."
+        },
+        "thirdPartyServices": {
+          "heading": "3. Servicios de terceros",
+          "body": "Este sitio usa Google Tag Manager para gestionar etiquetas de analítica y marketing. Los siguientes servicios de terceros pueden establecer cookies cuando otorgás tu consentimiento: Google Analytics 4 (analytics.google.com) para analítica de uso, y Meta Pixel (facebook.com) para medición de marketing. Cada servicio procesa datos bajo su propia política de privacidad. No se comparten datos con estos servicios hasta que otorgues explícitamente la categoría de consentimiento correspondiente."
         },
         "gpc": {
-          "heading": "3. Global Privacy Control (GPC)",
+          "heading": "4. Global Privacy Control (GPC)",
           "body": "Respetamos nativamente la señal de Global Privacy Control. Si tu navegador soporta e inyecta navigator.globalPrivacyControl, te excluimos automáticamente de todos los scripts y cookies no esenciales sin mostrarte un banner disruptivo."
         }
       },
       "intro": "Bienvenido al Portfolio Dark Kinetic. Respetamos tu privacidad y estamos comprometidos con la protección de tus datos personales. Esta política de privacidad te informará sobre cómo cuidamos tus datos personales cuando visitás nuestro sitio web y te contará sobre tus derechos de privacidad.",
-      "dataCollection": "Operamos bajo un principio estricto de minimización de datos. Solo recopilamos telemetría anónima básica (si se consiente) para entender el rendimiento de carga de página. No recopilamos información personal identificable (PII) a través de este portfolio front-end.",
-      "gpc": "Respetamos nativamente la señal de Global Privacy Control. Si tu navegador soporta e inyecta navigator.globalPrivacyControl, te excluimos automáticamente de todos los scripts y cookies no esenciales sin mostrarte un banner disruptivo.",
-      "_meta": {
-        "needsReview": true
-      }
+      "dataCollection": "Recopilamos datos de analítica y marketing solo después de que otorgues tu consentimiento explícito. Cuando aceptás analíticas, Google Analytics 4 (GA4) recopila datos de uso anonimizados como páginas visitadas, duración de sesión y región geográfica general. Cuando aceptás marketing, Meta (Facebook) Pixel recopila datos de interacción para medir la efectividad de anuncios. No recopilamos información personal identificable (PII) a través de este portfolio front-end.",
+      "thirdPartyServices": "Este sitio usa Google Tag Manager para gestionar etiquetas de analítica y marketing. Los siguientes servicios de terceros pueden establecer cookies cuando otorgás tu consentimiento: Google Analytics 4 (analytics.google.com) para analítica de uso, y Meta Pixel (facebook.com) para medición de marketing. Cada servicio procesa datos bajo su propia política de privacidad. No se comparten datos con estos servicios hasta que otorgues explícitamente la categoría de consentimiento correspondiente.",
+      "gpc": "Respetamos nativamente la señal de Global Privacy Control. Si tu navegador soporta e inyecta navigator.globalPrivacyControl, te excluimos automáticamente de todos los scripts y cookies no esenciales sin mostrarte un banner disruptivo."
     },
     "cookiePolicy": {
       "metaTitle": "Política de Cookies | Dark Kinetic",
@@ -137,15 +139,18 @@
         },
         "howWeUseCookies": {
           "heading": "2. Cómo usamos las cookies",
-          "body": "Usamos un único elemento consent_preferences en tu almacenamiento local para recordar tu decisión sobre analíticas. No usamos cookies de marketing de terceros, rastreadores cross-site ni CMP invasivos. Nuestra filosofía es máximo rendimiento y máxima privacidad."
+          "body": "Usamos un elemento consent_preferences en tu almacenamiento local para recordar tus preferencias de cookies. Cuando otorgás tu consentimiento, servicios de terceros pueden establecer las siguientes cookies:"
+        },
+        "cookieTable": {
+          "heading": "3. Detalle de cookies",
+          "analyticsCookies": "Cookies de analítica (requieren consentimiento de analítica): _ga — ID de cliente de Google Analytics, utilizada para distinguir usuarios únicos. Retención: 2 años. _ga_* — Identificador de sesión de Google Analytics. Retención: 2 años. Establecidas por: analytics.google.com.",
+          "marketingCookies": "Cookies de marketing (requieren consentimiento de marketing): _fbp — ID de navegador de Meta (Facebook) Pixel, utilizada para entregar y medir anuncios. Retención: 90 días. _fbc — Identificador de clic de Meta (Facebook) Pixel, establecida cuando un usuario llega a través de un anuncio de Facebook. Retención: 90 días. Establecidas por: facebook.com.",
+          "essentialStorage": "Almacenamiento esencial: consent_preferences — tus preferencias de consentimiento de cookies, almacenadas en localStorage. Sin vencimiento (persiste hasta que se borre manualmente)."
         },
         "managingPreferences": {
-          "heading": "3. Gestión de tus preferencias",
-          "body": "Si habilitaste Global Privacy Control (GPC) en tu navegador, tus preferencias ya quedan estrictamente gestionadas por el navegador y respetadas por nuestro sitio. Si aceptaste nuestro banner, podés limpiar el almacenamiento local del navegador para reiniciar el estado de consentimiento."
+          "heading": "4. Gestión de tus preferencias",
+          "body": "Si habilitaste Global Privacy Control (GPC) en tu navegador, tus preferencias ya quedan estrictamente gestionadas por el navegador y respetadas por nuestro sitio. Podés cambiar tus preferencias de cookies en cualquier momento haciendo clic en \"Gestionar Cookies\" en el pie de página. Esto revocará todo consentimiento activo, borrará las preferencias almacenadas y recargará la página con todas las cookies no esenciales bloqueadas."
         }
-      },
-      "_meta": {
-        "needsReview": true
       }
     },
     "legalNotice": {
@@ -166,9 +171,6 @@
           "heading": "3. Descargos",
           "body": "La información provista en este sitio es solo para fines informativos generales. Aunque buscamos precisión, no otorgamos garantías sobre la integridad o confiabilidad de la información."
         }
-      },
-      "_meta": {
-        "needsReview": true
       }
     }
   }
