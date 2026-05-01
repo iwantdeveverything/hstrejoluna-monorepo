@@ -58,6 +58,15 @@ export default async function PrivacyPolicy({
 
       <section className="mt-10">
         <h2 className="text-2xl font-semibold text-white">
+          {tPrivacy("sections.thirdPartyServices.heading")}
+        </h2>
+        <p className="mt-4 text-gray-300">
+          {tPrivacy("sections.thirdPartyServices.body")}
+        </p>
+      </section>
+
+      <section className="mt-10">
+        <h2 className="text-2xl font-semibold text-white">
           {tPrivacy("sections.gpc.heading")}
         </h2>
         <p className="mt-4 text-gray-300">{tPrivacy("sections.gpc.body")}</p>

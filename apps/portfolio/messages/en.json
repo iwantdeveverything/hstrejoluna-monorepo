@@ -111,15 +111,20 @@
         },
         "dataCollection": {
           "heading": "2. Data We Collect",
-          "body": "We operate under a strict data minimization principle. We only collect basic anonymous telemetry (if consented) to understand page load performance. We do not collect identifying Personally Identifiable Information (PII) through this front-end portfolio."
+          "body": "We collect analytics and marketing data only after you grant explicit consent. When analytics consent is granted, Google Analytics 4 (GA4) collects anonymized usage data such as pages visited, session duration, and general geographic region. When marketing consent is granted, Meta (Facebook) Pixel collects interaction data to measure ad effectiveness. We do not collect identifying Personally Identifiable Information (PII) through this front-end portfolio."
+        },
+        "thirdPartyServices": {
+          "heading": "3. Third-Party Services",
+          "body": "This site uses Google Tag Manager to manage analytics and marketing tags. The following third-party services may set cookies when you grant consent: Google Analytics 4 (analytics.google.com) for usage analytics, and Meta Pixel (facebook.com) for marketing measurement. Each service processes data under its own privacy policy. No data is shared with these services until you explicitly grant the corresponding consent category."
         },
         "gpc": {
-          "heading": "3. Global Privacy Control (GPC)",
+          "heading": "4. Global Privacy Control (GPC)",
           "body": "We natively respect the Global Privacy Control signal. If your browser supports and injects navigator.globalPrivacyControl, we automatically opt you out of all non-essential scripts and cookies without showing you a disruptive banner."
         }
       },
       "intro": "Welcome to the Dark Kinetic Portfolio. We respect your privacy and are committed to protecting your personal data. This privacy policy will inform you as to how we look after your personal data when you visit our website and tell you about your privacy rights.",
-      "dataCollection": "We operate under a strict data minimization principle. We only collect basic anonymous telemetry (if consented) to understand page load performance. We do not collect identifying Personally Identifiable Information (PII) through this front-end portfolio.",
+      "dataCollection": "We collect analytics and marketing data only after you grant explicit consent. When analytics consent is granted, Google Analytics 4 (GA4) collects anonymized usage data such as pages visited, session duration, and general geographic region. When marketing consent is granted, Meta (Facebook) Pixel collects interaction data to measure ad effectiveness. We do not collect identifying Personally Identifiable Information (PII) through this front-end portfolio.",
+      "thirdPartyServices": "This site uses Google Tag Manager to manage analytics and marketing tags. The following third-party services may set cookies when you grant consent: Google Analytics 4 (analytics.google.com) for usage analytics, and Meta Pixel (facebook.com) for marketing measurement. Each service processes data under its own privacy policy. No data is shared with these services until you explicitly grant the corresponding consent category.",
       "gpc": "We natively respect the Global Privacy Control signal. If your browser supports and injects navigator.globalPrivacyControl, we automatically opt you out of all non-essential scripts and cookies without showing you a disruptive banner."
     },
     "cookiePolicy": {
@@ -134,11 +139,17 @@
         },
         "howWeUseCookies": {
           "heading": "2. How We Use Cookies",
-          "body": "We use a single consent_preferences item in your local storage to remember your choice regarding analytics. We do not use third-party marketing cookies, cross-site trackers, or invasive CMP bloatware. Our philosophy is maximum performance and maximum privacy."
+          "body": "We use a consent_preferences item in your local storage to remember your cookie choices. When you grant consent, third-party services may set the following cookies:"
+        },
+        "cookieTable": {
+          "heading": "3. Cookie Details",
+          "analyticsCookies": "Analytics cookies (require analytics consent): _ga — Google Analytics client ID, used to distinguish unique users. Retention: 2 years. _ga_* — Google Analytics session identifier. Retention: 2 years. Set by: analytics.google.com.",
+          "marketingCookies": "Marketing cookies (require marketing consent): _fbp — Meta (Facebook) Pixel browser ID, used to deliver and measure advertisements. Retention: 90 days. _fbc — Meta (Facebook) Pixel click identifier, set when a user arrives via a Facebook ad. Retention: 90 days. Set by: facebook.com.",
+          "essentialStorage": "Essential storage: consent_preferences — your cookie consent choices, stored in localStorage. No expiration (persists until cleared)."
         },
         "managingPreferences": {
-          "heading": "3. Managing Your Preferences",
-          "body": "If you have enabled Global Privacy Control (GPC) in your browser, your preferences are already strictly managed by your browser and respected by our site. If you accepted our banner, you can clear your browser's local storage to reset your consent state."
+          "heading": "4. Managing Your Preferences",
+          "body": "If you have enabled Global Privacy Control (GPC) in your browser, your preferences are already strictly managed by your browser and respected by our site. You can change your cookie preferences at any time by clicking \"Manage Cookies\" in the footer. This will revoke all active consent, clear stored preferences, and reload the page with all non-essential cookies blocked."
         }
       }
     },

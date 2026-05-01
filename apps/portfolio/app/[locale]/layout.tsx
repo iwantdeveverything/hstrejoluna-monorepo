@@ -7,6 +7,7 @@ import "../globals.css";
 
 import Footer from "../../components/fragments/Footer";
 import CookieBanner from "../../components/fragments/CookieBanner";
+import GoogleTagManager from "../../components/tracking/GoogleTagManager";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 const spaceGrotesk = Space_Grotesk({
@@ -93,6 +94,7 @@ export default async function LocaleLayout({
             <Footer />
           </div>
           <CookieBanner />
+          <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GTM_ID || ""} />
         </NextIntlClientProvider>
       </body>
     </html>
