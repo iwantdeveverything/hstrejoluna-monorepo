@@ -72,6 +72,50 @@ describe("CookieBanner Component", () => {
     expect(banner).toBeInTheDocument();
   });
 
+  it("renders its glass surface via <LiquidGlass variant='dialog'> (REQ-7 S7.2)", () => {
+    mockUseCookieConsent.mockReturnValue({
+      shouldShowBanner: true,
+      acceptCookies: vi.fn(),
+      rejectCookies: vi.fn(),
+      acceptAll: vi.fn(),
+      rejectAll: vi.fn(),
+      consentState: { necessary: true, analytics: false, marketing: false },
+      isGpcActive: false,
+    });
+
+    const { container } = render(
+      <NextIntlClientProvider locale="en" messages={messages}>
+        <CookieBanner />
+      </NextIntlClientProvider>,
+    );
+
+    const banner = container.querySelector("[data-lg-variant]");
+    expect(banner).not.toBeNull();
+    expect(banner?.getAttribute("data-lg-variant")).toBe("dialog");
+    expect(banner?.getAttribute("role")).toBe("complementary");
+  });
+
+  it("does not use raw `backdrop-blur` Tailwind utilities (REQ-7 S7.1)", () => {
+    mockUseCookieConsent.mockReturnValue({
+      shouldShowBanner: true,
+      acceptCookies: vi.fn(),
+      rejectCookies: vi.fn(),
+      acceptAll: vi.fn(),
+      rejectAll: vi.fn(),
+      consentState: { necessary: true, analytics: false, marketing: false },
+      isGpcActive: false,
+    });
+
+    const { container } = render(
+      <NextIntlClientProvider locale="en" messages={messages}>
+        <CookieBanner />
+      </NextIntlClientProvider>,
+    );
+
+    const offenders = container.querySelectorAll("[class*='backdrop-blur']");
+    expect(offenders.length).toBe(0);
+  });
+
   it("calls acceptCookies when the user clicks the Accept button", () => {
     const acceptCookiesMock = vi.fn();
     mockUseCookieConsent.mockReturnValue({

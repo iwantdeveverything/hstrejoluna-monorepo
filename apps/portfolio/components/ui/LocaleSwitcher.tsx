@@ -2,6 +2,7 @@
 
 import { useLocale } from 'next-intl';
 import { useRouter, usePathname } from '@/i18n/navigation';
+import { LiquidGlass } from '@hstrejoluna/ui';
 
 export function LocaleSwitcher() {
   const locale = useLocale();
@@ -13,7 +14,11 @@ export function LocaleSwitcher() {
   }
 
   return (
-    <div className="flex items-center gap-1 p-1 bg-void/50 border border-white/10 rounded-sm">
+    <LiquidGlass
+      variant="pill"
+      intensity="low"
+      className="flex items-center gap-1 p-1 border border-white/10 rounded-sm"
+    >
       {(['en', 'es'] as const).map((cur) => (
         <button
           key={cur}
@@ -29,6 +34,6 @@ export function LocaleSwitcher() {
           {cur}
         </button>
       ))}
-    </div>
+    </LiquidGlass>
   );
 }

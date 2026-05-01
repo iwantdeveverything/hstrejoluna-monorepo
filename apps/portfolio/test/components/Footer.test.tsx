@@ -65,4 +65,35 @@ describe("Footer Component (Legal)", () => {
       ),
     ).toBeDefined();
   });
+
+  it("renders its glass surface via <LiquidGlass variant='panel'> (REQ-7 S7.2)", () => {
+    const { container } = render(
+      <NextIntlClientProvider locale="en" messages={messages}>
+        <Footer />
+      </NextIntlClientProvider>,
+    );
+
+    const footer = container.querySelector("footer");
+    expect(footer).not.toBeNull();
+    expect(footer?.getAttribute("data-lg-variant")).toBe("panel");
+  });
+
+  it("does not use raw `backdrop-blur` Tailwind utilities (REQ-7 S7.1)", () => {
+    const { container } = render(
+      <NextIntlClientProvider locale="en" messages={messages}>
+        <Footer />
+      </NextIntlClientProvider>,
+    );
+
+    const footer = container.querySelector("footer");
+    expect(footer).not.toBeNull();
+    // No descendant element on the migrated wrapper should declare a
+    // raw backdrop-blur utility class — that responsibility now lives
+    // inside <LiquidGlass>.
+    const offenders = footer?.querySelectorAll(
+      "[class*='backdrop-blur']",
+    );
+    expect(offenders?.length ?? 0).toBe(0);
+    expect(footer?.className.includes("backdrop-blur")).toBe(false);
+  });
 });

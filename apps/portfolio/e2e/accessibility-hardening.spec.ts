@@ -9,8 +9,9 @@ test.describe("WCAG 2.2 AA Accessibility Hardening", () => {
     });
   });
 
-  test("prefers-contrast: more applies correct high-contrast CSS overrides", async ({ page }, testInfo) => {
+  test("prefers-contrast: more applies correct high-contrast CSS overrides", async ({ page, browserName }, testInfo) => {
     test.skip(testInfo.project.name.includes("Mobile"), "Layout specific selectors are hidden on mobile");
+    test.skip(browserName !== "chromium", "emulateMedia({ contrast: 'more' }) is only reliably supported in Chromium in Playwright");
 
     // Navigate to a page where we can test contrast overrides
     await page.goto("/");
@@ -19,7 +20,7 @@ test.describe("WCAG 2.2 AA Accessibility Hardening", () => {
 
     // In globals.css, we added:
     // .text-on_surface_variant { color: rgba(255, 255, 255, 0.85) !important; }
-    const variantText = page.locator(".text-on_surface_variant").first();
+    const variantText = page.locator("main .text-on_surface_variant").first();
     await expect(variantText).toBeVisible();
 
     const borderElement = page.locator('.border-surface_container_highest').first();
@@ -49,10 +50,14 @@ test.describe("WCAG 2.2 AA Accessibility Hardening", () => {
     const secondSkill = skillButtons.nth(1);
 
     // Expand first
+    await firstSkill.evaluate((node) => node.scrollIntoView({ block: "center" }));
+    await page.waitForTimeout(100);
     await firstSkill.click();
     await expect(firstSkill).toHaveAttribute("aria-expanded", "true");
 
     // Expand second
+    await secondSkill.evaluate((node) => node.scrollIntoView({ block: "center" }));
+    await page.waitForTimeout(100);
     await secondSkill.click();
     
     // First should now be collapsed

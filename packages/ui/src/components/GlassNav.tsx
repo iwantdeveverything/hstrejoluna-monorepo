@@ -1,20 +1,23 @@
 "use client";
 
-import React from 'react';
+import React from "react";
+
+import { LiquidGlass } from "../liquid-glass";
 
 interface NavItem {
   label: string;
   href: string;
 }
 
-const navItems: NavItem[] = [
-  { label: 'System', href: '#' },
-];
+const navItems: NavItem[] = [{ label: "System", href: "#" }];
 
 export const GlassNav = () => {
   return (
     <nav className="fixed bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 z-50 pointer-events-auto">
-      <div className="flex items-center gap-6 md:gap-10 px-8 py-4 bg-surface_container/60 backdrop-blur-xl border border-outline_variant/10 rounded-none">
+      <LiquidGlass
+        variant="panel"
+        className="flex items-center gap-6 md:gap-10 px-8 py-4 border border-outline_variant/10 rounded-none"
+      >
         {navItems.map((item) => (
           <a
             key={item.label}
@@ -42,7 +45,7 @@ export const GlassNav = () => {
         >
           Skills
         </a>
-      </div>
+      </LiquidGlass>
     </nav>
   );
 };

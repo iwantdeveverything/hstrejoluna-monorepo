@@ -1,0 +1,92 @@
+/* Liquid Glass primitive — visual cascade
+ * ───────────────────────────────────────────────────────────────────────
+ * Owned by `<LiquidGlass />` (packages/ui/src/liquid-glass/LiquidGlass.tsx).
+ * Token sources live in `packages/ui/src/styles/tokens.css`.
+ *
+ * Cascade order (most-preferred → least):
+ *   0. Universal baseline — every variant gets blur+saturate so the
+ *      glass identity is preserved on any browser.
+ *   1. Upgrade — when @supports + ≥480px + !reduce-data, the inline
+ *      `--lg-backdrop-filter` (set by JS) refines to include the SVG
+ *      refraction url(#lg-refraction-{variant}).
+ *   2. Override — `prefers-reduced-transparency: reduce` flattens the
+ *      surface to a solid token bg, removing all backdrop filters.
+ *   3. Override — narrow viewport or `prefers-reduced-data: reduce`
+ *      drops the displacement url() but keeps blur+saturate (REQ-5).
+ *
+ * Specular rim is rendered via the `::after` pseudo-element so the
+ * filter graph stays small (ADR-2).
+ */
+
+/* 0. Universal baseline ---------------------------------------------------*/
+.lg-glass {
+  position: relative;
+  isolation: isolate;
+  background-color: color-mix(in oklab, var(--lg-tint) 35%, transparent);
+  backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-saturation));
+  -webkit-backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-saturation));
+  box-shadow:
+    inset 0 1px 0 0 hsla(0, 0%, 100%, calc(var(--lg-specular-opacity) * 1.4)),
+    inset 0 -1px 0 0 hsla(0, 0%, 0%, 0.15);
+  transition: background-color 200ms ease-out;
+}
+
+/* Variant geometry hooks --------------------------------------------------*/
+.lg-glass[data-lg-variant="panel"]  { border-radius: var(--lg-radius-panel); }
+.lg-glass[data-lg-variant="pill"]   { border-radius: var(--lg-radius-pill); }
+.lg-glass[data-lg-variant="dock"]   { border-radius: var(--lg-radius-dock); }
+.lg-glass[data-lg-variant="circle"] { border-radius: var(--lg-radius-circle); }
+.lg-glass[data-lg-variant="dialog"] { border-radius: var(--lg-radius-dialog); }
+
+/* 1. Upgrade — SVG refraction (CSS-only gate) -----------------------------*/
+@supports (backdrop-filter: url("#x")) {
+  @media (min-width: 480px) {
+    .lg-glass[data-lg-refraction="url"] {
+      backdrop-filter: var(
+        --lg-backdrop-filter,
+        blur(var(--lg-blur)) saturate(var(--lg-saturation))
+      );
+      -webkit-backdrop-filter: var(
+        --lg-backdrop-filter,
+        blur(var(--lg-blur)) saturate(var(--lg-saturation))
+      );
+    }
+  }
+}
+
+/* 3. Override — reduced data drops the url() but keeps blur (REQ-5 S5.3) -*/
+@media (prefers-reduced-data: reduce) {
+  .lg-glass {
+    backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-saturation));
+    -webkit-backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-saturation));
+  }
+}
+
+/* 2. Override — reduced transparency wins over everything (REQ-4 S4.1) ---*/
+@media (prefers-reduced-transparency: reduce) {
+  .lg-glass {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background-color: var(--lg-fallback-bg, var(--color-surface-container));
+    box-shadow: none;
+  }
+  .lg-glass::after {
+    display: none;
+  }
+}
+
+/* JS-mirrored fallback (when reduceTransparency was already detected) ----*/
+.lg-glass[data-lg-fallback="solid"] {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  background-color: var(--lg-fallback-bg, var(--color-surface-container));
+  box-shadow: none;
+}
+.lg-glass[data-lg-fallback="solid"]::after {
+  display: none;
+}
+
+/* Reduced motion is enforced inside the JS animation bridge (REQ-6 S6.4)
+ * — the resting `<feDisplacementMap scale>` value is set on the filter
+ * node by `filter-defs.tsx` and never mutated when useReducedMotion is on.
+ */

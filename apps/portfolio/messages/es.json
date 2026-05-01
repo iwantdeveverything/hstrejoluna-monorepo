@@ -93,7 +93,10 @@
     "neuralMap": "NEURAL_MAP",
     "experienceLog": "EXPERIENCE_LOG",
     "initializing": "INITIALIZING...",
-    "systemOnline": "SYSTEM ONLINE"
+    "systemOnline": "SYSTEM ONLINE",
+    "menu": "MENU",
+    "close": "CLOSE",
+    "socialHeading": "SOCIALS"
   },
   "legal": {
     "lastUpdatedPrefix": "Última actualización:",

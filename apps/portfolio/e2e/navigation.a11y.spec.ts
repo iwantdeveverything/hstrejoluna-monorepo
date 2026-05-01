@@ -25,11 +25,11 @@ test.describe("portfolio accessibility", () => {
 
     await page.goto("/");
 
-    // SectionDock uses icon-only controls, so explicit accessible names are required.
-    await expect(page.getByRole("link", { name: /navigate to projects/i })).toBeVisible();
-    await expect(page.getByRole("link", { name: /navigate to experience/i })).toBeVisible();
-    await expect(page.getByRole("link", { name: /navigate to skills/i })).toBeVisible();
-    await expect(page.getByRole("link", { name: /navigate to certificates/i })).toBeVisible();
+    // LiquidNav buttons should be present.
+    await expect(page.getByRole("button", { name: /^projects$/i }).first()).toBeVisible();
+    await expect(page.getByRole("button", { name: /^experience$/i }).first()).toBeVisible();
+    await expect(page.getByRole("button", { name: /^skills$/i }).first()).toBeVisible();
+    await expect(page.getByRole("button", { name: /^certificates$/i }).first()).toBeVisible();
 
     const focusedNavLabels: string[] = [];
     const focusedOutlineWidths: number[] = [];
@@ -43,7 +43,7 @@ test.describe("portfolio accessibility", () => {
           return null;
         }
 
-        const commandNav = document.querySelector('[data-testid="command-nav"]');
+        const commandNav = document.querySelector('[data-testid="liquid-nav"]');
         if (!commandNav || !commandNav.contains(activeElement)) {
           return null;
         }

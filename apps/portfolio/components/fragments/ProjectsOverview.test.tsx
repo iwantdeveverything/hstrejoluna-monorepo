@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { ProjectsOverview } from "./ProjectsOverview";
 import { NextIntlClientProvider } from "next-intl";
@@ -84,6 +84,56 @@ const projectWithoutImage = {
   technologies: ["Go"],
   links: [],
 };
+
+describe("ProjectsOverview — Liquid Glass migration (REQ-7)", () => {
+  it("renders each project card shell via <LiquidGlass variant='panel'> (S7.2)", () => {
+    const { container } = render(
+      <NextIntlClientProvider locale="en" messages={messages}>
+        <ProjectsOverview projects={[projectWithImage, projectWithoutImage]} />
+      </NextIntlClientProvider>,
+    );
+
+    const panels = container.querySelectorAll("[data-lg-variant='panel']");
+    expect(panels.length).toBeGreaterThanOrEqual(2);
+  });
+
+  it("renders the deployed status pill via <LiquidGlass variant='pill'> (S7.2)", () => {
+    const { container } = render(
+      <NextIntlClientProvider locale="en" messages={messages}>
+        <ProjectsOverview projects={[projectWithImage]} />
+      </NextIntlClientProvider>,
+    );
+
+    const pill = container.querySelector("[data-lg-variant='pill']");
+    expect(pill).not.toBeNull();
+    // The migrated surface is the small status badge (deployed indicator).
+    expect(pill?.textContent?.trim().length).toBeGreaterThan(0);
+  });
+
+  it("does not use raw `backdrop-blur` Tailwind utilities (S7.1)", () => {
+    const { container } = render(
+      <NextIntlClientProvider locale="en" messages={messages}>
+        <ProjectsOverview projects={[projectWithImage]} />
+      </NextIntlClientProvider>,
+    );
+
+    const offenders = container.querySelectorAll("[class*='backdrop-blur']");
+    expect(offenders.length).toBe(0);
+  });
+
+  it("renders the expanded frame via <LiquidGlass variant='panel'> when opened (S7.2)", () => {
+    const { container } = render(
+      <NextIntlClientProvider locale="en" messages={messages}>
+        <ProjectsOverview projects={[projectWithImage]} />
+      </NextIntlClientProvider>,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: /\[click_to_expand\]/i }));
+    const expanded = container.querySelector("#project-panel-p1");
+    const frame = expanded?.querySelector("[data-lg-variant='panel']");
+    expect(frame).not.toBeNull();
+  });
+});
 
 describe("ProjectsOverview — Descriptive Image Alt Text", () => {
   it("uses descriptive alt text on project images, not just the title", () => {

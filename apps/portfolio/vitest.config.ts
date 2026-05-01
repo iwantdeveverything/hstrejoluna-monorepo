@@ -7,11 +7,19 @@ export default defineConfig({
       "@": path.resolve(__dirname, "."),
     },
   },
+  esbuild: {
+    jsx: "automatic",
+  },
   test: {
     environment: "jsdom",
     globals: true,
     setupFiles: ["./test/setup.ts"],
-    include: ["**/*.test.ts", "**/*.test.tsx"],
+    include: [
+      "**/*.test.ts",
+      "**/*.test.tsx",
+      "../../packages/ui/src/**/*.test.ts",
+      "../../packages/ui/src/**/*.test.tsx",
+    ],
     server: {
       deps: {
         inline: ["next-intl"],

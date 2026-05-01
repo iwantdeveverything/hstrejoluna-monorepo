@@ -9,7 +9,7 @@ import { Project, PortableTextBlock } from "@/types/sanity";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { PortableText } from "@portabletext/react";
 import { blockToPlainText } from "@/lib/utils";
-import { TelemetryHUD } from "@hstrejoluna/ui";
+import { TelemetryHUD, LiquidGlass } from "@hstrejoluna/ui";
 import { AUTHOR_NAME, SITE_NAME } from "@/constants/brand";
 
 interface ProjectPageProps {
@@ -177,7 +177,10 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
           <section className="lg:col-span-8 space-y-12">
             {project.image && (
-              <div className="relative aspect-[16/9] w-full overflow-hidden border border-white/5 grayscale hover:grayscale-0 transition-all duration-700 group">
+              <LiquidGlass
+                variant="panel"
+                className="relative aspect-[16/9] w-full overflow-hidden border border-white/5 grayscale hover:grayscale-0 transition-all duration-700 group"
+              >
                 <Image
                   src={urlFor(project.image).url()}
                   alt={project.image.alt || project.title}
@@ -185,7 +188,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
                   sizes="(max-width: 1024px) 100vw, 66vw"
                   className="object-cover transition-transform duration-[2s] group-hover:scale-105"
                 />
-              </div>
+              </LiquidGlass>
             )}
 
             <div className="prose prose-invert prose-lg max-w-none prose-headings:font-black prose-headings:uppercase prose-headings:italic prose-headings:tracking-tighter prose-p:text-on_surface_variant prose-p:font-light prose-strong:text-white prose-a:text-primary">
@@ -197,7 +200,11 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
                 <h2 className="text-4xl font-black uppercase italic tracking-tighter">{t("gallery")}</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {project.gallery.map((img, idx) => (
-                    <div key={img.asset?._ref ?? String(idx)} className="relative aspect-video overflow-hidden border border-white/5 grayscale hover:grayscale-0 transition-all duration-500 group">
+                    <LiquidGlass
+                      key={img.asset?._ref ?? String(idx)}
+                      variant="panel"
+                      className="relative aspect-video overflow-hidden border border-white/5 grayscale hover:grayscale-0 transition-all duration-500 group"
+                    >
                       <Image
                         src={urlFor(img).url()}
                         alt={img.alt || `${project.title} gallery ${idx + 1}`}
@@ -205,7 +212,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
                         sizes="(max-width: 768px) 100vw, 50vw"
                         className="object-cover transition-transform duration-700 group-hover:scale-110"
                       />
-                    </div>
+                    </LiquidGlass>
                   ))}
                 </div>
               </div>
@@ -213,19 +220,22 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           </section>
 
           <aside className="lg:col-span-4 space-y-12">
-            <div className="p-8 border border-white/5 bg-white/[0.02]">
+            <LiquidGlass variant="panel" className="p-8 border border-white/5">
               <h3 className="text-2xl font-black uppercase italic tracking-tighter mb-6">{t("techStack")}</h3>
               <div className="flex flex-wrap gap-3">
                 {project.techStack?.filter(Boolean).map((skill) => (
-                  <span 
+                  <LiquidGlass
+                    as="span"
+                    variant="pill"
+                    intensity="low"
                     key={skill._id}
-                    className="px-3 py-1 bg-white/5 border border-white/10 text-[10px] font-mono uppercase tracking-widest text-on_surface_variant"
+                    className="px-3 py-1 border border-white/10 text-[10px] font-mono uppercase tracking-widest text-on_surface_variant"
                   >
                     {skill.name}
-                  </span>
+                  </LiquidGlass>
                 ))}
               </div>
-            </div>
+            </LiquidGlass>
           </aside>
         </div>
       </div>

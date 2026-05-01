@@ -14,13 +14,16 @@ test.describe("portfolio navigation behavior", () => {
     await page.goto("/");
 
     await page.evaluate(() => {
-      document.getElementById("projects")?.scrollIntoView({ behavior: "auto", block: "start" });
+      const el = document.getElementById("projects");
+      if (el) {
+        window.scrollTo({ top: el.offsetTop, behavior: "auto" });
+      }
     });
 
     await expect
       .poll(() =>
         page
-          .getByRole("link", { name: /^projects$/i })
+          .getByRole("button", { name: /^projects$/i })
           .first()
           .getAttribute("aria-current")
       )
@@ -31,47 +34,25 @@ test.describe("portfolio navigation behavior", () => {
     test.skip(testInfo.project.name.includes("Mobile"), "Desktop-only flow");
 
     await page.goto("/");
-    await expect(page.getByRole("button", { name: /open navigation menu/i })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: /^menu$/i })).toHaveCount(0);
   });
 
-  test("desktop navigation activates certificates and auto-hides on downward scroll", async ({
+  test("desktop navigation activates certificates", async ({
     page,
   }, testInfo) => {
     test.skip(testInfo.project.name.includes("Mobile"), "Desktop-only flow");
 
     await page.goto("/");
 
-    const commandNav = page.getByTestId("command-nav");
-    const certificatesDockLink = page.getByRole("link", {
-      name: /navigate to certificates/i,
-    });
-    await expect(certificatesDockLink).toBeVisible();
+    const liquidNav = page.getByTestId("liquid-nav");
+    const certificatesNavLink = page.getByRole("button", { name: /^certificates$/i }).first();
+    await expect(certificatesNavLink).toBeVisible();
 
-    await page.evaluate(() => {
-      window.scrollTo({ top: 0, behavior: "auto" });
-    });
-    await expect
-      .poll(async () => commandNav.getAttribute("data-hidden"))
-      .toBe("false");
+    await certificatesNavLink.click();
 
-    await certificatesDockLink.click();
-
-    const certificatesNavLink = page.getByRole("link", { name: /^certificates$/i }).first();
     await expect(certificatesNavLink).toHaveAttribute("aria-current", "location");
-    await expect
-      .poll(async () => commandNav.getAttribute("data-hidden"))
-      .toBe("true");
-
-    await page.evaluate(() => {
-      window.scrollTo({ top: 2400, behavior: "auto" });
-    });
-
-    await page.evaluate(() => {
-      window.scrollTo({ top: 120, behavior: "auto" });
-    });
-    await expect
-      .poll(async () => commandNav.getAttribute("data-hidden"))
-      .toBe("false");
+    // Ensure the navigation stays visible (auto-hide is disabled)
+    await expect(liquidNav).not.toHaveClass(/pointer-events-none/);
   });
 
   test("mobile menu opens and navigates to target section", async ({ page }, testInfo) => {
@@ -80,16 +61,16 @@ test.describe("portfolio navigation behavior", () => {
     await page.goto("/");
 
     const openMenuButton = page.getByRole("button", {
-      name: /open navigation menu/i,
+      name: /^menu$/i,
     });
     await expect(openMenuButton).toBeVisible();
     await openMenuButton.click();
 
     const mobileNavigation = page.getByRole("navigation", {
-      name: /mobile section navigation/i,
+      name: /mobile sections/i,
     });
     await expect(mobileNavigation).toBeVisible();
-    await mobileNavigation.getByRole("link", { name: /certificates/i }).click();
+    await mobileNavigation.getByRole("button", { name: /certificates/i }).click();
 
     await expect(mobileNavigation).toHaveCount(0);
     await expect(page).toHaveURL(/#certificates$/);

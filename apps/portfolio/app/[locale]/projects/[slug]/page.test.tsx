@@ -44,6 +44,16 @@ vi.mock("@/components/Breadcrumbs", () => ({
 
 vi.mock("@hstrejoluna/ui", () => ({
   TelemetryHUD: ({ identifier }: any) => <div data-testid="telemetry-hud">{identifier}</div>,
+  LiquidGlass: ({ as: As = "div", variant, intensity, children, className, ...rest }: any) => (
+    <As
+      data-lg-variant={variant}
+      data-lg-intensity={intensity}
+      className={className}
+      {...rest}
+    >
+      {children}
+    </As>
+  ),
 }));
 
 // Mock safeJsonLd
@@ -61,6 +71,8 @@ const mockProject = {
   role: "Lead Architect",
   externalLink: "https://github.com/hstrejoluna/test",
   techStack: [{ _id: "s1", name: "Next.js" }],
+  image: { asset: { _ref: "img-main", _type: "reference" as const } },
+  gallery: [{ asset: { _ref: "img-1", _type: "reference" as const } }],
 };
 
 import { client } from "@/lib/sanity";
@@ -104,6 +116,33 @@ describe("ProjectPage — Dynamic Rendering", () => {
     expect(jsonLd["@type"]).toContain("SoftwareSourceCode");
     expect(jsonLd.name).toBe("Test Project");
     expect(jsonLd.codeRepository).toBe("https://github.com/hstrejoluna/test");
+  });
+
+  it("renders the case-study aside via <LiquidGlass variant='panel'> (REQ-7 S7.2)", async () => {
+    const params = Promise.resolve({ locale: "en", slug: "test-project" });
+    const Page = await ProjectPage({ params });
+    const { container } = render(Page);
+
+    const panel = container.querySelector("aside [data-lg-variant='panel']");
+    expect(panel).not.toBeNull();
+  });
+
+  it("renders case-study image frames via <LiquidGlass variant='panel'> (REQ-7 S7.2)", async () => {
+    const params = Promise.resolve({ locale: "en", slug: "test-project" });
+    const Page = await ProjectPage({ params });
+    const { container } = render(Page);
+
+    const panels = container.querySelectorAll("section [data-lg-variant='panel']");
+    expect(panels.length).toBeGreaterThanOrEqual(2);
+  });
+
+  it("does not use raw `backdrop-blur` Tailwind utilities on the page (REQ-7 S7.1)", async () => {
+    const params = Promise.resolve({ locale: "en", slug: "test-project" });
+    const Page = await ProjectPage({ params });
+    const { container } = render(Page);
+
+    const offenders = container.querySelectorAll("[class*='backdrop-blur']");
+    expect(offenders.length).toBe(0);
   });
 
   it("renders Breadcrumbs with correct trace", async () => {
