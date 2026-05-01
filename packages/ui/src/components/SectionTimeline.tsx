@@ -2,6 +2,7 @@
 
 import React, { type MouseEvent } from "react";
 import { motion } from "framer-motion";
+import { LiquidGlass } from "../liquid-glass";
 
 export interface SectionTimelineItem {
   id: string;
@@ -63,20 +64,27 @@ export const SectionTimeline = ({
                 className="group relative block rounded p-2 focus-visible:outline-none"
                 onClick={(event) => handleSectionNavigation(event, section.id)}
               >
-                <span className="sr-only">{section.label}</span>
-                <div className="absolute left-1/2 top-1/2 h-8 w-8 -translate-x-1/2 -translate-y-1/2 scale-0 rounded-full border border-primary/20 transition-transform duration-300 group-hover:scale-100" />
+                <LiquidGlass
+                  as="span"
+                  variant="pill"
+                  intensity="low"
+                  className="relative flex h-8 w-8 items-center justify-center border border-white/10"
+                >
+                  <span className="sr-only">{section.label}</span>
+                  <div className="absolute left-1/2 top-1/2 h-8 w-8 -translate-x-1/2 -translate-y-1/2 scale-0 rounded-full border border-primary/20 transition-transform duration-300 group-hover:scale-100" />
 
-                <motion.div
-                  initial={false}
-                  animate={{
-                    width: isActive ? 6 : 4,
-                    height: isActive ? 6 : 4,
-                    backgroundColor: isActive
-                      ? "var(--color-primary)"
-                      : "var(--color-surface_container_highest)",
-                  }}
-                  className="relative z-10 rounded-full shadow-[0_0_0_1px_rgba(255,255,255,0.05)]"
-                />
+                  <motion.div
+                    initial={false}
+                    animate={{
+                      width: isActive ? 6 : 4,
+                      height: isActive ? 6 : 4,
+                      backgroundColor: isActive
+                        ? "var(--color-primary)"
+                        : "var(--color-surface_container_highest)",
+                    }}
+                    className="relative z-10 rounded-full shadow-[0_0_0_1px_rgba(255,255,255,0.05)]"
+                  />
+                </LiquidGlass>
               </a>
             </li>
           );

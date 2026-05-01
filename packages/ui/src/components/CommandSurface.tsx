@@ -3,6 +3,8 @@
 import React, { type MouseEvent, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
+import { LiquidGlass } from "../liquid-glass";
+
 export interface CommandSurfaceSection {
   id: string;
   label: string;
@@ -125,7 +127,11 @@ export const CommandSurface = ({
       animate={{ y: shouldHide ? 140 : 0, opacity: shouldHide ? 0 : 1 }}
       transition={{ type: "spring", stiffness: 260, damping: 20 }}
     >
-      <div className="absolute inset-0 bg-void/80 backdrop-blur-md border-t border-surface_container_highest" />
+      <LiquidGlass
+        variant="dock"
+        aria-hidden="true"
+        className="absolute inset-0 border-t border-surface_container_highest"
+      />
 
       <div className="relative z-10 flex items-center justify-between gap-4">
         <div className="flex items-center gap-4 text-xs font-mono">

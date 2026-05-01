@@ -4,6 +4,7 @@ import React from "react";
 import { Link } from "@/i18n/navigation";
 import { Copyleft } from "lucide-react";
 import { clearConsentState } from "@hstrejoluna/compliance";
+import { LiquidGlass } from "@hstrejoluna/ui";
 import { useTranslations } from "next-intl";
 import { pushConsentDenial } from "@/components/tracking/gtm-utils";
 
@@ -20,7 +21,11 @@ export default function Footer() {
   };
 
   return (
-    <footer className="relative z-50 mt-20 border-t border-white/10 bg-black/50 py-8 backdrop-blur-sm sm:mt-32">
+    <LiquidGlass
+      as="footer"
+      variant="panel"
+      className="relative z-50 mt-20 border-t border-white/10 py-8 sm:mt-32"
+    >
       <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-6 px-4 md:flex-row md:px-8 lg:px-12">
         <div className="flex items-center gap-2 text-sm text-gray-400">
           <Copyleft className="h-4 w-4" aria-hidden="true" />
@@ -51,6 +56,6 @@ export default function Footer() {
           </button>
         </nav>
       </div>
-    </footer>
+    </LiquidGlass>
   );
 }

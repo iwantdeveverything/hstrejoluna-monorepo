@@ -6,6 +6,7 @@ import { useCookieConsent } from "@hstrejoluna/compliance";
 import { motion, AnimatePresence } from "framer-motion";
 import { ShieldAlert } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { LiquidGlass } from "@hstrejoluna/ui";
 
 export default function CookieBanner() {
   const tCookie = useTranslations("cookie");
@@ -14,14 +15,19 @@ export default function CookieBanner() {
   return (
     <AnimatePresence>
       {shouldShowBanner && (
-        <motion.aside
+        <motion.div
           initial={{ y: "100%", opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: "100%", opacity: 0 }}
           transition={{ type: "spring", stiffness: 260, damping: 20 }}
+          className="fixed bottom-0 left-0 right-0 z-[100]"
+        >
+        <LiquidGlass
+          as="aside"
+          variant="dialog"
           aria-label={tCookie("bannerLabel")}
           role="complementary"
-          className="fixed bottom-0 left-0 right-0 z-[100] border-t border-white/10 bg-black/80 p-4 text-sm text-gray-300 backdrop-blur-md md:p-6"
+          className="border-t border-white/10 p-4 text-sm text-gray-300 md:p-6"
         >
           <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 md:flex-row">
             <div className="flex items-center gap-3">
@@ -55,7 +61,8 @@ export default function CookieBanner() {
               </button>
             </div>
           </div>
-        </motion.aside>
+        </LiquidGlass>
+        </motion.div>
       )}
     </AnimatePresence>
   );

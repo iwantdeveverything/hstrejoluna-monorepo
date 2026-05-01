@@ -71,6 +71,32 @@ const mockProfile = {
   socials: [],
 };
 
+describe("HeroFragment — Liquid Glass migration (REQ-7)", () => {
+  it("renders the info card via <LiquidGlass variant='panel'> (S7.2)", () => {
+    const { container } = render(<HeroFragment profile={mockProfile} />);
+    const glass = container.querySelector("[data-lg-variant='panel']");
+    expect(glass).not.toBeNull();
+    // The info card hosts the headline + subheadline copy.
+    expect(glass?.textContent).toContain("Test Headline");
+    expect(glass?.textContent).toContain(
+      "I transform complex constraints into pure, kinetic functional art.",
+    );
+  });
+
+  it("does not use raw `backdrop-blur` Tailwind utilities (S7.1)", () => {
+    const { container } = render(<HeroFragment profile={mockProfile} />);
+    const offenders = container.querySelectorAll("[class*='backdrop-blur']");
+    expect(offenders.length).toBe(0);
+  });
+
+  it("renders the scroll indicator chrome via <LiquidGlass variant='pill'> (S7.2)", () => {
+    const { container } = render(<HeroFragment profile={mockProfile} />);
+    const button = screen.getByRole("button", { name: "DESCENT" });
+    const pill = button.querySelector("[data-lg-variant='pill']");
+    expect(pill).not.toBeNull();
+  });
+});
+
 describe("HeroFragment — Decorative Content Isolation", () => {
   it("hides TelemetryPanel from assistive technology", () => {
     const { container } = render(<HeroFragment profile={mockProfile} />);

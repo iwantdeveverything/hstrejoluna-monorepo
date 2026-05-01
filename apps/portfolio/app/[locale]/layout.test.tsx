@@ -48,6 +48,20 @@ vi.mock("../../components/tracking/GoogleTagManager", () => ({
   ),
 }));
 
+// Mock the MotionProvider client boundary that the layout wraps the subtree
+// in. We only care that the layout actually wraps via the provider (REQ-6
+// S6.3 — LazyMotion + domAnimation lives there). Actual Framer Motion
+// runtime is covered by component-level tests.
+vi.mock("../../components/providers/MotionProvider", () => ({
+  __esModule: true,
+  default: ({ children }: { children: React.ReactNode }) => (
+    <div data-test-lazy-motion="dom">{children}</div>
+  ),
+  MotionProvider: ({ children }: { children: React.ReactNode }) => (
+    <div data-test-lazy-motion="dom">{children}</div>
+  ),
+}));
+
 import { getMessages, setRequestLocale } from "next-intl/server";
 import LocaleLayout from "./layout";
 
@@ -148,5 +162,49 @@ describe("LocaleLayout — Locale-Aware Rendering", () => {
     const header = screen.getByRole("banner");
     expect(header).toHaveAttribute("aria-label", "Site branding");
     expect(header).toHaveTextContent("Dark Kinetic");
+  });
+
+  it("mounts <LiquidGlassFilters /> exactly once (REQ-2 S2.1, S2.3)", async () => {
+    const params = Promise.resolve({ locale: "en" });
+    const Layout = await LocaleLayout({
+      children: <p>Content</p>,
+      params,
+    });
+
+    const { container } = render(Layout as React.ReactElement);
+    const filterMounts = container.querySelectorAll("[data-lg-filters]");
+    expect(filterMounts).toHaveLength(1);
+  });
+
+  it("filter defs include every variant id (REQ-2 S2.4)", async () => {
+    const params = Promise.resolve({ locale: "en" });
+    const Layout = await LocaleLayout({
+      children: <p>Content</p>,
+      params,
+    });
+
+    const { container } = render(Layout as React.ReactElement);
+    const expectedIds = [
+      "lg-refraction-panel",
+      "lg-refraction-pill",
+      "lg-refraction-dock",
+      "lg-refraction-circle",
+      "lg-refraction-dialog",
+    ];
+    for (const id of expectedIds) {
+      expect(container.querySelector(`#${id}`)).not.toBeNull();
+    }
+  });
+
+  it("wraps client subtree in <LazyMotion features={domAnimation}> (REQ-6 S6.3)", async () => {
+    const params = Promise.resolve({ locale: "en" });
+    const Layout = await LocaleLayout({
+      children: <p>Content</p>,
+      params,
+    });
+
+    const { container } = render(Layout as React.ReactElement);
+    // LazyMotion is mocked below to expose a marker we can assert against.
+    expect(container.querySelector("[data-test-lazy-motion='dom']")).not.toBeNull();
   });
 });

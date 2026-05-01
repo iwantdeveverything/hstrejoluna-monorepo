@@ -6,7 +6,7 @@ import Image from "next/image";
 import { Link as LocalizedLink } from "@/i18n/navigation";
 import { Project } from "@/types/sanity";
 import { urlFor } from "@/lib/sanity";
-import { GlitchText } from "@hstrejoluna/ui";
+import { GlitchText, LiquidGlass } from "@hstrejoluna/ui";
 import { TelemetryHUD } from "@hstrejoluna/ui";
 import { blockToPlainText } from "@/lib/utils";
 import { useTranslations } from "next-intl";
@@ -91,8 +91,9 @@ export const ProjectFragment = ({ project, index }: ProjectFragmentProps) => {
             />
             
             {/* Image Container with Custom Clip Path */}
-            <div 
-              className="relative z-10 w-full h-full overflow-hidden border border-white/5 bg-white/5 backdrop-blur-sm transition-all duration-700 grayscale group-hover:grayscale-0 group-hover:border-primary/30"
+            <LiquidGlass
+              variant="panel"
+              className="relative z-10 w-full h-full overflow-hidden border border-white/5 transition-all duration-700 grayscale group-hover:grayscale-0 group-hover:border-primary/30"
               style={{ clipPath: "polygon(15% 0, 100% 0, 85% 100%, 0 100%)" }}
             >
               {project.image && (
@@ -112,7 +113,7 @@ export const ProjectFragment = ({ project, index }: ProjectFragmentProps) => {
               {/* Edge Glitch Light */}
               <div className="absolute top-0 right-0 w-1 h-full bg-glitch-cyan/20 z-30 opacity-0 group-hover:opacity-100 transition-opacity" />
               <div className="absolute bottom-0 left-0 w-1 h-full bg-glitch-magenta/20 z-30 opacity-0 group-hover:opacity-100 transition-opacity" />
-            </div>
+            </LiquidGlass>
           </m.div>
         </div>
       </div>

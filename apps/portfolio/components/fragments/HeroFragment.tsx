@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, type Variants } from "framer-motion";
 import { Profile } from "@/types/sanity";
-import { GlitchText } from "@hstrejoluna/ui";
+import { GlitchText, LiquidGlass } from "@hstrejoluna/ui";
 import { useTranslations } from "next-intl";
 
 interface HeroFragmentProps {
@@ -111,16 +111,23 @@ const ScrollIndicator = ({
     className="absolute bottom-6 left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-3 opacity-50 hover:opacity-100 transition-opacity cursor-pointer z-20 bg-transparent border-0 p-0"
     onClick={onClick}
   >
-    <span className="font-mono text-[8px] tracking-[0.5em] text-white/40 uppercase [writing-mode:vertical-lr] rotate-180">
-      {label}
-    </span>
-    <div className="w-[1px] h-12 md:h-16 bg-white/10 relative overflow-hidden">
-      <motion.div
-        animate={{ y: [-48, 64] }}
-        transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
-        className="absolute top-0 w-full h-8 bg-gradient-to-b from-transparent via-ember to-transparent"
-      />
-    </div>
+    <LiquidGlass
+      as="span"
+      variant="pill"
+      intensity="low"
+      className="flex flex-col items-center gap-3 rounded-full border border-white/10 px-3 py-4"
+    >
+      <span className="font-mono text-[8px] tracking-[0.5em] text-white/40 uppercase [writing-mode:vertical-lr] rotate-180">
+        {label}
+      </span>
+      <div className="relative h-12 w-[1px] overflow-hidden md:h-16 bg-white/10">
+        <motion.div
+          animate={{ y: [-48, 64] }}
+          transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
+          className="absolute top-0 h-8 w-full bg-gradient-to-b from-transparent via-ember to-transparent"
+        />
+      </div>
+    </LiquidGlass>
   </motion.button>
 );
 
@@ -192,7 +199,10 @@ export const HeroFragment = ({ profile }: HeroFragmentProps) => {
           variants={itemVariants}
           className="flex flex-col lg:flex-row gap-6 lg:gap-12 items-start lg:items-end w-full max-w-5xl"
         >
-          <div className="relative p-5 md:p-8 rounded-tr-[40px] rounded-bl-[40px] border border-white/5 bg-white/[0.02] backdrop-blur-xl overflow-hidden group w-full lg:w-auto flex-1">
+          <LiquidGlass
+            variant="panel"
+            className="relative p-5 md:p-8 rounded-tr-[40px] rounded-bl-[40px] border border-white/5 overflow-hidden group w-full lg:w-auto flex-1"
+          >
             <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/5 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
             <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-gradient-to-b from-ember to-transparent" />
 
@@ -203,7 +213,7 @@ export const HeroFragment = ({ profile }: HeroFragmentProps) => {
                 {tHero("subheadline")}
               </span>
             </p>
-          </div>
+          </LiquidGlass>
 
           <motion.button
             onClick={handleCTA}

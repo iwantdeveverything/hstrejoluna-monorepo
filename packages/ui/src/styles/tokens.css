@@ -23,3 +23,48 @@
   --color-void: #131313;
   --color-ember: #ffb4a5;
 }
+
+/* ── Liquid Glass primitive tokens (REQ-1, REQ-4, REQ-5) ──────────────
+ * Filter parameters and variant geometry for <LiquidGlass>.
+ * Live in :root (NOT @theme) because they are not utility-classable
+ * design colors — they are filter/geometry parameters consumed by
+ * packages/ui/src/liquid-glass/styles.module.css and the global
+ * <LiquidGlassFilters /> SVG defs.
+ */
+:root {
+  /* Surface tint (composited under blur) */
+  --lg-tint: hsl(220 14% 12%);
+
+  /* Filter parameters (default = "med" intensity) */
+  --lg-blur: 12px;
+  --lg-saturation: 180%;
+  --lg-refraction-scale: 9px;
+  --lg-specular-opacity: 0.18;
+
+  /* Variant-scoped fallback background under prefers-reduced-transparency */
+  --lg-fallback-bg: var(--color-surface-container);
+
+  /* Variant radii (single source for primitive styling) */
+  --lg-radius-panel: 20px;
+  --lg-radius-pill: 9999px;
+  --lg-radius-dock: 28px;
+  --lg-radius-circle: 50%;
+  --lg-radius-dialog: 20px;
+}
+
+/* Intensity scaling (low < med < high) */
+[data-lg-intensity="low"] {
+  --lg-refraction-scale: 4px;
+  --lg-specular-opacity: 0.10;
+  --lg-blur: 8px;
+}
+[data-lg-intensity="med"] {
+  --lg-refraction-scale: 9px;
+  --lg-specular-opacity: 0.18;
+  --lg-blur: 12px;
+}
+[data-lg-intensity="high"] {
+  --lg-refraction-scale: 16px;
+  --lg-specular-opacity: 0.28;
+  --lg-blur: 16px;
+}
