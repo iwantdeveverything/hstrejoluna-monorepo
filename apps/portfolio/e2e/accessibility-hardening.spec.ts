@@ -50,14 +50,14 @@ test.describe("WCAG 2.2 AA Accessibility Hardening", () => {
     const secondSkill = skillButtons.nth(1);
 
     // Expand first
-    await firstSkill.scrollIntoViewIfNeeded();
-    await page.evaluate(() => window.scrollBy(0, -200));
+    await firstSkill.evaluate((node) => node.scrollIntoView({ block: "center" }));
+    await page.waitForTimeout(100);
     await firstSkill.click();
     await expect(firstSkill).toHaveAttribute("aria-expanded", "true");
 
     // Expand second
-    await secondSkill.scrollIntoViewIfNeeded();
-    await page.evaluate(() => window.scrollBy(0, -200));
+    await secondSkill.evaluate((node) => node.scrollIntoView({ block: "center" }));
+    await page.waitForTimeout(100);
     await secondSkill.click();
     
     // First should now be collapsed

@@ -14,7 +14,10 @@ test.describe("portfolio navigation behavior", () => {
     await page.goto("/");
 
     await page.evaluate(() => {
-      document.getElementById("projects")?.scrollIntoView({ behavior: "auto", block: "start" });
+      const el = document.getElementById("projects");
+      if (el) {
+        window.scrollTo({ top: el.offsetTop, behavior: "auto" });
+      }
     });
 
     await expect
