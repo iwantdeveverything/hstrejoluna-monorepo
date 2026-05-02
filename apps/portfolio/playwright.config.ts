@@ -17,6 +17,11 @@ const projects = [
     name: "Mobile Chrome",
     use: { ...devices["Pixel 5"] },
   },
+  {
+    name: "Desktop Chrome Reduced Motion",
+    testMatch: /.*\.reduced-motion\.spec\.ts$/,
+    use: { ...devices["Desktop Chrome"], reducedMotion: "reduce" },
+  },
 ];
 
 if (includeWebkit) {
