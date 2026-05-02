@@ -17,11 +17,11 @@ ENABLED. Test runner: `npm test` (vitest from root → apps/portfolio). E2E: `np
 
 ## Phase 1 — Infrastructure & Scaffolding
 
-- [ ] 1.1 Add `NEXT_PUBLIC_HERO_LIQUID` to `.env.example` (default `false`). Document in `apps/portfolio/README` if relevant.
-- [ ] 1.2 Bundle-size cap script `scripts/check-hero-webgl-bundle.mjs` reading Turbopack manifest. Fail if WebGL chunk > 200 KB gz. Wire into `qa:gate`.
-- [ ] 1.3 Add bundle-size config (`size-limit` or `bundlewatch`) + CI step.
-- [ ] 1.4 Playwright project for `reducedMotion: 'reduce'` in `apps/portfolio/playwright.config.ts`.
-- [ ] 1.5 Lighthouse CI assertions: SEO ≥ 95, Performance ≥ 90 desktop / ≥ 85 mobile, LCP ≤ 2.5s. Update `apps/portfolio/lighthouserc.cjs`.
+- [x] 1.1 Add `NEXT_PUBLIC_HERO_LIQUID` to `.env.example` (default `false`). Document in `apps/portfolio/README` if relevant.
+- [x] 1.2 Bundle-size cap script `apps/portfolio/scripts/check-hero-webgl-bundle.mjs` reading `.next` chunks. Fail if hero/WebGL chunks > 200 KB gz. Wired into `qa:gate` via `qa:bundle`.
+- [x] 1.3 Bundle-size CI step added to `.github/workflows/qa-professional.yml` after Lighthouse.
+- [x] 1.4 Playwright `Desktop Chrome Reduced Motion` project added (matches `*.reduced-motion.spec.ts`).
+- [x] 1.5 Lighthouse CI tightened — Performance ≥ 0.9 (error), LCP ≤ 2500ms (error), SEO ≥ 0.95 already enforced.
 
 ## Phase 2 — Library Verification (Context7 — gate to Phase 3)
 
