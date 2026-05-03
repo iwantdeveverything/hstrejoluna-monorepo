@@ -49,9 +49,16 @@
     }
   },
   "hero": {
+    "eyebrow": "Building digital experiences",
+    "h1Name": "Héctor Trejo Luna",
+    "h1Role": "Senior Software Architect",
+    "lead": "Engineering scalable, high-performance digital ecosystems from architecture to pixel",
+    "cta": "Explore my work",
+    "ctaAriaLabel": "View featured projects and case studies",
+    "secondaryLabel": "LinkedIn Profile",
+    "secondaryHref": "https://linkedin.com/in/htrejoluna",
     "headline": "Architecting zero-latency ecosystems and immersive digital voids.",
     "subheadline": "I transform complex constraints into pure, kinetic functional art.",
-    "cta": "INITIATE SEQUENCE",
     "titleLine1": "SYSTEM",
     "titleLine2": "ARCHITECT",
     "telemetryLatency": "LATENCY: 0.00MS",

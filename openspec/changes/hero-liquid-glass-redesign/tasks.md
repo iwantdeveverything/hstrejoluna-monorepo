@@ -3,6 +3,7 @@
 This file replaces the previous tasks.md after PR #33 (`liquid-glass-immersion`) merged primitives that overlap with our locked design. See `explore-delta.md` for the full delta. Reuse merged primitives. Drop redundant work.
 
 ## Strict TDD Mode
+
 ENABLED. Test runner: `npm test` (vitest from root → apps/portfolio). E2E: `npm run qa:e2e --workspace=apps/portfolio`. Each implementation task is preceded by a failing-test task (RED) and followed by REFACTOR where applicable.
 
 ## Re-architecture Summary
@@ -27,7 +28,7 @@ ENABLED. Test runner: `npm test` (vitest from root → apps/portfolio). E2E: `np
 
 - [x] 2.1 r3f v9 verified — Canvas frameloop "demand", useFrame((state, delta, xrFrame), priority?), R19+R19.2 compat (reconciler bundled), Next 16 OK with TS jsx-runtime shim.
 - [x] 2.2 drei MeshTransmissionMaterial verified — full prop list captured; subpath import `@react-three/drei/core/MeshTransmissionMaterial` confirmed (file present in node_modules/@react-three/drei/core).
-- [x] 2.3 framer-motion 12 useScroll verified — `useScroll({ target, offset })` returns 4 MotionValues; safe under LazyMotion strict (hook only, no motion.* JSX).
+- [x] 2.3 framer-motion 12 useScroll verified — `useScroll({ target, offset })` returns 4 MotionValues; safe under LazyMotion strict (hook only, no motion.\* JSX).
 - [x] 2.4 next-intl 4.9 RSC verified — `useTranslations` (sync hook) for non-async RSC; `getTranslations` async for data-fetching RSC. Use sync in HeroSection.
 - [x] 2.5 Next 16 dynamic verified — 🚨 ssr:false NOT allowed in RSC; declare `dynamic(..., { ssr: false })` inside HeroLiquidField (client), NOT HeroSection (RSC).
 - [x] 2.6 Findings saved to engram `sdd/hero-liquid-glass-redesign/context7` (full prop tables, decisions locked).
@@ -45,30 +46,30 @@ ENABLED. Test runner: `npm test` (vitest from root → apps/portfolio). E2E: `np
 
 ## Phase 4 — Hero components in apps/portfolio (TDD)
 
-- [ ] 4.1 RED: `apps/portfolio/components/fragments/HeroSection.test.tsx` — renders single `<h1 id="hero-title">` with name+role text, eyebrow `<p>`, lead `<p>`, primary `<a>` CTA, secondary `<a>` CTA, `<section aria-labelledby="hero-title">`. All copy from messages.
-- [ ] 4.2 GREEN: implement `apps/portfolio/components/fragments/HeroSection.tsx` as RSC. Use server-side i18n pattern from Context7 task 2.4. Wraps `HeroLiquidField` (client) + `HeroLiquidWebGL` (lazy).
-- [ ] 4.3 RED: lead Sanity fallback test — `profile?.headline` overrides `messages.hero.lead`; h1 stays static (never depends on Sanity).
-- [ ] 4.4 GREEN: thread `profile` prop into HeroSection lead.
-- [ ] 4.5 RED: `apps/portfolio/components/fragments/HeroLiquidField.test.tsx` — renders aria-hidden, three blob divs styled by CSS vars, `<LiquidGlass variant="panel">` card, subscribes to `useLiquidPointer`, applies displacement via `useDisplacementScaleAnimation` bound to scrollYProgress, entrance-burst tween plays once, freezes under reduced-motion.
-- [ ] 4.6 GREEN: implement `apps/portfolio/components/fragments/HeroLiquidField.tsx` (`"use client"`). Use `m.*` from framer-motion (NOT `motion.*` — global LazyMotion strict). Render blob divs styled by CSS vars + scroll-bound displacement.
-- [ ] 4.7 RED: `apps/portfolio/components/fragments/HeroLiquidWebGL.test.tsx` — renders r3f Canvas only when capability === "css+webgl"; else renders nothing. Mocks `useLiquidHeroCapability`.
-- [ ] 4.8 GREEN: implement `apps/portfolio/components/fragments/HeroLiquidWebGL.tsx` skeleton (r3f Canvas + Plane + MeshTransmissionMaterial with placeholder uniforms uMx, uMy, uScroll, uBurst, uTime).
-- [ ] 4.9 RED: entrance-burst test — uBurst ramps 0→1→idle once per page load (sessionStorage flag).
-- [ ] 4.10 GREEN: implement burst tween inside `useFrame`.
-- [ ] 4.11 RED: scroll-driven distortion test — uScroll updates via mocked scrollYProgress.
-- [ ] 4.12 GREEN: wire framer-motion `useScroll` + `useTransform` into a ref store consumed by `useFrame`.
-- [ ] 4.13 REFACTOR: tree-shake drei import to subpath form. Verify with bundle-size script.
-- [ ] 4.14 Add Storybook stories `apps/portfolio/components/fragments/HeroSection.stories.tsx` (default / reduced-motion / no-WebGL / hover / scroll).
-- [ ] 4.15 Update `scripts/audit-liquid-glass.ts` MIGRATED_FILES to include `HeroSection.tsx` (alongside `HeroFragment.tsx` until flag flip).
+- [x] 4.1 RED: `apps/portfolio/components/fragments/HeroSection.test.tsx` — renders single `<h1 id="hero-title">` with name+role text, eyebrow `<p>`, lead `<p>`, primary `<a>` CTA, secondary `<a>` CTA, `<section aria-labelledby="hero-title">`. All copy from messages.
+- [x] 4.2 GREEN: implement `apps/portfolio/components/fragments/HeroSection.tsx` as RSC. Use server-side i18n pattern from Context7 task 2.4. Wraps `HeroLiquidField` (client) + `HeroLiquidWebGL` (lazy).
+- [x] 4.3 RED: lead Sanity fallback test — `profile?.headline` overrides `messages.hero.lead`; h1 stays static (never depends on Sanity).
+- [x] 4.4 GREEN: thread `profile` prop into HeroSection lead.
+- [x] 4.5 RED: `apps/portfolio/components/fragments/HeroLiquidField.test.tsx` — renders aria-hidden, three blob divs styled by CSS vars, `<LiquidGlass variant="panel">` card, subscribes to `useLiquidPointer`, applies displacement via `useDisplacementScaleAnimation` bound to scrollYProgress, entrance-burst tween plays once, freezes under reduced-motion.
+- [x] 4.6 GREEN: implement `apps/portfolio/components/fragments/HeroLiquidField.tsx` (`"use client"`). Use `m.*` from framer-motion (NOT `motion.*` — global LazyMotion strict). Render blob divs styled by CSS vars + scroll-bound displacement.
+- [x] 4.7 RED: `apps/portfolio/components/fragments/HeroLiquidWebGL.test.tsx` — renders r3f Canvas only when capability === "css+webgl"; else renders nothing. Mocks `useLiquidHeroCapability`.
+- [x] 4.8 GREEN: implement `apps/portfolio/components/fragments/HeroLiquidWebGL.tsx` skeleton (r3f Canvas + Plane + MeshTransmissionMaterial with placeholder uniforms uMx, uMy, uScroll, uBurst, uTime).
+- [x] 4.9 RED: entrance-burst test — uBurst ramps 0→1→idle once per page load (sessionStorage flag).
+- [x] 4.10 GREEN: implement burst tween inside `useFrame`.
+- [x] 4.11 RED: scroll-driven distortion test — uScroll updates via mocked scrollYProgress.
+- [x] 4.12 GREEN: wire framer-motion `useScroll` + `useTransform` into a ref store consumed by `useFrame`.
+- [x] 4.13 REFACTOR: tree-shake drei import to subpath form. Verify with bundle-size script.
+- [x] 4.14 Add Storybook stories `apps/portfolio/components/fragments/HeroSection.stories.tsx` (default / reduced-motion / no-WebGL / hover / scroll).
+- [x] 4.15 Update `scripts/audit-liquid-glass.ts` MIGRATED_FILES to include `HeroSection.tsx` (alongside `HeroFragment.tsx` until flag flip).
 
 ## Phase 5 — i18n + page integration
 
-- [ ] 5.1 RED: i18n parity test extension covering new hero keys (`hero.eyebrow`, `hero.h1Name`, `hero.h1Role`, `hero.lead`, `hero.cta`, `hero.ctaAriaLabel`, `hero.secondaryLabel`) in `apps/portfolio/messages/en.test.ts` + `apps/portfolio/messages/es.test.ts`.
-- [ ] 5.2 GREEN: add new keys to `apps/portfolio/messages/en.json` + `apps/portfolio/messages/es.json`. Keep deprecated `hero.titleLine1`, `hero.titleLine2`, `hero.headline`, `hero.subheadline`, `hero.telemetryLatency`, `hero.telemetryFramework`, `brand.systemReady`, `brand.uplink`, `brand.descent` until cleanup phase.
-- [ ] 5.3 RED: `apps/portfolio/components/ObsidianStream.test.tsx` extension — flag true renders `<HeroSection>`, flag false/unset renders `<HeroFragment>`. Inner `LazyMotion` wrapper removed.
-- [ ] 5.4 GREEN: update `apps/portfolio/components/ObsidianStream.tsx` — drop inner `LazyMotion features={domAnimation}` (already provided by `MotionProvider`), branch on `process.env.NEXT_PUBLIC_HERO_LIQUID === "true"`, remove outer `<section id="hero">` wrapper (HeroSection now owns the section element).
-- [ ] 5.5 RED: page.tsx JSON-LD test — `Person` schema includes `image` + `mainEntityOfPage`.
-- [ ] 5.6 GREEN: extend JSON-LD in `apps/portfolio/app/[locale]/page.tsx` — `image` from Sanity URL helper, `mainEntityOfPage` set.
+- [x] 5.1 RED: i18n parity test extension covering new hero keys (`hero.eyebrow`, `hero.h1Name`, `hero.h1Role`, `hero.lead`, `hero.cta`, `hero.ctaAriaLabel`, `hero.secondaryLabel`) in `apps/portfolio/messages/en.test.ts` + `apps/portfolio/messages/es.test.ts`.
+- [x] 5.2 GREEN: add new keys to `apps/portfolio/messages/en.json` + `apps/portfolio/messages/es.json`. Keep deprecated `hero.titleLine1`, `hero.titleLine2`, `hero.headline`, `hero.subheadline`, `hero.telemetryLatency`, `hero.telemetryFramework`, `brand.systemReady`, `brand.uplink`, `brand.descent` until cleanup phase.
+- [x] 5.3 RED: `apps/portfolio/components/ObsidianStream.test.tsx` extension — flag true renders `<HeroSection>`, flag false/unset renders `<HeroFragment>`. Inner `LazyMotion` wrapper removed.
+- [x] 5.4 GREEN: update `apps/portfolio/components/ObsidianStream.tsx` — drop inner `LazyMotion features={domAnimation}` (already provided by `MotionProvider`), branch on `process.env.NEXT_PUBLIC_HERO_LIQUID === "true"`, remove outer `<section id="hero">` wrapper (HeroSection now owns the section element).
+- [x] 5.5 RED: page.tsx JSON-LD test — `Person` schema includes `image` + `mainEntityOfPage`.
+- [x] 5.6 GREEN: extend JSON-LD in `apps/portfolio/app/[locale]/page.tsx` — `image` from Sanity URL helper, `mainEntityOfPage` set.
 
 ## Phase 6 — Styles & SEO
 
@@ -115,10 +116,12 @@ ENABLED. Test runner: `npm test` (vitest from root → apps/portfolio). E2E: `np
 - [ ] 10.5 Remove `NEXT_PUBLIC_HERO_LIQUID` flag and the branch in `ObsidianStream.tsx`.
 
 ## Decisions to lock during apply
+
 - Final h1 wording (recommend: `Héctor Trejo Luna — Senior Software Architect`).
 - Final eyebrow microcopy en + es.
 - Image asset for OG / JSON-LD `image` field.
 - Whether `lg-hero-flow` turbulence filter is needed (start with `LG_FILTER_IDS.gooey`).
 
 ## Skill Resolution
+
 context7-strict baked into Phase 2.
