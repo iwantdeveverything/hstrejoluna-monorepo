@@ -10,6 +10,7 @@ export interface Profile {
   name?: string;
   headline?: string;
   bio?: string;
+  image?: SanityImage;
   socials?: ProfileSocialLink[];
 }
 

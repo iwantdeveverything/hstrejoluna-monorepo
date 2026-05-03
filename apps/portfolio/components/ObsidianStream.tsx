@@ -11,20 +11,14 @@ import {
   Certificate,
 } from "@/types/sanity";
 import { HeroFragment } from "./fragments/HeroFragment";
+import { HeroSection } from "./fragments/HeroSection";
 import { ProjectsOverview } from "./fragments/ProjectsOverview";
 import { ExperienceOverview } from "./fragments/ExperienceOverview";
 import { SkillsOverview } from "./fragments/SkillsOverview";
 import { CertificatesOverview } from "./fragments/CertificatesOverview";
 import { CommandNav } from "./ui/CommandNav";
 import { BootSequence } from "@hstrejoluna/ui";
-import {
-  m,
-  useScroll,
-  useTransform,
-  AnimatePresence,
-  LazyMotion,
-  domAnimation,
-} from "framer-motion";
+import { m, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { navSections, navSectionIds, streamSectionIds } from "@/lib/sections";
 import type { NavSectionId, StreamSectionId } from "@/lib/sections";
 import { useTranslations } from "next-intl";
@@ -82,11 +76,16 @@ export const ObsidianStream = ({
   const tNav = useTranslations("nav");
   const tPortfolioGrid = useTranslations("fragments.portfolioGrid");
   const skipBootSequence = process.env.NEXT_PUBLIC_SKIP_BOOT_SEQUENCE === "1";
+  const useNewHero = process.env.NEXT_PUBLIC_HERO_LIQUID === "true";
   const [isBooted, setIsBooted] = useState(skipBootSequence);
   const isReducedMotion = useReducedMotion();
   const isNavigationHidden = false;
 
-  const activeId = useActiveSection<StreamSectionId>(streamSectionIds, 0.4, isBooted);
+  const activeId = useActiveSection<StreamSectionId>(
+    streamSectionIds,
+    0.4,
+    isBooted,
+  );
 
   const { scrollYProgress } = useScroll();
   const sectionBaseWrapperClass =
@@ -112,98 +111,99 @@ export const ObsidianStream = ({
   }, [isBooted]);
 
   return (
-    <LazyMotion features={domAnimation}>
-      <div className="relative bg-background w-full min-h-screen font-sans overflow-x-hidden">
-        <AnimatePresence>
-          {!isBooted && <BootSequence onComplete={() => setIsBooted(true)} />}
-        </AnimatePresence>
+    <div className="relative bg-background w-full min-h-screen font-sans overflow-x-hidden">
+      <AnimatePresence>
+        {!isBooted && <BootSequence onComplete={() => setIsBooted(true)} />}
+      </AnimatePresence>
 
+      {isBooted && (
         <m.div
           initial={{ opacity: 0 }}
-          animate={{ opacity: isBooted ? 1 : 0 }}
+          animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
         >
-          {isBooted && (
-            <>
-              <m.div
-                style={{ y: backgroundY }}
-                aria-hidden="true"
-                className="fixed inset-0 z-0 flex flex-col justify-center items-center pointer-events-none select-none opacity-5 md:opacity-10"
-              >
-                <span className="text-[15vw] font-black uppercase leading-none italic">
-                  {profile?.name || tCommon("fullName")}
-                </span>
-              </m.div>
-              
-              <CommandNav
-                activeId={activeId}
-                counts={{
-                  projects: projects.length,
-                  experience: experiences.length,
-                  certificates: certificates.length,
-                }}
-                socials={profile?.socials}
-                hideOnScroll={isNavigationHidden}
-              />
+          <m.div
+            style={{ y: backgroundY }}
+            aria-hidden="true"
+            className="fixed inset-0 z-0 flex flex-col justify-center items-center pointer-events-none select-none opacity-5 md:opacity-10"
+          >
+            <span className="text-[15vw] font-black uppercase leading-none italic">
+              {profile?.name || tCommon("fullName")}
+            </span>
+          </m.div>
 
-              <main id="main-content" className="relative z-10 flex flex-col w-full">                <section id="hero" className="stream-section">
-                  <HeroFragment profile={profile} />
-                </section>
+          <CommandNav
+            activeId={activeId}
+            counts={{
+              projects: projects.length,
+              experience: experiences.length,
+              certificates: certificates.length,
+            }}
+            socials={profile?.socials}
+            hideOnScroll={isNavigationHidden}
+          />
 
-                <StreamSection
-                  id="projects"
-                  sectionClassName="stream-section bg-surface_container_lowest"
-                  wrapperClassName={compactSectionWrapperClass}
-                  title={tNav("projects").toUpperCase()}
-                  countLabel={`[${formatLabelCount(projects.length)}]`}
-                >
-                  <ProjectsOverview projects={projects} />
-                </StreamSection>
+          <main
+            id="main-content"
+            className="relative z-10 flex flex-col w-full"
+          >
+            {" "}
+            {useNewHero ? (
+              <HeroSection profile={profile} />
+            ) : (
+              <section id="hero" className="stream-section">
+                <HeroFragment profile={profile} />
+              </section>
+            )}
+            <StreamSection
+              id="projects"
+              sectionClassName="stream-section bg-surface_container_lowest"
+              wrapperClassName={compactSectionWrapperClass}
+              title={tNav("projects").toUpperCase()}
+              countLabel={`[${formatLabelCount(projects.length)}]`}
+            >
+              <ProjectsOverview projects={projects} />
+            </StreamSection>
+            <StreamSection
+              id="experience"
+              sectionClassName="stream-section relative bg-background"
+              wrapperClassName={compactSectionWrapperClass}
+              title={tBrand("experienceLog")}
+              countLabel={`[${formatLabelCount(experiences.length)}]`}
+            >
+              <ExperienceOverview experiences={experiences} />
+            </StreamSection>
+            <StreamSection
+              id="skills"
+              sectionClassName="stream-section bg-surface_container_lowest"
+              wrapperClassName={fullSectionWrapperClass}
+              title={tBrand("neuralMap")}
+              countLabel={`[${tPortfolioGrid("activeNodes")}: ${skills.length}]`}
+            >
+              <SkillsOverview skills={skills} />
+            </StreamSection>
+            <StreamSection
+              id="certificates"
+              sectionClassName="stream-section relative bg-background"
+              wrapperClassName={fullSectionWrapperClass}
+              title={tNav("certificates").toUpperCase()}
+              countLabel={`[${formatLabelCount(certificates.length)}]`}
+            >
+              <CertificatesOverview certificates={certificates} />
+            </StreamSection>
+          </main>
 
-                <StreamSection
-                  id="experience"
-                  sectionClassName="stream-section relative bg-background"
-                  wrapperClassName={compactSectionWrapperClass}
-                  title={tBrand("experienceLog")}
-                  countLabel={`[${formatLabelCount(experiences.length)}]`}
-                >
-                  <ExperienceOverview experiences={experiences} />
-                </StreamSection>
-
-                <StreamSection
-                  id="skills"
-                  sectionClassName="stream-section bg-surface_container_lowest"
-                  wrapperClassName={fullSectionWrapperClass}
-                  title={tBrand("neuralMap")}
-                  countLabel={`[${tPortfolioGrid("activeNodes")}: ${skills.length}]`}
-                >
-                  <SkillsOverview skills={skills} />
-                </StreamSection>
-
-                <StreamSection
-                  id="certificates"
-                  sectionClassName="stream-section relative bg-background"
-                  wrapperClassName={fullSectionWrapperClass}
-                  title={tNav("certificates").toUpperCase()}
-                  countLabel={`[${formatLabelCount(certificates.length)}]`}
-                >
-                  <CertificatesOverview certificates={certificates} />
-                </StreamSection>
-              </main>
-
-              <div
-                aria-hidden="true"
-                className="fixed top-0 left-0 w-full h-[2px] z-[100] bg-white/5 pointer-events-none"
-              >
-                <m.div
-                  className="h-full bg-primary origin-left"
-                  style={{ scaleX: scrollYProgress }}
-                />
-              </div>
-            </>
-          )}
+          <div
+            aria-hidden="true"
+            className="fixed top-0 left-0 w-full h-[2px] z-[100] bg-white/5 pointer-events-none"
+          >
+            <m.div
+              className="h-full bg-primary origin-left"
+              style={{ scaleX: scrollYProgress }}
+            />
+          </div>
         </m.div>
-      </div>
-    </LazyMotion>
+      )}
+    </div>
   );
 };
