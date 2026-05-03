@@ -2,10 +2,10 @@
 schema: spec-driven
 
 context: |
-  Tech stack: TypeScript, React 19, Next.js 16 (App Router), Sanity Studio, Turborepo.
-  Architecture: Monorepo with NPM workspaces. Portfolio and Landing apps connected to Sanity CMS.
-  Testing: Vitest (unit) + Testing Library (integration) + Playwright (e2e).
-  Style: Clean Code, Type Safety (no any), DRY, KISS. camelCase (vars/fns), PascalCase (components).
+  Tech stack: TypeScript, React 19, Next.js 16 (App Router), Turborepo, Tailwind CSS v4, next-intl v4, Sanity CMS, Storybook.
+  Architecture: Monorepo with npm workspaces — apps/portfolio, apps/maestros-del-salmon, packages/ui (@hstrejoluna/ui, framer-motion), packages/compliance.
+  Testing: Vitest 4 + Testing Library (unit/integration), Playwright + axe-core (e2e), Lighthouse CI (perf), Storybook (visual).
+  Style: Clean Code, Type Safety (no any), DRY, KISS. camelCase (vars/fns), PascalCase (components). Prettier, tsc --noEmit.
 
 strict_tdd: true
 

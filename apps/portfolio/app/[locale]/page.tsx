@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { cache } from "react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { normalizeSocialLinks } from "@/lib/navigation";
 import { safeJsonLd } from "@/lib/safe-json-ld";
+import { buildPersonJsonLd } from "@/lib/json-ld";
 import { client } from "@/lib/sanity";
 import {
   Profile,
@@ -83,16 +83,11 @@ export default async function PortfolioPage({
       client.fetch<Certificate[]>(certificatesQuery),
     ]);
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Person",
-    name: profile?.name,
-    jobTitle: profile?.headline,
-    description: profile?.bio,
-    url: "https://hstrejoluna.com",
-    sameAs: normalizeSocialLinks(profile?.socials).map((social) => social.href),
-    knowsAbout: skills.map((s) => s.name),
-  };
+  const jsonLd = buildPersonJsonLd({
+    profile,
+    skills,
+    locale,
+  });
 
   return (
     <>
