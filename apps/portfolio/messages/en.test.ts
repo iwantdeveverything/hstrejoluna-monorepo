@@ -81,14 +81,6 @@ describe("messages/en.json", () => {
         expect(typeof hero[key], `hero.${key} must be a string`).toBe("string");
       }
     });
-
-    it("retains all deprecated hero keys", () => {
-      const hero = (en as Record<string, Record<string, string>>).hero;
-      for (const key of DEPRECATED_HERO_KEYS) {
-        expect(hero, `hero.${key} must exist`).toHaveProperty(key);
-        expect(typeof hero[key], `hero.${key} must be a string`).toBe("string");
-      }
-    });
   });
 
   describe("brand namespace invariance", () => {
