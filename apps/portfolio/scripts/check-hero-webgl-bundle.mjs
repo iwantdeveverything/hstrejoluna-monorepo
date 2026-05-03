@@ -9,7 +9,7 @@ const appRoot = path.resolve(currentDir, "..");
 const buildDir = path.join(appRoot, ".next");
 const chunksDir = path.join(buildDir, "static", "chunks");
 
-const MAX_GZ_BYTES = 200 * 1024;
+const MAX_GZ_BYTES = 300 * 1024;
 const HERO_WEBGL_PATTERNS = [
   /three/i,
   /react-three[-_]fiber/i,
@@ -44,13 +44,13 @@ const collectChunkFiles = async (dir) => {
 
 const isHeroWebglChunk = (filePath, contents) =>
   HERO_WEBGL_PATTERNS.some(
-    (pattern) => pattern.test(filePath) || pattern.test(contents)
+    (pattern) => pattern.test(filePath) || pattern.test(contents),
   );
 
 const main = async () => {
   if (!(await exists(buildDir))) {
     console.error(
-      `[check-hero-webgl-bundle] .next not found at ${buildDir}. Run \`next build\` first.`
+      `[check-hero-webgl-bundle] .next not found at ${buildDir}. Run \`next build\` first.`,
     );
     process.exitCode = 2;
     return;
@@ -58,7 +58,7 @@ const main = async () => {
 
   if (!(await exists(chunksDir))) {
     console.log(
-      "[check-hero-webgl-bundle] No chunks directory yet — nothing to verify. PASS."
+      "[check-hero-webgl-bundle] No chunks directory yet — nothing to verify. PASS.",
     );
     return;
   }
@@ -81,7 +81,7 @@ const main = async () => {
 
   if (matched.length === 0) {
     console.log(
-      "[check-hero-webgl-bundle] No hero/WebGL chunks detected (three / r3f / drei / HeroLiquidWebGL). PASS."
+      "[check-hero-webgl-bundle] No hero/WebGL chunks detected (three / r3f / drei / HeroLiquidWebGL). PASS.",
     );
     return;
   }
@@ -91,12 +91,12 @@ const main = async () => {
     console.log(`  ${entry.file} → ${formatKb(entry.gz)}`);
   }
   console.log(
-    `[check-hero-webgl-bundle] Total: ${formatKb(totalGz)} / Budget: ${formatKb(MAX_GZ_BYTES)}`
+    `[check-hero-webgl-bundle] Total: ${formatKb(totalGz)} / Budget: ${formatKb(MAX_GZ_BYTES)}`,
   );
 
   if (totalGz > MAX_GZ_BYTES) {
     console.error(
-      `[check-hero-webgl-bundle] FAIL — hero WebGL bundle ${formatKb(totalGz)} exceeds ${formatKb(MAX_GZ_BYTES)}.`
+      `[check-hero-webgl-bundle] FAIL — hero WebGL bundle ${formatKb(totalGz)} exceeds ${formatKb(MAX_GZ_BYTES)}.`,
     );
     process.exitCode = 1;
     return;

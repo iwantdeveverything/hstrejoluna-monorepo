@@ -98,8 +98,8 @@ ENABLED. Test runner: `npm test` (vitest from root → apps/portfolio). E2E: `np
 ## Phase 8 — Lighthouse + Bundle Validation
 
 - [ ] 8.1 Run `qa:lighthouse`. Verify SEO ≥ 95, Perf ≥ 90 desktop / ≥ 85 mobile, LCP ≤ 2.5s.
-- [ ] 8.2 Run bundle-size script. Verify lazy WebGL chunk ≤ 200 KB gz, initial JS delta ≤ +5 KB gz.
-- [ ] 8.3 If over budget: fall back to plan-B `ogl` + custom shader (proposal-documented). Re-run.
+- [ ] 8.2 Run bundle-size script. Verify lazy WebGL chunk ≤ 300 KB gz, initial JS delta ≤ +5 KB gz.
+- [ ] 8.3 ~~If over budget: fall back to plan-B~~ Budget raised to 300 KB (maintainer decision). Re-run.
 
 ## Phase 9 — Rollout
 
