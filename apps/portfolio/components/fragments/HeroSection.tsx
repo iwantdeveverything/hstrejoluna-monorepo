@@ -47,8 +47,9 @@ export const HeroSection = ({ profile }: HeroSectionProps) => {
           {h1Role}
         </h1>
 
-        {/* Lead paragraph */}
-        <p className="text-sm md:text-lg text-white/70 font-light leading-relaxed max-w-2xl mb-10">
+        {/* Lead paragraph — solid white at 90% opacity still passes WCAG AA
+            after backdrop-filter brightness(0.65) compositing */}
+        <p className="text-sm md:text-lg text-white/90 font-light leading-relaxed max-w-2xl mb-10">
           {lead}
         </p>
 
@@ -57,7 +58,7 @@ export const HeroSection = ({ profile }: HeroSectionProps) => {
           <Link
             href="#projects"
             aria-label={ctaAriaLabel}
-            className="inline-flex items-center px-8 py-4 bg-ember text-white font-mono tracking-[0.3em] uppercase text-xs font-bold transition-all duration-300 hover:bg-ember/80 rounded-tl-[16px] rounded-br-[16px]"
+            className="inline-flex items-center px-8 py-4 bg-ember text-[#3a0000] font-mono tracking-[0.3em] uppercase text-xs font-bold transition-all duration-300 hover:bg-ember/80 rounded-tl-[16px] rounded-br-[16px]"
           >
             {primaryCta}
           </Link>

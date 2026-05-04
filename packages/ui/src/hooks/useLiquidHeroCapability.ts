@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 
 import { useLiquidGlassGates } from "../liquid-glass/use-liquid-glass-gates";
 
@@ -51,38 +51,51 @@ const hardwareEnough = (): boolean => {
   return cores >= HARDWARE_FLOOR;
 };
 
+/**
+ * Compute the liquid hero capability synchronously to avoid a race
+ * between `useEffect` and `useSyncExternalStore` finalising its gate
+ * snapshot after React hydration (fixes RED task 7.5 / e2e reduced-
+ * motion spec).
+ */
+const computeCapability = (
+  gates: ReturnType<typeof useLiquidGlassGates>,
+): LiquidHeroCapability => {
+  // SSR — always static (matches design §6)
+  if (!isBrowser()) return "static";
+
+  // Highest priority: user preference
+  if (gates.reduceMotion || gates.reduceTransparency) {
+    return "static";
+  }
+
+  // Hard floors before WebGL probes
+  if (!hasIntersectionObserver()) return "static";
+
+  if (
+    !hdViewportMatches() ||
+    !hardwareEnough() ||
+    saveDataOn() ||
+    gates.reduceData ||
+    !gates.supportsRefraction ||
+    !probeWebGL2()
+  ) {
+    return "css-only";
+  }
+
+  return "css+webgl";
+};
+
 export function useLiquidHeroCapability(): LiquidHeroCapability {
   const gates = useLiquidGlassGates();
-  const [capability, setCapability] = useState<LiquidHeroCapability>("static");
 
-  useEffect(() => {
-    if (gates.reduceMotion || gates.reduceTransparency) {
-      setCapability("static");
-      return;
-    }
-    if (!hasIntersectionObserver()) {
-      setCapability("static");
-      return;
-    }
-    if (
-      !hdViewportMatches() ||
-      !hardwareEnough() ||
-      saveDataOn() ||
-      gates.reduceData ||
-      !gates.supportsRefraction ||
-      !probeWebGL2()
-    ) {
-      setCapability("css-only");
-      return;
-    }
-    setCapability("css+webgl");
-  }, [
-    gates.reduceMotion,
-    gates.reduceTransparency,
-    gates.reduceData,
-    gates.supportsRefraction,
-    gates.isMobile,
-  ]);
-
-  return capability;
+  return useMemo(
+    () => computeCapability(gates),
+    [
+      gates.reduceMotion,
+      gates.reduceTransparency,
+      gates.reduceData,
+      gates.supportsRefraction,
+      gates.isMobile,
+    ],
+  );
 }
