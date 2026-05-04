@@ -66,20 +66,16 @@ export function assertH1IsLcpCandidate(
     el = el.parentElement;
   }
 
-  // ── Condition 3: No display:none ─────────────────────────────────
-  const display = window.getComputedStyle(element).display;
-  if (display === "none") {
+  // ── Conditions 3–5: Layout-affecting computed styles ────────────
+  // Cache getComputedStyle once — each call triggers a layout reflow.
+  const style = window.getComputedStyle(element);
+  if (style.display === "none") {
     failures.push("Element has display:none");
   }
-
-  // ── Condition 4: No visibility:hidden ────────────────────────────
-  const visibility = window.getComputedStyle(element).visibility;
-  if (visibility === "hidden") {
+  if (style.visibility === "hidden") {
     failures.push("Element has visibility:hidden");
   }
-
-  // ── Condition 5: Opacity > 0 at first paint ──────────────────────
-  const opacity = parseFloat(window.getComputedStyle(element).opacity);
+  const opacity = parseFloat(style.opacity);
   if (opacity <= 0) {
     failures.push(`Element opacity is ${opacity} (must be > 0)`);
   }
@@ -96,7 +92,7 @@ export function assertH1IsLcpCandidate(
     element: {
       tagName,
       id,
-      textContent: text.slice(0, 80), // Truncate for readability
+      textContent: text.slice(0, 80),
     },
   };
 }
