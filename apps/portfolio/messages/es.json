@@ -49,9 +49,16 @@
     }
   },
   "hero": {
+    "eyebrow": "Construyendo experiencias digitales",
+    "h1Name": "Héctor Trejo Luna",
+    "h1Role": "Arquitecto Senior de Software",
+    "lead": "Ingeniería de ecosistemas digitales escalables y de alto rendimiento, de la arquitectura al píxel",
+    "cta": "Explorar mi trabajo",
+    "ctaAriaLabel": "Ver proyectos destacados y casos de estudio",
+    "secondaryLabel": "Perfil de LinkedIn",
+    "secondaryHref": "https://linkedin.com/in/htrejoluna",
     "headline": "Arquitectura de ecosistemas de latencia cero y vacíos digitales inmersivos.",
     "subheadline": "Transformo restricciones complejas en arte funcional, cinético y puro.",
-    "cta": "INICIAR SECUENCIA",
     "titleLine1": "SYSTEM",
     "titleLine2": "ARCHITECT",
     "telemetryLatency": "LATENCIA: 0.00MS",

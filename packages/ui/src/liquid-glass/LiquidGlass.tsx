@@ -18,6 +18,7 @@
  *    caller string is appended without duplicating internal tokens (S1.4).
  */
 import {
+  createElement,
   forwardRef,
   type CSSProperties,
   type ElementType,
@@ -62,7 +63,7 @@ const LiquidGlassImpl = ({
   style: callerStyle,
   ...rest
 }: LiquidGlassImplProps): ReactElement => {
-  const Component = (as ?? "div") as ElementType;
+  const Component = as ?? "div";
   const gates = useLiquidGlassGates();
 
   const refractionState: "url" | "none" = gates.supportsRefraction
@@ -88,19 +89,19 @@ const LiquidGlassImpl = ({
         ...(callerStyle as CSSProperties | undefined),
       } as CSSProperties);
 
-  return (
-    <Component
-      {...rest}
-      ref={forwardedRef as never}
-      data-lg-variant={variant}
-      data-lg-intensity={intensity}
-      data-lg-refraction={refractionState}
-      data-lg-fallback={fallbackState}
-      className={cn(LG_BASE_CLASS, className)}
-      style={lgStyle}
-    >
-      {children}
-    </Component>
+  return createElement(
+    Component,
+    {
+      ...rest,
+      ref: forwardedRef,
+      "data-lg-variant": variant,
+      "data-lg-intensity": intensity,
+      "data-lg-refraction": refractionState,
+      "data-lg-fallback": fallbackState,
+      className: cn(LG_BASE_CLASS, className),
+      style: lgStyle,
+    },
+    children,
   );
 };
 
@@ -115,7 +116,7 @@ LiquidGlassFR.displayName = "LiquidGlass";
 
 /**
  * <LiquidGlass /> — single shared primitive for translucent glass surfaces.
- * 
+ *
  * This component implements the Apple "Liquid Glass" paradigm using a combination
  * of CSS backdrop-filters and SVG refraction maps.
  *
@@ -125,7 +126,7 @@ LiquidGlassFR.displayName = "LiquidGlass";
  *   <h1>Glassy Content</h1>
  * </LiquidGlass>
  * ```
- * 
+ *
  * @param props.variant - The surface profile ('panel', 'pill', 'dock', 'circle', 'dialog').
  * @param props.intensity - Depth of the refraction/blur ('low', 'med', 'high'). Default is 'med'.
  * @param props.as - The underlying HTML element to render (polymorphic). Default is 'div'.

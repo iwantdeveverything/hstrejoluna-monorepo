@@ -70,6 +70,28 @@ describe("messages/es.json", () => {
     });
   });
 
+  describe("hero namespace — Spanish translations present", () => {
+    const NEW_HERO_KEYS = [
+      "eyebrow",
+      "h1Name",
+      "h1Role",
+      "lead",
+      "cta",
+      "ctaAriaLabel",
+      "secondaryLabel",
+      "secondaryHref",
+    ] as const;
+
+    it("has all new hero keys with non-empty Spanish translations", () => {
+      const hero = es.hero as Record<string, string>;
+      for (const key of NEW_HERO_KEYS) {
+        const value = hero[key];
+        expect(typeof value, `hero.${key} must be a string`).toBe("string");
+        expect(value.trim(), `hero.${key} must not be empty`).not.toBe("");
+      }
+    });
+  });
+
   describe("translation quality", () => {
     it("has Spanish content in non-brand translatable namespaces", () => {
       const esNav = (es as MessageObject).nav as MessageObject;

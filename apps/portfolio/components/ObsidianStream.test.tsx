@@ -35,7 +35,9 @@ vi.mock("framer-motion", async (importOriginal) => {
     useScroll: () => ({ scrollYProgress: { get: () => 0 } }),
     useTransform: (_: unknown, __: unknown, values: string[]) => values[0],
     AnimatePresence: ({ children }: React.PropsWithChildren) => <>{children}</>,
-    LazyMotion: ({ children }: React.PropsWithChildren) => <>{children}</>,
+    LazyMotion: ({ children }: React.PropsWithChildren) => (
+      <div data-lazy-motion-wrapper="">{children}</div>
+    ),
     motion: {
       ...actual.motion,
       div: ({
@@ -61,6 +63,9 @@ vi.mock("@/hooks/useActiveSection", () => ({
 
 vi.mock("./fragments/HeroFragment", () => ({
   HeroFragment: () => <div data-testid="hero-fragment">Hero</div>,
+}));
+vi.mock("./fragments/HeroSection", () => ({
+  HeroSection: () => <div data-testid="hero-section">New Hero</div>,
 }));
 vi.mock("./fragments/ProjectsOverview", () => ({
   ProjectsOverview: () => <div>Projects</div>,
@@ -122,5 +127,71 @@ describe("ObsidianStream — Decorative Content Isolation", () => {
     );
     expect(progressBarWrapper).toBeInTheDocument();
     expect(progressBarWrapper).toHaveAttribute("aria-hidden", "true");
+  });
+});
+
+describe("ObsidianStream — Feature flag (NEXT_PUBLIC_HERO_LIQUID)", () => {
+  it("renders HeroSection when flag is 'true'", () => {
+    vi.stubEnv("NEXT_PUBLIC_HERO_LIQUID", "true");
+
+    render(<ObsidianStream {...defaultProps} />);
+
+    expect(screen.getByTestId("hero-section")).toBeInTheDocument();
+    expect(screen.queryByTestId("hero-fragment")).not.toBeInTheDocument();
+  });
+
+  it("renders HeroFragment when flag is 'false'", () => {
+    vi.stubEnv("NEXT_PUBLIC_HERO_LIQUID", "false");
+
+    render(<ObsidianStream {...defaultProps} />);
+
+    expect(screen.getByTestId("hero-fragment")).toBeInTheDocument();
+    expect(screen.queryByTestId("hero-section")).not.toBeInTheDocument();
+  });
+
+  it("renders HeroFragment when flag is unset (undefined)", () => {
+    vi.stubEnv("NEXT_PUBLIC_HERO_LIQUID", undefined);
+
+    render(<ObsidianStream {...defaultProps} />);
+
+    expect(screen.getByTestId("hero-fragment")).toBeInTheDocument();
+    expect(screen.queryByTestId("hero-section")).not.toBeInTheDocument();
+  });
+});
+
+describe("ObsidianStream — LazyMotion and section wrapper removal", () => {
+  it("does not contain an inner LazyMotion wrapper (MotionProvider handles it globally)", () => {
+    const { container } = render(<ObsidianStream {...defaultProps} />);
+
+    // LazyMotion mock renders <div data-lazy-motion-wrapper="">.
+    // When ObsidianStream no longer wraps content in its own LazyMotion,
+    // this attribute should never appear.
+    const lazyWrappers = container.querySelectorAll(
+      "[data-lazy-motion-wrapper]",
+    );
+    expect(lazyWrappers).toHaveLength(0);
+  });
+
+  it("does not wrap hero content in an outer <section id='hero'> element when flag is true", () => {
+    vi.stubEnv("NEXT_PUBLIC_HERO_LIQUID", "true");
+
+    render(<ObsidianStream {...defaultProps} />);
+
+    // When the new hero is active, HeroSection owns its own <section>.
+    // ObsidianStream should NOT add a wrapping <section id="hero">.
+    const heroSection = document.querySelector("section#hero");
+    expect(heroSection).toBeNull();
+  });
+
+  it("wraps legacy hero in <section id='hero'> when flag is false", () => {
+    vi.stubEnv("NEXT_PUBLIC_HERO_LIQUID", "false");
+
+    render(<ObsidianStream {...defaultProps} />);
+
+    // Legacy HeroFragment needs the section wrapper since it doesn't
+    // own one internally. This preserves backward compatibility.
+    const heroSection = document.querySelector("section#hero");
+    expect(heroSection).not.toBeNull();
+    expect(heroSection).toContainElement(screen.getByTestId("hero-fragment"));
   });
 });

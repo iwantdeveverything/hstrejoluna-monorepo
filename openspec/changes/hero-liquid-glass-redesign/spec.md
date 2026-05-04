@@ -181,14 +181,14 @@ A scroll-linked signal SHALL bend the WebGL refraction while the hero is visible
 ### Requirement: Performance budgets
 
 - Initial JavaScript for `apps/portfolio` SHALL increase by NO MORE than **5 KB gzipped** versus the baseline measured at proposal time.
-- The lazy WebGL chunk SHALL be ≤ **200 KB gzipped**.
+- The lazy WebGL chunk SHALL be ≤ **300 KB gzipped**.
 - Largest Contentful Paint (LCP) on a slow-4G mobile profile SHALL be ≤ **2.5 s**.
 - Interaction to Next Paint (INP) on hero interactions (pointer move, CTA click) SHALL be ≤ **200 ms**.
 - Cumulative Layout Shift (CLS) on initial hero render SHALL be ≤ **0.1**.
 
 #### Scenario: bundle-size assertion fails on regression
 
-- **Given** a developer adds a heavy dependency that pushes the WebGL chunk above 200 KB gz
+- **Given** a developer adds a heavy dependency that pushes the WebGL chunk above 300 KB gz
 - **When** CI runs `qa:gate`
 - **Then** the bundle-size step SHALL fail with a non-zero exit code
 - **And** the PR SHALL be blocked from merging

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 
 interface BootSequenceProps {
   onComplete: () => void;
@@ -25,7 +25,8 @@ export const BootSequence = ({ onComplete }: BootSequenceProps) => {
     };
     setDimensions();
 
-    const charset = "ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789<>/-=";
+    const charset =
+      "ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789<>/-=";
     const fontSize = 16;
     let columns = Math.ceil(canvas.width / fontSize);
     let drops: number[] = new Array(columns).fill(1);
@@ -40,13 +41,13 @@ export const BootSequence = ({ onComplete }: BootSequenceProps) => {
 
       for (let i = 0; i < drops.length; i++) {
         const text = charset.charAt(Math.floor(Math.random() * charset.length));
-        
+
         // The leading character is white
         ctx.fillStyle = "#FFFFFF";
         ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-        
+
         // The ones trailing behind are the ember color (matching Dark Kinetic theme)
-        ctx.fillStyle = "#FF5637"; 
+        ctx.fillStyle = "#FF5637";
         ctx.fillText(text, i * fontSize, (drops[i] - 1) * fontSize);
 
         // Reset drop to top randomly when it hits bottom
@@ -83,7 +84,7 @@ export const BootSequence = ({ onComplete }: BootSequenceProps) => {
 
   return (
     <AnimatePresence>
-      <motion.div
+      <m.div
         initial={{ opacity: 1 }}
         animate={{ opacity: isFading ? 0 : 1 }}
         exit={{ opacity: 0 }}
@@ -91,10 +92,10 @@ export const BootSequence = ({ onComplete }: BootSequenceProps) => {
         className="fixed inset-0 z-[999] bg-[#131313] flex items-center justify-center pointer-events-none"
       >
         <canvas ref={canvasRef} className="block w-full h-full" />
-        
+
         {/* Central Overlay */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
-          <motion.div 
+          <m.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 0.5, duration: 0.5 }}
@@ -103,9 +104,9 @@ export const BootSequence = ({ onComplete }: BootSequenceProps) => {
             <span className="text-ember font-mono tracking-[0.5em] text-xs font-bold uppercase animate-pulse">
               [ SYSTEM_OVERRIDE ]
             </span>
-          </motion.div>
+          </m.div>
         </div>
-      </motion.div>
+      </m.div>
     </AnimatePresence>
   );
 };
