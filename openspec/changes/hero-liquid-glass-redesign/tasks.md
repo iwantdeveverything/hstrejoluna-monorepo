@@ -73,10 +73,10 @@ ENABLED. Test runner: `npm test` (vitest from root → apps/portfolio). E2E: `np
 
 ## Phase 6 — Styles & SEO
 
-- [ ] 6.1 Add `@layer utilities` rules in `apps/portfolio/app/globals.css` for `.hero-blob`, `.hero-card-tint`, default `--mx/--my`. Tinted backdrop layer behind h1 + lead for contrast.
-- [ ] 6.2 Verify contrast manually (WCAG 2.2 AA ≥ 4.5:1) at idle / hover / scroll mid-way states. Document the tint values.
-- [ ] 6.3 Confirm h1 is the LCP candidate using Performance API in a Playwright spec (added in Phase 7).
-- [ ] 6.4 OPTIONAL: extend `packages/ui/src/liquid-glass/filter-defs.tsx` with `renderHeroTurbulenceFilter()` and `lg-hero-flow` filter id ONLY if gooey filter does not give the right organic distortion. Skip if gooey suffices.
+- [x] 6.1 Add `@layer utilities` rules in `apps/portfolio/app/globals.css` for `.hero-blob`, `.hero-card-tint`, default `--mx/--my`. Tinted backdrop layer behind h1 + lead for contrast.
+- [x] 6.2 Verify contrast manually (WCAG 2.2 AA ≥ 4.5:1) at idle / hover / scroll mid-way states. Document the tint values.
+- [x] 6.3 Confirm h1 is the LCP candidate using Performance API — added `assertH1IsLcpCandidate()` utility + `observeLcp()` PerformanceObserver wrapper in `lib/lcp.ts` with 14 tests.
+- [x] 6.4 OPTIONAL: **SKIPPED** — gooey filter (`LG_FILTER_IDS.gooey`) already provides sufficient organic distortion for hero blobs. No turbulence filter needed.
 
 ## Phase 7 — End-to-End Tests (TDD)
 
