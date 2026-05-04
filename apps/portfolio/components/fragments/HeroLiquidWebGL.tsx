@@ -2,9 +2,8 @@
 
 import { useRef, useEffect, type ReactElement } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { MeshTransmissionMaterial } from "@react-three/drei/core/MeshTransmissionMaterial";
+import { MeshTransmissionMaterial } from "@react-three/drei";
 import { useLiquidHeroCapability } from "@hstrejoluna/ui";
-import * as THREE from "three";
 import type { Mesh } from "three";
 import {
   getBurstStore,
@@ -14,19 +13,52 @@ import {
 
 const BURST_DURATION_MS = 1200;
 
+// Custom uniform names injected into the MeshTransmissionMaterial's
+// existing uniforms object after mount. The material's internal
+// extend() call inside the Drei component registers the class with
+// R3F so it can be used declaratively.
+type LiquidUniforms = {
+  uTime: { value: number };
+  uMx: { value: number };
+  uMy: { value: number };
+  uScroll: { value: number };
+  uBurst: { value: number };
+};
+
+/** Material instance shape — MeshPhysicalMaterial extended with uniforms. */
+interface LiquidMaterial {
+  uniforms: Record<string, { value: number }> & LiquidUniforms;
+  // Refs forwarded by Drei's MeshTransmissionMaterial:
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  buffer?: any;
+}
+
 /**
  * Inner component — rendered INSIDE the r3f Canvas.
  *
- * Renders a fullscreen plane with a MeshTransmissionMaterial whose
- * uniforms are driven by:
- *  - uTime: clock elapsed time
- *  - uMx/uMy: cursor position (placeholder — wired in future phase)
- *  - uScroll: scroll progress from HeroLiquidField → scrollStore
- *  - uBurst: one-shot entrance burst (0→1→0 via computeBurstValue)
+ * Renders a fullscreen plane with Drei's MeshTransmissionMaterial
+ * (PascalCase component — triggers the internal extend() call so the
+ * material is registered in R3F's namespace automatically).
+ *
+ * Custom uniforms (uTime, uMx/uMy, uScroll, uBurst) are merged into
+ * the material's existing uniforms via Object.assign after mount.
  */
 const LiquidGlassPlane = () => {
   const meshRef = useRef<Mesh>(null);
-  const materialRef = useRef<THREE.ShaderMaterial>(null);
+  const materialRef = useRef<LiquidMaterial>(null);
+
+  // ── Merge custom uniforms into Drei's built-in uniforms ─────────
+  useEffect(() => {
+    const mat = materialRef.current;
+    if (!mat || !mat.uniforms) return;
+    Object.assign(mat.uniforms, {
+      uTime: { value: 0 },
+      uMx: { value: 0.5 },
+      uMy: { value: 0.5 },
+      uScroll: { value: 0 },
+      uBurst: { value: 0 },
+    });
+  }, []);
 
   // ── Entrance burst tween (design §3.3) ──────────────────────────
   useEffect(() => {
@@ -74,7 +106,7 @@ const LiquidGlassPlane = () => {
   return (
     <mesh ref={meshRef} position={[0, 0, 0]}>
       <planeGeometry args={[2, 2, 1, 1]} />
-      <meshTransmissionMaterial
+      <MeshTransmissionMaterial
         ref={materialRef}
         transmission={1}
         thickness={1.5}
@@ -90,16 +122,6 @@ const LiquidGlassPlane = () => {
         opacity={0.85}
         roughness={0.1}
         metalness={0}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        {...({
-          uniforms: {
-            uTime: { value: 0 },
-            uMx: { value: 0.5 },
-            uMy: { value: 0.5 },
-            uScroll: { value: 0 },
-            uBurst: { value: 0 },
-          },
-        } as any)}
       />
     </mesh>
   );

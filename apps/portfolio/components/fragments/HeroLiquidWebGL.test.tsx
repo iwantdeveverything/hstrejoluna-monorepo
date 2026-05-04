@@ -79,12 +79,18 @@ vi.mock("@react-three/fiber", () => ({
 }));
 
 // ── Mock @react-three/drei MeshTransmissionMaterial ────────────────
-vi.mock("@react-three/drei/core/MeshTransmissionMaterial", () => ({
-  MeshTransmissionMaterial: () => <div data-testid="mesh-transmission" />,
-}));
-
+// Renders as a lowercase custom element so DOM queries (querySelector)
+// continue to work. The real Drei component calls extend() internally
+// and renders <meshTransmissionMaterial> under the hood.
 vi.mock("@react-three/drei", () => ({
-  MeshTransmissionMaterial: () => <div data-testid="mesh-transmission" />,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  MeshTransmissionMaterial: React.forwardRef((props: any, ref: any) =>
+    React.createElement("meshTransmissionMaterial", {
+      ...props,
+      ref,
+      "data-testid": "mesh-transmission",
+    }),
+  ),
 }));
 
 // ── Mock three — needed for type imports, no runtime needed ────────
@@ -400,8 +406,8 @@ describe("4.8 GREEN — Skeleton structure", () => {
     expect(mtm).not.toBeNull();
   });
 
-  it("component imports from @react-three/drei/core/MeshTransmissionMaterial (subpath)", () => {
-    // Verified by import — the test compiles successfully with the subpath mock
+  it("component imports MeshTransmissionMaterial from @react-three/drei (public API)", () => {
+    // Verified by import — the test compiles with the public API mock
     render(<HeroLiquidWebGL />);
     expect(screen.getByTestId("r3f-canvas")).toBeInTheDocument();
   });
