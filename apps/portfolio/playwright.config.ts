@@ -2,7 +2,8 @@ import { defineConfig, devices } from "@playwright/test";
 
 const port = 4173;
 const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? `http://127.0.0.1:${port}`;
-const includeWebkit = process.env.CI === "true" || process.env.PLAYWRIGHT_INCLUDE_WEBKIT === "1";
+const includeWebkit =
+  process.env.CI === "true" || process.env.PLAYWRIGHT_INCLUDE_WEBKIT === "1";
 
 const projects = [
   {
@@ -33,7 +34,7 @@ if (includeWebkit) {
     {
       name: "Mobile Safari",
       use: { ...devices["iPhone 13"] },
-    }
+    },
   );
 }
 
@@ -60,6 +61,7 @@ export default defineConfig({
     reuseExistingServer: !process.env.CI,
     env: {
       NEXT_PUBLIC_SKIP_BOOT_SEQUENCE: "1",
+      NEXT_PUBLIC_HERO_LIQUID: "true",
     },
   },
   projects,

@@ -80,20 +80,20 @@ ENABLED. Test runner: `npm test` (vitest from root → apps/portfolio). E2E: `np
 
 ## Phase 7 — End-to-End Tests (TDD)
 
-- [ ] 7.1 RED: `apps/portfolio/e2e/hero.spec.ts` — desktop 1440x900, canvas mounts within 5s of viewport intersection.
-- [ ] 7.2 GREEN: verify capability gate causes Canvas to mount.
-- [ ] 7.3 RED: mobile 375x812 — no `<canvas>` in hero section.
-- [ ] 7.4 GREEN: verify mobile path via gate.
-- [ ] 7.5 RED: reduced-motion project — no canvas, no pointermove, blobs static.
-- [ ] 7.6 GREEN: verify reduced-motion path.
-- [ ] 7.7 RED: axe a11y test — 0 violations on hero.
-- [ ] 7.8 GREEN: resolve any axe violations.
-- [ ] 7.9 RED: pixel contrast spec at h1 region (multiple cursor positions).
-- [ ] 7.10 GREEN: tune backdrop tint to meet contrast.
-- [ ] 7.11 RED: Playwright LCP assertion — LCP element id is `hero-title`.
-- [ ] 7.12 GREEN: verify h1 wins LCP.
-- [ ] 7.13 RED: memory-leak stress test (mount/unmount, heap delta < threshold). Document threshold.
-- [ ] 7.14 GREEN: implement WebGL teardown (dispose renderer, cancel rAF, remove listeners).
+- [x] 7.1 RED: `apps/portfolio/e2e/hero.spec.ts` — desktop 1440x900, canvas mounts within 5s of viewport intersection.
+- [x] 7.2 GREEN: verify capability gate causes Canvas to mount.
+- [x] 7.3 RED: mobile 375x812 — no `<canvas>` in hero section.
+- [x] 7.4 GREEN: verify mobile path via gate.
+- [x] 7.5 RED: reduced-motion project — no canvas, no pointermove, blobs static.
+- [x] 7.6 GREEN: verify reduced-motion path.
+- [x] 7.7 RED: axe a11y test — 0 violations on hero.
+- [x] 7.8 GREEN: resolve any axe violations.
+- [x] 7.9 RED: pixel contrast spec at h1 region (multiple cursor positions).
+- [x] 7.10 GREEN: tune backdrop tint to meet contrast.
+- [x] 7.11 RED: Playwright LCP assertion — LCP element id is `hero-title`.
+- [x] 7.12 GREEN: verify h1 wins LCP.
+- [x] 7.13 RED: memory-leak stress test (mount/unmount, heap delta < threshold). Document threshold.
+- [x] 7.14 GREEN: implement WebGL teardown (dispose renderer, cancel rAF, remove listeners).
 
 ## Phase 8 — Lighthouse + Bundle Validation
 
