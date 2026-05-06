@@ -29,7 +29,10 @@ test.describe("in-place expansion grids", () => {
     );
 
     await page.goto("/#projects");
-    await expect(page.locator("#projects .grid-with-life")).toBeVisible();
+    const grid = page.locator("#projects .grid-with-life");
+    await expect(grid).toBeVisible();
+    // Ensure layout is stable before reading computed grid columns.
+    await page.waitForTimeout(500);
 
     const columnCount = await getProjectGridColumnCount(page);
     expect(columnCount).toBe(3);
@@ -106,22 +109,25 @@ test.describe("in-place expansion grids", () => {
       "Needs at least two experiences for singular expansion verification",
     );
 
-    const first = experienceButtons.nth(0);
-    const second = experienceButtons.nth(1);
+    // Re-query before every action — AnimatePresence may detach nodes on page load.
+    await experienceButtons.nth(0).scrollIntoViewIfNeeded();
+    await experienceButtons.nth(0).click();
+    await expect(experienceButtons.nth(0)).toHaveAttribute(
+      "aria-expanded",
+      "true",
+      {
+        timeout: 15000,
+      },
+    );
 
-    await first.scrollIntoViewIfNeeded();
-    await first.click();
-    await expect(first).toHaveAttribute("aria-expanded", "true", {
-      timeout: 15000,
-    });
-
-    // Wait for animation or layout shift
+    // Wait for AnimatePresence exit animation before collapsing first.
     await page.waitForTimeout(500);
 
-    await second.scrollIntoViewIfNeeded();
-    await second.click();
+    await experienceButtons.nth(1).scrollIntoViewIfNeeded();
+    await experienceButtons.nth(1).click();
 
-    // Re-query locator after AnimatePresence exit — first may be stale.
+    // Re-query after AnimatePresence exit/enter — all locators must be fresh.
+    await page.waitForTimeout(500);
     await expect(experienceButtons.nth(0)).toHaveAttribute(
       "aria-expanded",
       "false",
@@ -129,8 +135,12 @@ test.describe("in-place expansion grids", () => {
         timeout: 15000,
       },
     );
-    await expect(second).toHaveAttribute("aria-expanded", "true", {
-      timeout: 15000,
-    });
+    await expect(experienceButtons.nth(1)).toHaveAttribute(
+      "aria-expanded",
+      "true",
+      {
+        timeout: 15000,
+      },
+    );
   });
 });
