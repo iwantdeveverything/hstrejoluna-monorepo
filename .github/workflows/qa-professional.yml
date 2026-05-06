@@ -5,19 +5,33 @@ on:
     branches:
       - master
   workflow_dispatch:
+    inputs:
+      retries:
+        description: "Playwright retry count"
+        required: false
+        default: "2"
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  PLAYWRIGHT_RETRIES: ${{ github.event.inputs.retries || '2' }}
+  PLAYWRIGHT_INCLUDE_WEBKIT: "1"
 
 concurrency:
   group: qa-professional-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  qa:
-    name: E2E, Accessibility, Lighthouse Gates
+  e2e:
+    name: "E2E — ${{ matrix.suite }}"
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 18
+    strategy:
+      fail-fast: false
+      matrix:
+        suite:
+          - "Desktop Chrome + Memory Leak"
+          - "Desktop Firefox + Mobile Chrome"
+          - "WebKit + Reduced Motion"
 
     steps:
       - name: Checkout
@@ -64,24 +78,82 @@ jobs:
         run: npx playwright install-deps chromium firefox webkit
         working-directory: apps/portfolio
 
-      - name: E2E + accessibility gate
-        run: npm run qa:e2e --workspace=apps/portfolio
+      # ── E2E: project-based parallelism ──────────────────────────
+      # Each matrix suite runs a subset of Playwright projects via
+      # --project so tests are never skipped because of wrong browser.
+      #
+      # Desktop Chrome + Memory Leak: all files via Chrome project,
+      # memory-leak runs through its dedicated project (excluded from main
+      # Desktop Chrome via testIgnore).
+      # Desktop Firefox + Mobile Chrome: Firefox + Pixel 5 emulation
+      # WebKit + Reduced Motion: Safari Desktop/Mobile + reduced-motion
+      - name: Run E2E — ${{ matrix.suite }}
+        run: |
+          case "${{ matrix.suite }}" in
+            "Desktop Chrome + Memory Leak")
+              npx playwright test \
+                --project="Desktop Chrome" \
+                --project="Desktop Chrome Memory Leak"
+              ;;
+            "Desktop Firefox + Mobile Chrome")
+              npx playwright test --project="Desktop Firefox" --project="Mobile Chrome"
+              ;;
+            "WebKit + Reduced Motion")
+              npx playwright test \
+                --project="Desktop Safari" \
+                --project="Mobile Safari" \
+                --project="Desktop Chrome Reduced Motion"
+              ;;
+          esac
+        working-directory: apps/portfolio
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-${{ matrix.suite }}
+          path: |
+            apps/portfolio/playwright-report
+            apps/portfolio/test-results
+          if-no-files-found: ignore
+
+  # ── Lighthouse + Bundle ──────────────────────────────────────────
+  # Runs in parallel with E2E jobs — each on its own runner.
+  # No resource contention with E2E (separate GitHub Actions VMs).
+  lighthouse-bundle:
+    name: "Lighthouse CI + Bundle Size"
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    if: ${{ !cancelled() }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Next.js Cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ github.workspace }}/apps/portfolio/.next/cache
+            ${{ github.workspace }}/apps/maestros-del-salmon/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/*.[jt]s', '**/*.[jt]sx') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
 
       - name: Lighthouse CI gate
         run: npm run qa:lighthouse --workspace=apps/portfolio
 
       - name: Hero WebGL bundle-size gate
         run: npm run qa:bundle --workspace=apps/portfolio
-
-      - name: Upload Playwright report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-report
-          path: |
-            apps/portfolio/playwright-report
-            apps/portfolio/test-results
-          if-no-files-found: ignore
 
       - name: Upload Lighthouse artifacts
         if: always()
