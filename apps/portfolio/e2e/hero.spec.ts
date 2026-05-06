@@ -7,12 +7,21 @@ test.describe("Hero — Liquid Glass (e2e)", () => {
   // ═══════════════════════════════════════════════════════════════════
   test("desktop 1440x900: canvas mounts when capability gate allows WebGL", async ({
     page,
+    browserName,
   }) => {
+    test.skip(
+      browserName === "firefox",
+      "WebGL2 not available in headless Firefox",
+    );
+
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("/");
 
     const heroSection = page.locator('section[aria-labelledby="hero-title"]');
     await expect(heroSection).toBeVisible();
+
+    // Wait for dynamic(r3f) canvas to attach to DOM before asserting visibility.
+    await page.waitForSelector("canvas", { state: "attached" });
 
     // The r3f Canvas renders a <canvas> element in the DOM.
     // Wait for dynamic(r3f) chunk to load — give up to 5s.
@@ -46,8 +55,12 @@ test.describe("Hero — Liquid Glass (e2e)", () => {
     const heroSection = page.locator('section[aria-labelledby="hero-title"]');
     await expect(heroSection).toBeVisible();
 
+    // Wait for dynamic(r3f) canvas to attach before scanning.
+    await page.waitForSelector("canvas", { state: "attached" });
+
     const analysis = await new AxeBuilder({ page })
       .include('section[aria-labelledby="hero-title"]')
+      .exclude("canvas")
       .analyze();
 
     expect(analysis.violations).toEqual([]);

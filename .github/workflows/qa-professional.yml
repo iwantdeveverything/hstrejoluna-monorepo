@@ -15,9 +15,14 @@ concurrency:
 
 jobs:
   qa:
-    name: E2E, Accessibility, Lighthouse Gates
+    name: "E2E Shard ${{ matrix.shard }}/${{ matrix.shardTotal }}"
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2]
+        shardTotal: [2]
 
     steps:
       - name: Checkout
@@ -64,8 +69,9 @@ jobs:
         run: npx playwright install-deps chromium firefox webkit
         working-directory: apps/portfolio
 
-      - name: E2E + accessibility gate
-        run: npm run qa:e2e --workspace=apps/portfolio
+      - name: E2E shard ${{ matrix.shard }}/${{ matrix.shardTotal }}
+        run: npx playwright test --shard=${{ matrix.shard }}/${{ matrix.shardTotal }}
+        working-directory: apps/portfolio
 
       - name: Lighthouse CI gate
         run: npm run qa:lighthouse --workspace=apps/portfolio
@@ -77,7 +83,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report
+          name: playwright-report-shard-${{ matrix.shard }}
           path: |
             apps/portfolio/playwright-report
             apps/portfolio/test-results
@@ -87,7 +93,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: lighthouse-ci-report
+          name: lighthouse-ci-report-shard-${{ matrix.shard }}
           path: |
             apps/portfolio/.lighthouseci
           if-no-files-found: ignore

@@ -1,6 +1,8 @@
 import { expect, test } from "@playwright/test";
 
-const getProjectGridColumnCount = async (page: import("@playwright/test").Page) =>
+const getProjectGridColumnCount = async (
+  page: import("@playwright/test").Page,
+) =>
   page.locator("#projects .grid-with-life").evaluate((element) => {
     const columns = getComputedStyle(element).gridTemplateColumns;
     return columns.split(" ").filter(Boolean).length;
@@ -9,11 +11,22 @@ const getProjectGridColumnCount = async (page: import("@playwright/test").Page) 
 test.describe("in-place expansion grids", () => {
   test.beforeEach(async ({ page }) => {
     await page.addInitScript(() => {
-      window.localStorage.setItem("consent_preferences", JSON.stringify({ analytics: true, timestamp: new Date().toISOString() }));
+      window.localStorage.setItem(
+        "consent_preferences",
+        JSON.stringify({
+          analytics: true,
+          timestamp: new Date().toISOString(),
+        }),
+      );
     });
   });
-  test("projects grid uses three columns on desktop", async ({ page }, testInfo) => {
-    test.skip(testInfo.project.name.includes("Mobile"), "Desktop-only responsive assertion");
+  test("projects grid uses three columns on desktop", async ({
+    page,
+  }, testInfo) => {
+    test.skip(
+      testInfo.project.name.includes("Mobile"),
+      "Desktop-only responsive assertion",
+    );
 
     await page.goto("/#projects");
     await expect(page.locator("#projects .grid-with-life")).toBeVisible();
@@ -22,8 +35,13 @@ test.describe("in-place expansion grids", () => {
     expect(columnCount).toBe(3);
   });
 
-  test("projects grid uses one column on mobile", async ({ page }, testInfo) => {
-    test.skip(!testInfo.project.name.includes("Mobile"), "Mobile-only responsive assertion");
+  test("projects grid uses one column on mobile", async ({
+    page,
+  }, testInfo) => {
+    test.skip(
+      !testInfo.project.name.includes("Mobile"),
+      "Mobile-only responsive assertion",
+    );
 
     await page.goto("/#projects");
     await expect(page.locator("#projects .grid-with-life")).toBeVisible();
@@ -35,13 +53,21 @@ test.describe("in-place expansion grids", () => {
   test("project selection expands in place and collapses previous selection", async ({
     page,
   }, testInfo) => {
-    test.skip(testInfo.project.name.includes("Mobile"), "Desktop-only interaction assertion");
+    test.skip(
+      testInfo.project.name.includes("Mobile"),
+      "Desktop-only interaction assertion",
+    );
 
     await page.goto("/#projects");
 
-    const projectButtons = page.locator('button[aria-controls^="project-panel-"]');
+    const projectButtons = page.locator(
+      'button[aria-controls^="project-panel-"]',
+    );
     const buttonCount = await projectButtons.count();
-    test.skip(buttonCount < 2, "Needs at least two projects for singular expansion verification");
+    test.skip(
+      buttonCount < 2,
+      "Needs at least two projects for singular expansion verification",
+    );
 
     const first = projectButtons.nth(0);
     const second = projectButtons.nth(1);
@@ -52,32 +78,59 @@ test.describe("in-place expansion grids", () => {
     await expect(page.locator(`#${firstPanelId}`)).toBeVisible();
 
     await second.click();
-    await expect(first).toHaveAttribute("aria-expanded", "false");
+
+    // AnimatePresence exit animation detaches/re-attaches DOM nodes.
+    // Wait for animation to complete AND re-query locator to avoid staleness.
+    await page.waitForTimeout(500);
+    await expect(projectButtons.nth(0)).toHaveAttribute(
+      "aria-expanded",
+      "false",
+    );
     await expect(second).toHaveAttribute("aria-expanded", "true");
   });
 
-  test("experience selection keeps singular expansion behavior", async ({ page }, testInfo) => {
-    test.skip(testInfo.project.name.includes("Mobile"), "Desktop-only interaction assertion");
+  test("experience selection keeps singular expansion behavior", async ({
+    page,
+  }, testInfo) => {
+    test.skip(
+      testInfo.project.name.includes("Mobile"),
+      "Desktop-only interaction assertion",
+    );
 
     await page.goto("/#experience");
 
     const experienceButtons = page.locator('button[aria-controls^="details-"]');
     const buttonCount = await experienceButtons.count();
-    test.skip(buttonCount < 2, "Needs at least two experiences for singular expansion verification");
+    test.skip(
+      buttonCount < 2,
+      "Needs at least two experiences for singular expansion verification",
+    );
 
     const first = experienceButtons.nth(0);
     const second = experienceButtons.nth(1);
 
     await first.scrollIntoViewIfNeeded();
     await first.click();
-    await expect(first).toHaveAttribute("aria-expanded", "true", { timeout: 15000 });
+    await expect(first).toHaveAttribute("aria-expanded", "true", {
+      timeout: 15000,
+    });
 
     // Wait for animation or layout shift
     await page.waitForTimeout(500);
 
     await second.scrollIntoViewIfNeeded();
     await second.click();
-    await expect(first).toHaveAttribute("aria-expanded", "false", { timeout: 15000 });
-    await expect(second).toHaveAttribute("aria-expanded", "true", { timeout: 15000 });
+
+    // Re-query locator after AnimatePresence exit — first may be stale.
+    await expect(experienceButtons.nth(0)).toHaveAttribute(
+      "aria-expanded",
+      "false",
+      {
+        timeout: 15000,
+      },
+    );
+    await expect(second).toHaveAttribute("aria-expanded", "true", {
+      timeout: 15000,
+    });
   });
 });

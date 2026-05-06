@@ -5,6 +5,14 @@ const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? `http://127.0.0.1:${port}`;
 const includeWebkit =
   process.env.CI === "true" || process.env.PLAYWRIGHT_INCLUDE_WEBKIT === "1";
 
+const shard = process.env.PLAYWRIGHT_SHARD
+  ? (() => {
+      const [current, total] =
+        process.env.PLAYWRIGHT_SHARD.split("/").map(Number);
+      return { current, total };
+    })()
+  : undefined;
+
 const projects = [
   {
     name: "Desktop Chrome",
@@ -12,7 +20,15 @@ const projects = [
   },
   {
     name: "Desktop Firefox",
-    use: { ...devices["Desktop Firefox"] },
+    use: {
+      ...devices["Desktop Firefox"],
+      launchOptions: {
+        firefoxUserPrefs: {
+          "webgl.force-enabled": true,
+          "webgl.disabled": false,
+        },
+      },
+    },
   },
   {
     name: "Mobile Chrome",
@@ -43,7 +59,8 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 2 : undefined,
+  workers: undefined,
+  shard,
   reporter: [
     ["list"],
     ["html", { outputFolder: "playwright-report", open: "never" }],
