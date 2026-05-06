@@ -102,7 +102,11 @@ test.describe("in-place expansion grids", () => {
 
     await page.goto("/#experience");
 
+    // AnimatePresence aggressively detaches/re-attaches DOM nodes on Safari
+    // during viewport entry — wait for section and buttons to stabilize.
+    await expect(page.locator("#experience")).toBeVisible();
     const experienceButtons = page.locator('button[aria-controls^="details-"]');
+    await expect(experienceButtons.first()).toBeAttached({ timeout: 10000 });
     const buttonCount = await experienceButtons.count();
     test.skip(
       buttonCount < 2,
