@@ -5,9 +5,15 @@ on:
     branches:
       - master
   workflow_dispatch:
+    inputs:
+      retries:
+        description: "Playwright retry count"
+        required: false
+        default: "2"
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  PLAYWRIGHT_RETRIES: ${{ github.event.inputs.retries || '2' }}
 
 concurrency:
   group: qa-professional-${{ github.ref }}
