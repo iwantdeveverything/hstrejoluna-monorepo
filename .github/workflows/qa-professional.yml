@@ -118,13 +118,12 @@ jobs:
           if-no-files-found: ignore
 
   # ── Lighthouse + Bundle ──────────────────────────────────────────
-  # Runs once after all E2E jobs, not per shard.
+  # Runs in parallel with E2E jobs — each on its own runner.
+  # No resource contention with E2E (separate GitHub Actions VMs).
   lighthouse-bundle:
     name: "Lighthouse CI + Bundle Size"
     runs-on: ubuntu-latest
     timeout-minutes: 12
-    needs: e2e
-    # Run even if E2E failed (we still want metrics), but skip if cancelled.
     if: ${{ !cancelled() }}
 
     steps:
