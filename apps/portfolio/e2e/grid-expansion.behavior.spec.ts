@@ -119,6 +119,9 @@ test.describe("in-place expansion grids", () => {
     );
 
     // Re-query before every action — AnimatePresence may detach nodes on page load.
+    // First ensure the button is re-attached after initial page load animations.
+    await expect(experienceButtons.nth(0)).toBeAttached({ timeout: 10000 });
+    await page.waitForTimeout(500);
     await experienceButtons.nth(0).scrollIntoViewIfNeeded();
     await experienceButtons.nth(0).click();
 
