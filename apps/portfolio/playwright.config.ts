@@ -1,4 +1,5 @@
 import { defineConfig, devices } from "@playwright/test";
+import type { Project } from "@playwright/test";
 
 const port = 4173;
 const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? `http://127.0.0.1:${port}`;
@@ -13,13 +14,15 @@ const shard = process.env.PLAYWRIGHT_SHARD
     })()
   : undefined;
 
-const projects = [
+const projects: Project[] = [
   {
     name: "Desktop Chrome",
+    testIgnore: /hero\.memory-leak\.spec\.ts$/,
     use: { ...devices["Desktop Chrome"] },
   },
   {
     name: "Desktop Firefox",
+    testIgnore: /hero\.memory-leak\.spec\.ts$/,
     use: {
       ...devices["Desktop Firefox"],
       launchOptions: {
@@ -32,6 +35,7 @@ const projects = [
   },
   {
     name: "Mobile Chrome",
+    testIgnore: /hero\.memory-leak\.spec\.ts$/,
     use: { ...devices["Pixel 5"] },
   },
   {
@@ -39,16 +43,23 @@ const projects = [
     testMatch: /.*\.reduced-motion\.spec\.ts$/,
     use: { ...devices["Desktop Chrome"], reducedMotion: "reduce" },
   },
+  {
+    name: "Desktop Chrome Memory Leak",
+    testMatch: /hero\.memory-leak\.spec\.ts$/,
+    use: { ...devices["Desktop Chrome"] },
+  },
 ];
 
 if (includeWebkit) {
   projects.push(
     {
       name: "Desktop Safari",
+      testIgnore: /hero\.memory-leak\.spec\.ts$/,
       use: { ...devices["Desktop Safari"] },
     },
     {
       name: "Mobile Safari",
+      testIgnore: /hero\.memory-leak\.spec\.ts$/,
       use: { ...devices["iPhone 13"] },
     },
   );
