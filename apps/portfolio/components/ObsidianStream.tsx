@@ -145,7 +145,6 @@ export const ObsidianStream = ({
             id="main-content"
             className="relative z-10 flex flex-col w-full"
           >
-            {" "}
             <HeroSection profile={profile} />
             <StreamSection
               id="projects"

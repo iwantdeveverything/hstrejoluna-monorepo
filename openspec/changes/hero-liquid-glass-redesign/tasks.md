@@ -111,7 +111,7 @@ ENABLED. Test runner: `npm test` (vitest from root → apps/portfolio). E2E: `np
 
 - [x] 10.1 Remove `apps/portfolio/components/fragments/HeroFragment.tsx` + `HeroFragment.test.tsx`.
 - [x] 10.2 Remove `useSpotlightTracking` hook.
-- [x] 10.3 Drop deprecated `hero.titleLine1`, `hero.titleLine2`, `hero.headline`, `hero.subheadline`, `hero.telemetryLatency`, `hero.telemetryFramework`, `brand.systemReady`, `brand.uplink`, `brand.descent` keys. Update parity tests.
+- [x] 10.3 Drop deprecated `hero.titleLine1`, `hero.titleLine2`, `hero.headline`, `hero.subheadline`, `hero.telemetryLatency`, `hero.telemetryFramework`, `hero.coords`, `hero.os`, `brand.systemReady`, `brand.uplink`, `brand.descent` keys. Update parity tests.
 - [x] 10.4 Remove `HeroFragment` from `scripts/audit-liquid-glass.ts` MIGRATED_FILES.
 - [x] 10.5 Remove `NEXT_PUBLIC_HERO_LIQUID` flag and the branch in `ObsidianStream.tsx`.
 

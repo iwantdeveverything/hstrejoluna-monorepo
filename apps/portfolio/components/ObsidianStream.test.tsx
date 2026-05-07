@@ -62,7 +62,11 @@ vi.mock("@/hooks/useActiveSection", () => ({
 }));
 
 vi.mock("./fragments/HeroSection", () => ({
-  HeroSection: () => <div data-testid="hero-section">Hero</div>,
+  HeroSection: () => (
+    <section id="hero">
+      <div data-testid="hero-section">Hero</div>
+    </section>
+  ),
 }));
 vi.mock("./fragments/ProjectsOverview", () => ({
   ProjectsOverview: () => <div>Projects</div>,
@@ -149,12 +153,16 @@ describe("ObsidianStream — LazyMotion and section wrapper", () => {
     expect(lazyWrappers).toHaveLength(0);
   });
 
-  it("does not wrap hero content in an outer <section id='hero'> element", () => {
+  it("HeroSection provides id='hero' for useActiveSection, ObsidianStream adds no wrapper", () => {
     render(<ObsidianStream {...defaultProps} />);
 
-    // HeroSection owns its own <section>. ObsidianStream should NOT
-    // add a wrapping <section id="hero">.
-    const heroSection = document.querySelector("section#hero");
-    expect(heroSection).toBeNull();
+    // HeroSection owns id="hero" (needed by useActiveSection for CommandNav).
+    const heroElement = document.getElementById("hero");
+    expect(heroElement).toBeInTheDocument();
+    expect(heroElement?.tagName).toBe("SECTION");
+
+    // ObsidianStream must NOT add a duplicate section#hero wrapper.
+    const heroSections = document.querySelectorAll("section#hero");
+    expect(heroSections).toHaveLength(1);
   });
 });
