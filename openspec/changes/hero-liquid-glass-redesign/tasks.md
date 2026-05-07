@@ -97,23 +97,23 @@ ENABLED. Test runner: `npm test` (vitest from root → apps/portfolio). E2E: `np
 
 ## Phase 8 — Lighthouse + Bundle Validation
 
-- [ ] 8.1 Run `qa:lighthouse`. Verify SEO ≥ 95, Perf ≥ 90 desktop / ≥ 85 mobile, LCP ≤ 2.5s.
-- [ ] 8.2 Run bundle-size script. Verify lazy WebGL chunk ≤ 300 KB gz, initial JS delta ≤ +5 KB gz.
-- [ ] 8.3 ~~If over budget: fall back to plan-B~~ Budget raised to 300 KB (maintainer decision). Re-run.
+- [x] 8.1 Run `qa:lighthouse`. Verify SEO ≥ 95, Perf ≥ 90 desktop / ≥ 85 mobile, LCP ≤ 2.5s.
+- [x] 8.2 Run bundle-size script. Verify lazy WebGL chunk ≤ 300 KB gz, initial JS delta ≤ +5 KB gz.
+- [x] 8.3 ~~If over budget: fall back to plan-B~~ Budget raised to 300 KB (maintainer decision). Re-run.
 
 ## Phase 9 — Rollout
 
-- [ ] 9.1 Land PR with flag default `false`. Reviewers verify legacy hero unchanged.
-- [ ] 9.2 Enable flag in preview deployment. Manual QA + Lighthouse comparison.
-- [ ] 9.3 Flip flag in production. Monitor RUM (LCP / INP / CLS) for 48h.
+- [x] 9.1 Land PR with flag default `false`. Reviewers verify legacy hero unchanged.
+- [x] 9.2 Enable flag in preview deployment. Manual QA + Lighthouse comparison.
+- [x] 9.3 Flip flag in production. Monitor RUM (LCP / INP / CLS) for 48h.
 
 ## Phase 10 — Cleanup (post-stable-release)
 
-- [ ] 10.1 Remove `apps/portfolio/components/fragments/HeroFragment.tsx` + `HeroFragment.test.tsx`.
-- [ ] 10.2 Remove `useSpotlightTracking` hook.
-- [ ] 10.3 Drop deprecated `hero.titleLine1`, `hero.titleLine2`, `hero.headline`, `hero.subheadline`, `hero.telemetryLatency`, `hero.telemetryFramework`, `brand.systemReady`, `brand.uplink`, `brand.descent` keys. Update parity tests.
-- [ ] 10.4 Remove `HeroFragment` from `scripts/audit-liquid-glass.ts` MIGRATED_FILES.
-- [ ] 10.5 Remove `NEXT_PUBLIC_HERO_LIQUID` flag and the branch in `ObsidianStream.tsx`.
+- [x] 10.1 Remove `apps/portfolio/components/fragments/HeroFragment.tsx` + `HeroFragment.test.tsx`.
+- [x] 10.2 Remove `useSpotlightTracking` hook.
+- [x] 10.3 Drop deprecated `hero.titleLine1`, `hero.titleLine2`, `hero.headline`, `hero.subheadline`, `hero.telemetryLatency`, `hero.telemetryFramework`, `hero.coords`, `hero.os`, `brand.systemReady`, `brand.uplink`, `brand.descent` keys. Update parity tests.
+- [x] 10.4 Remove `HeroFragment` from `scripts/audit-liquid-glass.ts` MIGRATED_FILES.
+- [x] 10.5 Remove `NEXT_PUBLIC_HERO_LIQUID` flag and the branch in `ObsidianStream.tsx`.
 
 ## Decisions to lock during apply
 

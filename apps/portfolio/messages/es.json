@@ -56,15 +56,7 @@
     "cta": "Explorar mi trabajo",
     "ctaAriaLabel": "Ver proyectos destacados y casos de estudio",
     "secondaryLabel": "Perfil de LinkedIn",
-    "secondaryHref": "https://linkedin.com/in/htrejoluna",
-    "headline": "Arquitectura de ecosistemas de latencia cero y vacíos digitales inmersivos.",
-    "subheadline": "Transformo restricciones complejas en arte funcional, cinético y puro.",
-    "titleLine1": "SYSTEM",
-    "titleLine2": "ARCHITECT",
-    "telemetryLatency": "LATENCIA: 0.00MS",
-    "telemetryFramework": "FRAMEWORK: KINETIC_V2",
-    "coords": "COORDS: 0.00.00° ALPHA",
-    "os": "OS: THE_VOID"
+    "secondaryHref": "https://linkedin.com/in/htrejoluna"
   },
   "nav": {
     "projects": "Proyectos",
@@ -93,9 +85,6 @@
   },
   "brand": {
     "systemOverride": "SYSTEM_OVERRIDE",
-    "systemReady": "[SYSTEM_READY]: INITIALIZING_NEURAL_UPLINK",
-    "uplink": "UPLINK_STATUS: OPTIMAL",
-    "descent": "DESCENT",
     "scrollToExplore": "SCROLL_TO_EXPLORE",
     "neuralMap": "NEURAL_MAP",
     "experienceLog": "EXPERIENCE_LOG",

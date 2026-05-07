@@ -10,7 +10,6 @@ import {
   Experience,
   Certificate,
 } from "@/types/sanity";
-import { HeroFragment } from "./fragments/HeroFragment";
 import { HeroSection } from "./fragments/HeroSection";
 import { ProjectsOverview } from "./fragments/ProjectsOverview";
 import { ExperienceOverview } from "./fragments/ExperienceOverview";
@@ -76,7 +75,6 @@ export const ObsidianStream = ({
   const tNav = useTranslations("nav");
   const tPortfolioGrid = useTranslations("fragments.portfolioGrid");
   const skipBootSequence = process.env.NEXT_PUBLIC_SKIP_BOOT_SEQUENCE === "1";
-  const useNewHero = process.env.NEXT_PUBLIC_HERO_LIQUID === "true";
   const [isBooted, setIsBooted] = useState(skipBootSequence);
   const isReducedMotion = useReducedMotion();
   const isNavigationHidden = false;
@@ -147,14 +145,7 @@ export const ObsidianStream = ({
             id="main-content"
             className="relative z-10 flex flex-col w-full"
           >
-            {" "}
-            {useNewHero ? (
-              <HeroSection profile={profile} />
-            ) : (
-              <section id="hero" className="stream-section">
-                <HeroFragment profile={profile} />
-              </section>
-            )}
+            <HeroSection profile={profile} />
             <StreamSection
               id="projects"
               sectionClassName="stream-section bg-surface_container_lowest"

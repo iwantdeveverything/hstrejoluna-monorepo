@@ -54,7 +54,7 @@ describe("messages/en.json", () => {
       "secondaryHref",
     ] as const;
 
-    const DEPRECATED_HERO_KEYS = [
+    const REMOVED_HERO_KEYS = [
       "titleLine1",
       "titleLine2",
       "headline",
@@ -74,11 +74,13 @@ describe("messages/en.json", () => {
       }
     });
 
-    it("retains all deprecated hero keys", () => {
+    it("has removed all deprecated hero keys", () => {
       const hero = en.hero as Record<string, string>;
-      for (const key of DEPRECATED_HERO_KEYS) {
-        expect(hero, `hero.${key} must exist`).toHaveProperty(key);
-        expect(typeof hero[key], `hero.${key} must be a string`).toBe("string");
+      for (const key of REMOVED_HERO_KEYS) {
+        expect(
+          hero,
+          `hero.${key} must be removed during cleanup phase 10`,
+        ).not.toHaveProperty(key);
       }
     });
   });
@@ -87,11 +89,6 @@ describe("messages/en.json", () => {
     it("contains HUD/cyberpunk terms as English-only values", () => {
       const brand = (en as Record<string, Record<string, unknown>>).brand;
       expect(brand.systemOverride).toBe("SYSTEM_OVERRIDE");
-      expect(brand.systemReady).toBe(
-        "[SYSTEM_READY]: INITIALIZING_NEURAL_UPLINK",
-      );
-      expect(brand.uplink).toBe("UPLINK_STATUS: OPTIMAL");
-      expect(brand.descent).toBe("DESCENT");
     });
 
     it("has all brand values as uppercase English strings", () => {

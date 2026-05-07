@@ -94,7 +94,6 @@ export default defineConfig({
     reuseExistingServer: !process.env.CI,
     env: {
       NEXT_PUBLIC_SKIP_BOOT_SEQUENCE: "1",
-      NEXT_PUBLIC_HERO_LIQUID: "true",
     },
   },
   projects,
