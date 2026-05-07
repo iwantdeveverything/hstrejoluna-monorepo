@@ -17,7 +17,6 @@ const MIGRATED_FILES = [
   "apps/portfolio/components/fragments/Footer.tsx",
   "packages/ui/src/components/GlassNav.tsx",
   "packages/ui/src/components/CommandSurface.tsx",
-  "apps/portfolio/components/fragments/HeroFragment.tsx",
   "apps/portfolio/components/fragments/HeroSection.tsx",
   "apps/portfolio/components/fragments/CookieBanner.tsx",
   "apps/portfolio/components/fragments/ProjectsOverview.tsx",

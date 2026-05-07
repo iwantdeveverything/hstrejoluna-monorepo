@@ -3,7 +3,6 @@ import { LazyMotion, domAnimation } from "framer-motion";
 import { userEvent, within } from "storybook/test";
 import { NextIntlClientProvider } from "next-intl";
 import { HeroSection } from "./HeroSection";
-import { HeroFragment } from "./HeroFragment";
 import type { Profile } from "@/types/sanity";
 
 const mockProfile: Profile = {
@@ -23,21 +22,9 @@ const heroMessages = {
   ctaAriaLabel: "View featured projects and case studies",
   secondaryLabel: "LinkedIn Profile",
   secondaryHref: "https://linkedin.com/in/htrejoluna",
-  // Legacy keys (used by HeroFragment in FlagOff story)
-  headline: "Architecting zero-latency ecosystems and immersive digital voids.",
-  subheadline:
-    "I transform complex constraints into pure, kinetic functional art.",
-  titleLine1: "SYSTEM",
-  titleLine2: "ARCHITECT",
-  telemetryLatency: "LATENCY: 0.00MS",
-  telemetryFramework: "FRAMEWORK: KINETIC_V2",
 };
 
-const brandMessages = {
-  systemReady: "[SYSTEM_READY]: INITIALIZING_NEURAL_UPLINK",
-  uplink: "UPLINK_STATUS: OPTIMAL",
-  descent: "DESCENT",
-};
+const brandMessages = {};
 
 const meta = {
   title: "Fragments/HeroSection",
@@ -204,26 +191,7 @@ export const Scroll: Story = {
 };
 
 /**
- * 6. FlagOff — NEXT_PUBLIC_HERO_LIQUID=false renders legacy HeroFragment.
- *
- * Renders the legacy `HeroFragment` for side-by-side comparison in
- * Storybook. When the flag is off, `ObsidianStream` branches to
- * `HeroFragment` instead of `HeroSection`. This story documents
- * the expected legacy behavior until the cleanup phase.
+ * 6. ~~FlagOff~~ — REMOVED in Phase 10 cleanup.
+ * Legacy `HeroFragment` and its stories are no longer needed
+ * after the liquid-glass migration is stable.
  */
-export const FlagOff: Story = {
-  args: {
-    profile: mockProfile,
-  },
-  render: () => <HeroFragment profile={mockProfile} />,
-  parameters: {
-    docs: {
-      description: {
-        story:
-          "Legacy `HeroFragment` — rendered when `NEXT_PUBLIC_HERO_LIQUID=false`. " +
-          "`ObsidianStream` branches to `HeroFragment` instead of `HeroSection`. " +
-          "This story provides visual comparison between old and new hero.",
-      },
-    },
-  },
-};
