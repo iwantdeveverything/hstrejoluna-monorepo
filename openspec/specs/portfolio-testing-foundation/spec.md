@@ -59,3 +59,43 @@ The system MUST expose deterministic test commands that can be reused in local d
 - WHEN watch-mode command is executed
 - THEN the runner SHOULD provide incremental reruns for touched files
 - AND developers MAY run scoped tests for certificate modules/components
+
+### Requirement: Hero Testing Extension
+
+The testing foundation SHALL include hero-specific assertions introduced by the liquid-glass redesign.
+
+#### Scenario: hero contains semantic h1 (was: NOT TESTED)
+
+- **Given** any locale (`en`, `es`)
+- **When** the hero is rendered in jsdom + Vitest
+- **Then** `screen.getByRole('heading', { level: 1 })` SHALL find exactly one element
+- **And** that element SHALL contain the canonical name + role text from `messages.hero.h1Name` + `messages.hero.h1Role`
+
+#### Scenario: Lighthouse SEO threshold raised to 95
+
+- **Given** `qa:lighthouse` runs against the production build
+- **When** the categories are scored
+- **Then** the SEO category SHALL score ≥ 95 (previous baseline: TBD / unmeasured)
+
+#### Scenario: Playwright e2e covers reduced-motion path
+
+- **Given** a Playwright project configured with `reducedMotion: 'reduce'`
+- **When** the hero is loaded
+- **Then** no `<canvas>` element SHALL be present inside the hero section
+- **And** the hero SHALL still render the h1, lead, and CTAs
+- **And** axe SHALL report zero violations
+
+#### Scenario: Playwright e2e covers desktop capable path
+
+- **Given** a Playwright project configured with viewport ≥ 1440×900 and reduced-motion `'no-preference'`
+- **When** the hero is loaded
+- **Then** a `<canvas>` element SHALL eventually appear inside the hero section (after IntersectionObserver fires)
+- **And** the burst animation SHALL be observable via uniform-state assertion or visual snapshot
+- **And** the h1 SHALL remain the LCP candidate (verified by Performance API)
+
+#### Scenario: i18n parity tests cover hero keys
+
+- **Given** the hero introduces new `hero.*` keys (eyebrow, h1Name, h1Role, lead, cta, ctaAriaLabel, secondaryLabel, secondaryHref)
+- **When** `messages/en.test.ts` and `messages/es.test.ts` run
+- **Then** every new key SHALL be present in BOTH locales
+- **And** any missing key SHALL fail the parity test
