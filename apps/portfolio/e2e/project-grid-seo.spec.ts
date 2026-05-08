@@ -61,10 +61,10 @@ test.describe("Project Grid — SEO & Semantic HTML", () => {
   test("heading hierarchy does not skip levels", async ({ page }) => {
     await page.goto("/");
 
-    // Collect heading levels in DOM order within main
+    // Collect heading levels in DOM order within the projects section
     const headings = await page
       .locator(
-        "#main-content h1, #main-content h2, #main-content h3, #main-content h4, #main-content h5, #main-content h6",
+        "#projects h1, #projects h2, #projects h3, #projects h4, #projects h5, #projects h6",
       )
       .evaluateAll((els) =>
         els.map((el) => parseInt(el.tagName.replace("H", ""), 10)),
@@ -101,7 +101,7 @@ test.describe("Project Grid — SEO & Semantic HTML", () => {
     await expect(articles.first()).toBeVisible({ timeout: 10000 });
 
     // Find a link that goes to /projects/
-    const projectLink = page.locator('article a[href*="/projects/"]').first();
+    const projectLink = page.locator('a[href*="/projects/"]').first();
     await expect(projectLink).toBeVisible();
 
     // Click the link
@@ -227,11 +227,13 @@ test.describe("Project Grid — SEO & Semantic HTML", () => {
           .locator("#projects")
           .count()) > 0;
 
-      // Check if the focused element has an article ancestor
-      const hasArticleAncestor = await focused.evaluate(
-        (el) => !!el.closest("article"),
+      // Check if the focused element is a project card link
+      const isProjectLink = await focused.evaluate(
+        (el) =>
+          el.tagName === "A" &&
+          (el as HTMLAnchorElement).href.includes("/projects/"),
       );
-      if (hasArticleAncestor) {
+      if (isProjectLink) {
         articleFocused = true;
         break;
       }
