@@ -224,12 +224,17 @@ describe("ProjectsGrid — SSR semantic rendering", () => {
       await ProjectsGrid({ projects: MOCK_PROJECTS, locale: "en" }),
     );
 
-    // Verify the list has a CSS class that enables transition disabling with prefers-reduced-motion
-    const list = container.querySelector("ul");
-    expect(list).toBeInTheDocument();
-    // The grid should use Tailwind motion-safe or have CSS that respects reduced motion
-    // We check for presence of a class that indicates motion consideration
-    expect(list?.className).toMatch(/grid/);
+    const cards = Array.from(container.querySelectorAll("article"));
+    expect(cards).toHaveLength(2);
+
+    const motionSafeElements = cards.flatMap((card) => {
+      const elements = [card, ...Array.from(card.querySelectorAll("*"))];
+      return elements.filter((element) =>
+        /\bmotion-safe:[^\s]+\b/.test(element.className),
+      );
+    });
+
+    expect(motionSafeElements.length).toBeGreaterThan(0);
   });
 });
 
