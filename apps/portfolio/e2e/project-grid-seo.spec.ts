@@ -227,9 +227,11 @@ test.describe("Project Grid — SEO & Semantic HTML", () => {
           .locator("#projects")
           .count()) > 0;
 
-      // Check if the focused element is an anchor inside an article
-      const articleParent = page.locator(":focus").locator("ancestor::article");
-      if ((await articleParent.count()) > 0) {
+      // Check if the focused element has an article ancestor
+      const hasArticleAncestor = await focused.evaluate(
+        (el) => !!el.closest("article"),
+      );
+      if (hasArticleAncestor) {
         articleFocused = true;
         break;
       }
@@ -241,12 +243,10 @@ test.describe("Project Grid — SEO & Semantic HTML", () => {
     // At least one article link should be reachable via keyboard
     expect(articleFocused).toBe(true);
 
-    // Verify :focus-visible styles apply
+    // Verify :focus-visible styles apply via keyboard navigation
     const focusedElement = page.locator(":focus-visible");
-    // If browser synthesized a :focus-visible, we got a visible indicator
     const focusVisibleCount = await focusedElement.count();
-    // count() >= 0 is always true, so check if any element has :focus-visible
-    // In Playwright, keyboard Tab sets :focus-visible
-    expect(focusVisibleCount).toBeGreaterThanOrEqual(0); // always true check — real assertion is that we reached an article
+    // Keyboard Tab sets :focus-visible in Playwright — we should have at least one
+    expect(focusVisibleCount).toBeGreaterThan(0);
   });
 });

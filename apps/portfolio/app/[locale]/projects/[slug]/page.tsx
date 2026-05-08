@@ -137,7 +137,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
   };
 
   return (
-    <main className="min-h-screen bg-background text-white pt-32 pb-24 px-4 md:px-8">
+    <div className="min-h-screen bg-background text-white pt-32 pb-24 px-4 md:px-8">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
@@ -266,6 +266,6 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           </aside>
         </div>
       </div>
-    </main>
+    </div>
   );
 }
