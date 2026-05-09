@@ -90,14 +90,20 @@ describe("HeroSection — Semantic SSR shell (REQ liquid-glass-hero)", () => {
     expect(lead.tagName).toBe("P");
   });
 
-  it("renders a primary <a> CTA pointing to #projects with aria-label", () => {
+  it("renders a primary <a> CTA pointing to #projects with accessible name matching visible text", () => {
     render(<HeroSection profile={null} />);
+    // Accessible name should include visible text to avoid label/content mismatch
     const primaryCta = screen.getByRole("link", {
-      name: "View featured projects and case studies",
+      name: /Explore my work/,
     });
     expect(primaryCta).toBeInTheDocument();
     expect(primaryCta).toHaveAttribute("href", "#projects");
     expect(primaryCta).toHaveTextContent("Explore my work");
+    // The aria-label should now include both the descriptive text AND visible text
+    expect(primaryCta).toHaveAttribute(
+      "aria-label",
+      "View featured projects and case studies — Explore my work",
+    );
   });
 
   it("renders a secondary <a> CTA pointing to the LinkedIn profile URL from messages", () => {

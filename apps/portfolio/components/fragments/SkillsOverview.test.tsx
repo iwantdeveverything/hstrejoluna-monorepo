@@ -17,17 +17,40 @@ vi.mock("framer-motion", async (importOriginal) => {
     AnimatePresence: ({ children }: React.PropsWithChildren) => <>{children}</>,
     motion: {
       ...actual.motion,
-      div: ({ children, ...props }: React.PropsWithChildren<Record<string, unknown>>) => (
-        <div {...(props as React.HTMLAttributes<HTMLDivElement>)}>{children}</div>
+      div: ({
+        children,
+        ...props
+      }: React.PropsWithChildren<Record<string, unknown>>) => (
+        <div {...(props as React.HTMLAttributes<HTMLDivElement>)}>
+          {children}
+        </div>
       ),
     },
   };
 });
 
 const mockSkills = [
-  { _id: "s1", _type: "skill" as const, name: "React", category: "Frontend", proficiency: 95 },
-  { _id: "s2", _type: "skill" as const, name: "TypeScript", category: "Frontend", proficiency: 90 },
-  { _id: "s3", _type: "skill" as const, name: "Node.js", category: "Backend", proficiency: 80 },
+  {
+    _id: "s1",
+    _type: "skill" as const,
+    name: "React",
+    category: "Frontend",
+    proficiency: 95,
+  },
+  {
+    _id: "s2",
+    _type: "skill" as const,
+    name: "TypeScript",
+    category: "Frontend",
+    proficiency: 90,
+  },
+  {
+    _id: "s3",
+    _type: "skill" as const,
+    name: "Node.js",
+    category: "Backend",
+    proficiency: 80,
+  },
 ];
 
 describe("SkillsOverview — Keyboard Accessibility", () => {
@@ -73,5 +96,17 @@ describe("SkillsOverview — Keyboard Accessibility", () => {
 
     fireEvent.click(reactButton);
     expect(reactButton).toHaveAttribute("aria-expanded", "false");
+  });
+
+  it("uses no heading elements for skill names to avoid skipping h3 level", () => {
+    render(<SkillsOverview skills={mockSkills} />);
+
+    // No <h4> headings should exist — skill names are inside a <h2> parent
+    const h4Elements = document.querySelectorAll("h4");
+    expect(h4Elements.length).toBe(0);
+
+    // Skill names should still be rendered as visible text
+    expect(screen.getByText("React")).toBeInTheDocument();
+    expect(screen.getByText("TypeScript")).toBeInTheDocument();
   });
 });
