@@ -40,8 +40,8 @@ Chain strategy: feature-branch-chain
 
 ## Phase 3: Verification
 
-- [ ] 3.1 Run `npm run typecheck` — zero TypeScript errors
-- [ ] 3.2 Run `npm test` — all 432 tests pass
-- [ ] 3.3 Run `npm run build` — build succeeds with no warnings
-- [ ] 3.4 Visual smoke test: hero text renders on page load (SSR HTML), no hydration error in console, no flash or CLS on ObsidianStream mount
-- [ ] 3.5 Lighthouse audit (mobile): Performance ≥ 90, TBT ≤ 200 ms
+- [x] 3.1 Run `npm run typecheck` — zero TypeScript errors
+- [x] 3.2 Run `npm test` — all 442 tests pass (60 files)
+- [x] 3.3 Run `npm run build` — build succeeds with no warnings
+- [x] 3.4 Visual smoke test: hero text renders on page load (SSR HTML), no hydration error in console, no flash or CLS on ObsidianStream mount
+- [x] 3.5 Lighthouse audit (mobile): Performance ≥ 90, TBT ≤ 200 ms

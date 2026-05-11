@@ -46,9 +46,9 @@ test.describe("Hero — Liquid Glass Memory Leak (e2e)", () => {
 
     // Cycle: navigate away and back 5 times (use /legal as valid alt route)
     for (let i = 0; i < 5; i++) {
-      await page.goto("/legal", { waitUntil: "networkidle" });
+      await page.goto("/legal", { waitUntil: "load" });
       await page.waitForTimeout(1000);
-      await page.goto("/", { waitUntil: "networkidle" });
+      await page.goto("/", { waitUntil: "load" });
       await page.waitForTimeout(2000); // let WebGL re-init
     }
 

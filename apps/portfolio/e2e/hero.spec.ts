@@ -8,10 +8,11 @@ test.describe("Hero — Liquid Glass (e2e)", () => {
   test("desktop 1440x900: canvas mounts when capability gate allows WebGL", async ({
     page,
     browserName,
-  }) => {
+  }, testInfo) => {
     test.skip(
-      browserName === "firefox",
-      "WebGL2 not available in headless Firefox",
+      browserName === "firefox" ||
+        (browserName === "webkit" && testInfo.project.name === "Mobile Safari"),
+      "WebGL2 not available in headless Firefox or headless mobile WebKit",
     );
 
     await page.setViewportSize({ width: 1440, height: 900 });
