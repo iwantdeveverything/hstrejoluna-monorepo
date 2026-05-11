@@ -10,24 +10,28 @@ vi.mock("@hstrejoluna/ui", async (importOriginal) => {
   };
 });
 
-vi.mock("framer-motion", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("framer-motion")>();
-  return {
-    ...actual,
-    AnimatePresence: ({ children }: React.PropsWithChildren) => <>{children}</>,
-    motion: {
-      ...actual.motion,
-      div: ({ children, ...props }: React.PropsWithChildren<Record<string, unknown>>) => (
-        <div {...(props as React.HTMLAttributes<HTMLDivElement>)}>{children}</div>
-      ),
-    },
-  };
-});
-
 const mockSkills = [
-  { _id: "s1", _type: "skill" as const, name: "React", category: "Frontend", proficiency: 95 },
-  { _id: "s2", _type: "skill" as const, name: "TypeScript", category: "Frontend", proficiency: 90 },
-  { _id: "s3", _type: "skill" as const, name: "Node.js", category: "Backend", proficiency: 80 },
+  {
+    _id: "s1",
+    _type: "skill" as const,
+    name: "React",
+    category: "Frontend",
+    proficiency: 95,
+  },
+  {
+    _id: "s2",
+    _type: "skill" as const,
+    name: "TypeScript",
+    category: "Frontend",
+    proficiency: 90,
+  },
+  {
+    _id: "s3",
+    _type: "skill" as const,
+    name: "Node.js",
+    category: "Backend",
+    proficiency: 80,
+  },
 ];
 
 describe("SkillsOverview — Keyboard Accessibility", () => {

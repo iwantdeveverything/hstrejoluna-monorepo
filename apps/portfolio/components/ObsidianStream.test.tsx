@@ -28,31 +28,6 @@ vi.mock("@hstrejoluna/ui", async (importOriginal) => {
   };
 });
 
-vi.mock("framer-motion", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("framer-motion")>();
-  return {
-    ...actual,
-    useScroll: () => ({ scrollYProgress: { get: () => 0 } }),
-    useTransform: (_: unknown, __: unknown, values: string[]) => values[0],
-    AnimatePresence: ({ children }: React.PropsWithChildren) => <>{children}</>,
-    LazyMotion: ({ children }: React.PropsWithChildren) => (
-      <div data-lazy-motion-wrapper="">{children}</div>
-    ),
-    motion: {
-      ...actual.motion,
-      div: ({
-        children,
-        style,
-        ...props
-      }: React.PropsWithChildren<Record<string, unknown>>) => (
-        <div {...(props as React.HTMLAttributes<HTMLDivElement>)}>
-          {children}
-        </div>
-      ),
-    },
-  };
-});
-
 vi.mock("@/hooks/useAutoHideNavigation", () => ({
   useAutoHideNavigation: () => false,
 }));
