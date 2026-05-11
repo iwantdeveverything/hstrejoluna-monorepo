@@ -28,6 +28,8 @@ interface ObsidianStreamProps {
   experiences: Experience[];
   certificates: Certificate[];
   projectsContent?: React.ReactNode;
+  /** When true, HeroSection is skipped (rendered by parent SSR shell). */
+  skipHero?: boolean;
 }
 
 interface StreamSectionProps {
@@ -69,6 +71,7 @@ export const ObsidianStream = ({
   experiences,
   certificates,
   projectsContent,
+  skipHero = false,
 }: ObsidianStreamProps) => {
   const tCommon = useTranslations("common");
   const tBrand = useTranslations("brand");
@@ -120,7 +123,7 @@ export const ObsidianStream = ({
         />
 
         <div className="relative z-10 flex flex-col w-full">
-          <HeroSection profile={profile} />
+          {!skipHero && <HeroSection profile={profile} />}
           <StreamSection
             id="projects"
             sectionClassName="stream-section bg-surface_container_lowest"

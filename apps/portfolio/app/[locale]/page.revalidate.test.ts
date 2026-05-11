@@ -21,8 +21,8 @@ vi.mock("@/lib/json-ld", () => ({
   buildProjectListJsonLd: vi.fn().mockReturnValue({}),
 }));
 
-vi.mock("@/components/ObsidianStream", () => ({
-  ObsidianStream: () => null,
+vi.mock("@/components/ObsidianStreamLoader", () => ({
+  ObsidianStreamLoader: () => null,
 }));
 
 vi.mock("@/components/ProjectsGrid", () => ({
