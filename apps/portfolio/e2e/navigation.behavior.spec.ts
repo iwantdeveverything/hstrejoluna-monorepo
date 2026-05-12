@@ -60,7 +60,9 @@ test.describe("portfolio navigation behavior", () => {
       .first();
     await expect(certificatesNavLink).toBeVisible();
 
-    await certificatesNavLink.click();
+    // Force click — LiquidNav uses framer-motion spring entrance animation
+    // (y:100→0) which can temporarily place the element outside viewport bounds
+    await certificatesNavLink.click({ force: true });
 
     // URL hash is set synchronously via replaceState — reliable first gate.
     await expect(page).toHaveURL(/#certificates$/);
@@ -94,7 +96,8 @@ test.describe("portfolio navigation behavior", () => {
       name: /^menu$/i,
     });
     await expect(openMenuButton).toBeVisible();
-    await openMenuButton.click();
+    // Force click — LiquidNav spring entrance animation may shift element off-viewport
+    await openMenuButton.click({ force: true });
 
     const mobileNavigation = page.getByRole("navigation", {
       name: /mobile sections/i,

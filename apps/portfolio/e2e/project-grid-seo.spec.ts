@@ -109,7 +109,9 @@ test.describe("Project Grid — SEO & Semantic HTML", () => {
     expect(href).toContain("/projects/");
 
     await projectLink.click();
-    await page.waitForLoadState("networkidle");
+    // Use waitForURL instead of networkidle — ISR pages never reach idle because
+    // of revalidation requests. URL-based wait is deterministic and faster.
+    await page.waitForURL("**/projects/**");
 
     // Should be on a project page
     expect(page.url()).toContain("/projects/");
