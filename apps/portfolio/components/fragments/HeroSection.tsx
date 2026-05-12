@@ -41,6 +41,7 @@ export const HeroSection = ({ profile }: HeroSectionProps) => {
         <div className="flex flex-col sm:flex-row gap-4">
           <Link
             href="#projects"
+            aria-label={`${primaryCta} — ${t("ctaAriaLabel")}`}
             className="inline-flex items-center px-8 py-4 bg-ember text-[#3a0000] font-mono tracking-[0.3em] uppercase text-xs font-bold transition-all duration-300 hover:bg-ember/80 rounded-tl-[16px] rounded-br-[16px]"
           >
             {primaryCta}

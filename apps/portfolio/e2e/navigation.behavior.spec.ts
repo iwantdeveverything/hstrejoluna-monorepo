@@ -107,8 +107,10 @@ test.describe("portfolio navigation behavior", () => {
       name: /^menu$/i,
     });
     await expect(openMenuButton).toBeVisible();
-    // Force click — LiquidNav spring entrance animation may shift element off-viewport
-    await openMenuButton.click({ force: true });
+    // Dispatch click in JS context — LiquidNav spring entrance animation
+    // places the button offscreen via CSS transform. force:true bypasses
+    // actionability checks but NOT viewport/scroll-into-view on fixed elements
+    await openMenuButton.evaluate((el) => (el as HTMLButtonElement).click());
 
     const mobileNavigation = page.getByRole("navigation", {
       name: /mobile sections/i,

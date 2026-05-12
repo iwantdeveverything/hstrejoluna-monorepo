@@ -86,7 +86,7 @@ describe("HeroSection — Semantic SSR shell (REQ liquid-glass-hero)", () => {
   it("renders a primary <a> CTA pointing to #projects", () => {
     render(<HeroSection profile={null} />);
     const primaryCta = screen.getByRole("link", {
-      name: "Explore my work",
+      name: /Explore my work/,
     });
     expect(primaryCta).toBeInTheDocument();
     expect(primaryCta).toHaveAttribute("href", "#projects");
