@@ -14,7 +14,7 @@ import {
 import { ObsidianStream } from "@/components/ObsidianStream";
 import { ProjectsGrid } from "@/components/ProjectsGrid";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
 
 const profileQuery = '*[_type == "profile"][0]';
 const projectsQuery =
