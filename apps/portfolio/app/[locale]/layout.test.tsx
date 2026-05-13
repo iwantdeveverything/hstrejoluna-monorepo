@@ -9,6 +9,18 @@ vi.mock("next-intl/server", () => ({
   getMessages: vi.fn(),
 }));
 
+// Hoisted mock for CookieBanner — needed by both the direct mock and
+// the next/dynamic pass-through mock below.
+const { MockCookieBanner } = vi.hoisted(() => ({
+  MockCookieBanner: () => <div data-testid="cookie-banner">CookieBanner</div>,
+}));
+
+// Mock next/dynamic — resolve synchronously in tests by returning
+// the mocked CookieBanner component directly.
+vi.mock("next/dynamic", () => ({
+  default: () => MockCookieBanner,
+}));
+
 // Mock next/font/google to avoid font loading in tests
 vi.mock("next/font/google", () => ({
   Inter: () => ({ variable: "--font-sans" }),
@@ -43,7 +55,7 @@ vi.mock("../../components/fragments/Footer", () => ({
 }));
 
 vi.mock("../../components/fragments/CookieBanner", () => ({
-  default: () => <div data-testid="cookie-banner">CookieBanner</div>,
+  default: MockCookieBanner,
 }));
 
 vi.mock("../../components/tracking/GoogleTagManager", () => ({
