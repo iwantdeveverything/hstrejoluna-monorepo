@@ -8,7 +8,7 @@ import "../globals.css";
 import "@hstrejoluna/ui/styles/liquid-glass.css";
 
 import Footer from "../../components/fragments/Footer";
-import CookieBanner from "../../components/fragments/CookieBanner";
+import { CookieBannerWrapper } from "../../components/fragments/CookieBannerWrapper";
 import GoogleTagManager from "../../components/tracking/GoogleTagManager";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
@@ -100,7 +100,7 @@ export default async function LocaleLayout({
             </main>
             <Footer />
           </div>
-          <CookieBanner />
+          <CookieBannerWrapper />
           <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GTM_ID || ""} />
         </NextIntlClientProvider>
       </body>

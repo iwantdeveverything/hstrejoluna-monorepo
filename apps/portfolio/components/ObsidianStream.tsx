@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import { useReducedMotion } from "@hstrejoluna/ui";
 import { useActiveSection } from "@/hooks/useActiveSection";
 import {
@@ -14,8 +15,20 @@ import { HeroSection } from "./fragments/HeroSection";
 import { ExperienceOverview } from "./fragments/ExperienceOverview";
 import { SkillsOverview } from "./fragments/SkillsOverview";
 import { CertificatesOverview } from "./fragments/CertificatesOverview";
-import { CommandNav } from "./ui/CommandNav";
 import { BootSequence } from "@hstrejoluna/ui";
+
+const CommandNav = dynamic(
+  () => import("./ui/CommandNav").then((mod) => mod.CommandNav),
+  {
+    ssr: false,
+    loading: () => (
+      <div aria-hidden="true" className="fixed top-4 right-4 z-[90]">
+        <div className="h-4 w-4 rounded-full bg-primary/20 animate-pulse" />
+      </div>
+    ),
+  },
+);
+
 import { navSections, navSectionIds, streamSectionIds } from "@/lib/sections";
 import type { NavSectionId, StreamSectionId } from "@/lib/sections";
 import { useTranslations } from "next-intl";
