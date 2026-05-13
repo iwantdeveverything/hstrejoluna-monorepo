@@ -266,7 +266,7 @@ body::before {
 }
 
 .animate-hero-fade-in {
-  animation: hero-fade-in 0.5s ease-out forwards;
+  animation: hero-fade-in 0.15s ease-out forwards;
 }
 
 /* ── Scroll progress bar — CSS custom property driven ──────────── */
