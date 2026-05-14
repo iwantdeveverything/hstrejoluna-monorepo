@@ -35,9 +35,9 @@ Chain strategy: stacked-to-main
 
 ## Phase 2: Turbo-ify CI (high impact)
 
-- [ ] 2.1 [TPO-05, CSA-02] Refactor `ci.yml` quality job: replace manual checkout+setup-node+cache+ci steps with `uses: .github/actions/setup-node-deps`; replace `npm run lint/typecheck/build/test` with `turbo run lint typecheck build test --filter=./apps/*`. Remove Next.js cache step (now in composite action). **GitHub issue required.**
-- [ ] 2.2 [LH-01, LH-03, CSA-02, E2E-01] Refactor `qa-professional.yml`: both jobs use `uses: .github/actions/setup-node-deps`; lighthouse-bundle job runs `turbo run qa:lighthouse qa:bundle --filter=./apps/*` instead of `npm run qa:lighthouse --workspace=...`; add conditional skip via `--affected` when not `workflow_dispatch`. E2E job keeps existing Playwright steps with composite action for setup. **GitHub issue required.**
-- [ ] 2.3 [TPO-06] Add `TURBO_TOKEN` and `TURBO_TEAM` env vars to `ci.yml` and `qa-professional.yml` using GitHub Actions cache (remote cache via `actions/cache` with turbo's built-in integration). Graceful fallback when secrets absent — local turbo cache still works. **GitHub issue required.**
+- [x] 2.1 [TPO-05, CSA-02] Refactor `ci.yml` quality job: replace manual checkout+setup-node+cache+ci steps with `uses: .github/actions/setup-node-deps`; replace `npm run lint/typecheck/build/test` with `turbo run lint --filter=portfolio --filter=maestros-del-salmon` (separate steps). Remove Next.js cache step (now in composite action). **GitHub issue required.**
+- [x] 2.2 [LH-01, LH-03, CSA-02, E2E-01] Refactor `qa-professional.yml`: both jobs use `uses: .github/actions/setup-node-deps`; lighthouse-bundle job runs `turbo run qa:lighthouse --filter=portfolio` and `turbo run qa:bundle --filter=portfolio` instead of `npm run qa:lighthouse --workspace=...`; added `changes` job with paths-filter for conditional skip (skip on docs-only, run on workflow_dispatch). E2E job keeps existing Playwright steps with composite action for setup. **GitHub issue required.**
+- [x] 2.3 [TPO-06] Add `TURBO_TOKEN` and `TURBO_TEAM` env vars to `ci.yml` and `qa-professional.yml`. Graceful fallback when secrets absent — local turbo cache still works. **GitHub issue required.**
 - [ ] 2.4 Verify Phase 2: push PR; confirm `turbo run` succeeds in CI. Check logs for turbo cache hits on reruns. Verify Lighthouse runs without double build.
 
 ## Phase 3: CD Refactoring (matrix + Docker caching)
