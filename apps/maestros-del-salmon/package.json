@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "npx tsc -p tsconfig.json --noEmit"
+    "lint": "npx tsc -p tsconfig.json --noEmit",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@hstrejoluna/compliance": "*",

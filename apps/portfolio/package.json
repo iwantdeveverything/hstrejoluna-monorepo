@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "npx tsc -p tsconfig.json --noEmit",
+    "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
     "storybook": "storybook dev -p 6006",
@@ -15,7 +16,7 @@
     "qa:e2e:install": "playwright install chromium firefox webkit",
     "qa:e2e": "playwright test",
     "qa:e2e:headed": "playwright test --headed",
-    "qa:lighthouse": "NEXT_PUBLIC_BASE_URL=http://127.0.0.1:4173 npm run build && lhci autorun --config=./lighthouserc.cjs",
+    "qa:lighthouse": "lhci autorun --config=./lighthouserc.cjs",
     "qa:bundle": "node ./scripts/check-hero-webgl-bundle.mjs",
     "qa:gate": "npm run lint && npm run test && npm run qa:e2e && npm run qa:lighthouse && npm run qa:bundle"
   },
