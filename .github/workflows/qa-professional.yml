@@ -13,6 +13,8 @@ on:
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: ${{ vars.TURBO_TEAM }}
   PLAYWRIGHT_RETRIES: ${{ github.event.inputs.retries || '2' }}
   PLAYWRIGHT_INCLUDE_WEBKIT: "1"
 
@@ -21,8 +23,36 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  changes:
+    name: Detect relevant changes
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      e2e: ${{ steps.filter.outputs.e2e }}
+      lighthouse: ${{ steps.filter.outputs.lighthouse }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            e2e:
+              - 'apps/portfolio/**'
+              - 'packages/**'
+              - 'package.json'
+              - 'package-lock.json'
+              - 'turbo.json'
+            lighthouse:
+              - 'apps/portfolio/**'
+              - 'packages/**'
+              - 'package.json'
+              - 'package-lock.json'
+              - 'turbo.json'
+
   e2e:
     name: "E2E — ${{ matrix.suite }}"
+    needs: changes
+    if: ${{ github.event_name == 'workflow_dispatch' || needs.changes.outputs.e2e == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 18
     strategy:
@@ -34,27 +64,8 @@ jobs:
           - "WebKit + Reduced Motion"
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Next.js Cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            ${{ github.workspace }}/apps/portfolio/.next/cache
-            ${{ github.workspace }}/apps/maestros-del-salmon/.next/cache
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-nextjs-
+      - name: Setup Node and Dependencies
+        uses: ./.github/actions/setup-node-deps
 
       - name: Get Playwright version
         id: playwright-version
@@ -122,38 +133,20 @@ jobs:
   # No resource contention with E2E (separate GitHub Actions VMs).
   lighthouse-bundle:
     name: "Lighthouse CI + Bundle Size"
+    needs: changes
+    if: ${{ github.event_name == 'workflow_dispatch' || needs.changes.outputs.lighthouse == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 12
-    if: ${{ !cancelled() }}
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Next.js Cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            ${{ github.workspace }}/apps/portfolio/.next/cache
-            ${{ github.workspace }}/apps/maestros-del-salmon/.next/cache
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-nextjs-
+      - name: Setup Node and Dependencies
+        uses: ./.github/actions/setup-node-deps
 
       - name: Lighthouse CI gate
-        run: npm run qa:lighthouse --workspace=apps/portfolio
+        run: turbo run qa:lighthouse --filter=portfolio
 
-      - name: Hero WebGL bundle-size gate
-        run: npm run qa:bundle --workspace=apps/portfolio
+      - name: Bundle-size gate
+        run: turbo run qa:bundle --filter=portfolio
 
       - name: Upload Lighthouse artifacts
         if: always()
