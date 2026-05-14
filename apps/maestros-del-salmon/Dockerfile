@@ -11,7 +11,7 @@ RUN npm ci
 
 COPY . .
 
-RUN npm run build --workspace=apps/maestros-del-salmon
+RUN npx turbo run build --filter=maestros-del-salmon
 RUN npm prune --omit=dev
 
 FROM node:20-alpine AS runner
