@@ -47,6 +47,13 @@ jobs:
             exit 1
           fi
 
+      - name: Check develop branch existence
+        id: develop_check
+        uses: actions/cache@v4
+        with:
+          path: .github/develop-branch-marker
+          key: develop-branch-exists
+
       - name: Validate Gitflow base branch mapping
         run: |
           set -euo pipefail
@@ -59,15 +66,24 @@ jobs:
             exit 0
           fi
 
-          if gh api "repos/${OWNER}/${REPO}/branches/develop" > /dev/null 2>&1; then
+          if [ "${{ steps.develop_check.outputs.cache-hit }}" == "true" ]; then
+            echo "Cache hit: develop branch exists (cached result)."
             if [ "${BASE_BRANCH}" != "develop" ]; then
               echo "Feature/fix/chore/etc branches must target develop when develop branch exists."
               exit 1
             fi
           else
-            if [ "${BASE_BRANCH}" != "master" ]; then
-              echo "Repository has no develop branch; PRs must target master."
-              exit 1
+            if gh api "repos/${OWNER}/${REPO}/branches/develop" > /dev/null 2>&1; then
+              touch .github/develop-branch-marker
+              if [ "${BASE_BRANCH}" != "develop" ]; then
+                echo "Feature/fix/chore/etc branches must target develop when develop branch exists."
+                exit 1
+              fi
+            else
+              if [ "${BASE_BRANCH}" != "master" ]; then
+                echo "Repository has no develop branch; PRs must target master."
+                exit 1
+              fi
             fi
           fi
 

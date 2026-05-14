@@ -42,8 +42,8 @@ Chain strategy: stacked-to-main
 
 ## Phase 3: CD Refactoring (matrix + Docker caching)
 
-- [ ] 3.1 [GCP-01] Refactor `cd-cloudrun.yml`: replace `deploy-portfolio` and `deploy-maestros-del-salmon` jobs with single matrix `deploy` job using `matrix.app`. Parameterize `SERVICE_NAME`, `IMAGE_NAME`, `SMOKE_PATH`, secrets, env vars via `${{ matrix.app.* }}`. Verify: `act --matrix app=portfolio` runs without YAML errors. **GitHub issue required.**
-- [ ] 3.2 [GCP-02] Add Docker buildx layer caching to `cd-cloudrun.yml` build step: `--cache-from type=gha` and `--cache-to type=gha,mode=max`. Ensure buildx is configured (`docker buildx create --use` or existing builder). **GitHub issue required.**
-- [ ] 3.3 [GCP-03] Update `apps/portfolio/Dockerfile` and `apps/maestros-del-salmon/Dockerfile`: replace `RUN npm run build --workspace=apps/...` with `RUN npx turbo run build --filter=...`. **GitHub issue required.**
-- [ ] 3.4 [CSA-03] Add develop-branch check cache to `pr-governance.yml`: wrap `gh api branches/develop` call with `actions/cache@v4` keyed on a stable ref (e.g., `develop-branch-check-${{ github.sha }}`). **GitHub issue required.**
+- [x] 3.1 [GCP-01] Refactor `cd-cloudrun.yml`: replace `deploy-portfolio` and `deploy-maestros-del-salmon` jobs with single matrix `deploy` job using `matrix.app`. Parameterize `SERVICE_NAME`, `IMAGE_NAME`, `SMOKE_PATH`, secrets, env vars via `${{ matrix.app.* }}`. Verify: `act --matrix app=portfolio` runs without YAML errors. **GitHub issue required.**
+- [x] 3.2 [GCP-02] Add Docker buildx layer caching to `cd-cloudrun.yml` build step: `--cache-from type=gha` and `--cache-to type=gha,mode=max`. Ensure buildx is configured (`docker buildx create --use` or existing builder). **GitHub issue required.**
+- [x] 3.3 [GCP-03] Update `apps/portfolio/Dockerfile` and `apps/maestros-del-salmon/Dockerfile`: replace `RUN npm run build --workspace=apps/...` with `RUN npx turbo run build --filter=...`. **GitHub issue required.**
+- [x] 3.4 [CSA-03] Add develop-branch check cache to `pr-governance.yml`: wrap `gh api branches/develop` call with `actions/cache@v4` keyed on a stable ref (e.g., `develop-branch-check-${{ github.sha }}`). **GitHub issue required.**
 - [ ] 3.5 Verify Phase 3: push to master; confirm both Cloud Run services deploy identically. Verify Docker cache hits on subsequent deploys. Verify pr-governance cache behavior.

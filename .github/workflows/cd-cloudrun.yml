@@ -27,16 +27,32 @@ env:
   CLOUD_RUN_TIMEOUT: ${{ vars.CLOUD_RUN_TIMEOUT || '60' }}
 
 jobs:
-  deploy-portfolio:
-    name: Deploy portfolio
+  deploy:
+    name: Deploy ${{ matrix.app.name }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
+
+    strategy:
+      matrix:
+        app:
+          - name: portfolio
+            service: ${{ vars.CLOUD_RUN_SERVICE_PORTFOLIO || 'portfolio' }}
+            image: portfolio
+            smoke_path: ${{ vars.CLOUD_RUN_SMOKE_PATH_PORTFOLIO || '/' }}
+            has_env_vars: true
+            sanity_secret: ${{ vars.CLOUD_RUN_SECRET_SANITY_API_READ_TOKEN || 'portfolio-sanity-api-read-token' }}
+          - name: maestros-del-salmon
+            service: ${{ vars.CLOUD_RUN_SERVICE_SALMON || 'maestros-del-salmon' }}
+            image: maestros-del-salmon
+            smoke_path: ${{ vars.CLOUD_RUN_SMOKE_PATH_SALMON || '/maestros-del-salmon' }}
+            has_env_vars: false
+            sanity_secret: ''
+
     env:
-      SERVICE_NAME: ${{ vars.CLOUD_RUN_SERVICE_PORTFOLIO || 'portfolio' }}
-      IMAGE_NAME: portfolio
-      SMOKE_PATH: ${{ vars.CLOUD_RUN_SMOKE_PATH_PORTFOLIO || '/' }}
-      SALMON_ORIGIN: ${{ vars.SALMON_ORIGIN || '' }}
-      SANITY_API_READ_SECRET: ${{ vars.CLOUD_RUN_SECRET_SANITY_API_READ_TOKEN || 'portfolio-sanity-api-read-token' }}
+      SERVICE_NAME: ${{ matrix.app.service }}
+      IMAGE_NAME: ${{ matrix.app.image }}
+      SMOKE_PATH: ${{ matrix.app.smoke_path }}
+      DOCKER_BUILDKIT: 1
 
     steps:
       - name: Checkout
@@ -65,12 +81,17 @@ jobs:
         if: ${{ env.ACT != 'true' }}
         run: gcloud auth configure-docker "${GCP_REGION}-docker.pkg.dev" --quiet
 
-      - name: Validate portfolio runtime env contract
+      - name: Set up Docker Buildx
         if: ${{ env.ACT != 'true' }}
+        uses: docker/setup-buildx-action@v3
+
+      - name: Validate runtime env contract
+        if: ${{ env.ACT != 'true' && matrix.app.has_env_vars == true }}
         run: |
+          set -euo pipefail
           missing=()
-          [ -z "${SALMON_ORIGIN}" ] && missing+=("SALMON_ORIGIN (repo variable)")
-          [ -z "${SANITY_API_READ_SECRET}" ] && missing+=("CLOUD_RUN_SECRET_SANITY_API_READ_TOKEN (repo variable)")
+          [ -z "${SALMON_ORIGIN:-}" ] && missing+=("SALMON_ORIGIN (repo variable)")
+          [ -z "${{ matrix.app.sanity_secret }}" ] && missing+=("CLOUD_RUN_SECRET_SANITY_API_READ_TOKEN (repo variable)")
 
           if [ ${#missing[@]} -gt 0 ]; then
             echo "Missing required runtime configuration for portfolio deploy:"
@@ -78,22 +99,40 @@ jobs:
             exit 1
           fi
 
-          gcloud secrets describe "${SANITY_API_READ_SECRET}" --project "${GCP_PROJECT_ID}" > /dev/null
+          gcloud secrets describe "${{ matrix.app.sanity_secret }}" --project "${GCP_PROJECT_ID}" > /dev/null
+        env:
+          SALMON_ORIGIN: ${{ vars.SALMON_ORIGIN || '' }}
 
-      - name: Build image
+      - name: Build and push image
         if: ${{ env.ACT != 'true' }}
         run: |
+          set -euo pipefail
           IMAGE_BASE="${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/${GAR_REPOSITORY}/${IMAGE_NAME}"
           IMAGE_TAG="${IMAGE_BASE}:${GITHUB_SHA}"
           IMAGE_LATEST="${IMAGE_BASE}:latest"
-          docker build -f apps/portfolio/Dockerfile -t "${IMAGE_TAG}" -t "${IMAGE_LATEST}" .
-          docker push "${IMAGE_TAG}"
-          docker push "${IMAGE_LATEST}"
-          DIGEST="$(docker inspect --format='{{index .RepoDigests 0}}' "${IMAGE_TAG}")"
-          echo "IMAGE_DIGEST=${DIGEST}" >> "${GITHUB_ENV}"
+          docker buildx build \
+            --cache-from type=gha \
+            --cache-to type=gha,mode=max \
+            -f "apps/${{ matrix.app.name }}/Dockerfile" \
+            -t "${IMAGE_TAG}" \
+            -t "${IMAGE_LATEST}" \
+            --push \
+            .
+          DIGEST="$(docker buildx imagetools inspect "${IMAGE_TAG}" --format '{{ .Digest }}')"
+          echo "IMAGE_DIGEST=${IMAGE_BASE}@${DIGEST}" >> "${GITHUB_ENV}"
 
-      - name: Deploy to Cloud Run
-        if: ${{ env.ACT != 'true' }}
+      - name: Build image (act simulation)
+        if: ${{ env.ACT == 'true' }}
+        run: |
+          set -euo pipefail
+          IMAGE_BASE="${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT_ID:-local-project}/${GAR_REPOSITORY}/${IMAGE_NAME}"
+          IMAGE_TAG="${IMAGE_BASE}:${GITHUB_SHA}"
+          IMAGE_LATEST="${IMAGE_BASE}:latest"
+          docker build -f "apps/${{ matrix.app.name }}/Dockerfile" -t "${IMAGE_TAG}" -t "${IMAGE_LATEST}" .
+          echo "IMAGE_DIGEST=${IMAGE_TAG}@sha256:actlocal" >> "${GITHUB_ENV}"
+
+      - name: Deploy to Cloud Run (with env vars and secrets)
+        if: ${{ env.ACT != 'true' && matrix.app.has_env_vars == true }}
         run: |
           gcloud run deploy "${SERVICE_NAME}" \
             --project "${GCP_PROJECT_ID}" \
@@ -107,68 +146,16 @@ jobs:
             --memory "${CLOUD_RUN_MEMORY}" \
             --timeout "${CLOUD_RUN_TIMEOUT}" \
             --update-env-vars "SALMON_ORIGIN=${SALMON_ORIGIN}" \
-            --set-secrets "SANITY_API_READ_TOKEN=${SANITY_API_READ_SECRET}:latest" \
+            --set-secrets "SANITY_API_READ_TOKEN=${{ matrix.app.sanity_secret }}:latest" \
             --cpu-throttling \
             --no-cpu-boost \
             --allow-unauthenticated \
             --quiet
+        env:
+          SALMON_ORIGIN: ${{ vars.SALMON_ORIGIN || '' }}
 
-      - name: Smoke check
-        if: ${{ env.ACT != 'true' }}
-        run: |
-          SERVICE_URL="$(gcloud run services describe "${SERVICE_NAME}" --project "${GCP_PROJECT_ID}" --region "${GCP_REGION}" --format='value(status.url)')"
-          curl --fail --silent --show-error "${SERVICE_URL}${SMOKE_PATH}" > /dev/null
-
-  deploy-maestros-del-salmon:
-    name: Deploy maestros-del-salmon
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    env:
-      SERVICE_NAME: ${{ vars.CLOUD_RUN_SERVICE_SALMON || 'maestros-del-salmon' }}
-      IMAGE_NAME: maestros-del-salmon
-      SMOKE_PATH: ${{ vars.CLOUD_RUN_SMOKE_PATH_SALMON || '/maestros-del-salmon' }}
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Local act simulation marker
-        if: ${{ env.ACT == 'true' }}
-        run: |
-          IMAGE_BASE="${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT_ID:-local-project}/${GAR_REPOSITORY}/${IMAGE_NAME}"
-          IMAGE_TAG="${IMAGE_BASE}:${GITHUB_SHA}"
-          echo "IMAGE_DIGEST=${IMAGE_TAG}@sha256:actlocal" >> "${GITHUB_ENV}"
-          echo "ACT mode: skipping real GCP deploy steps."
-
-      - name: Authenticate to Google Cloud
-        if: ${{ env.ACT != 'true' }}
-        uses: google-github-actions/auth@v2
-        with:
-          workload_identity_provider: ${{ secrets.GCP_WIF_PROVIDER }}
-          service_account: ${{ secrets.GCP_WIF_SERVICE_ACCOUNT }}
-
-      - name: Setup gcloud
-        if: ${{ env.ACT != 'true' }}
-        uses: google-github-actions/setup-gcloud@v2
-
-      - name: Configure Docker auth for Artifact Registry
-        if: ${{ env.ACT != 'true' }}
-        run: gcloud auth configure-docker "${GCP_REGION}-docker.pkg.dev" --quiet
-
-      - name: Build image
-        if: ${{ env.ACT != 'true' }}
-        run: |
-          IMAGE_BASE="${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/${GAR_REPOSITORY}/${IMAGE_NAME}"
-          IMAGE_TAG="${IMAGE_BASE}:${GITHUB_SHA}"
-          IMAGE_LATEST="${IMAGE_BASE}:latest"
-          docker build -f apps/maestros-del-salmon/Dockerfile -t "${IMAGE_TAG}" -t "${IMAGE_LATEST}" .
-          docker push "${IMAGE_TAG}"
-          docker push "${IMAGE_LATEST}"
-          DIGEST="$(docker inspect --format='{{index .RepoDigests 0}}' "${IMAGE_TAG}")"
-          echo "IMAGE_DIGEST=${DIGEST}" >> "${GITHUB_ENV}"
-
-      - name: Deploy to Cloud Run
-        if: ${{ env.ACT != 'true' }}
+      - name: Deploy to Cloud Run (no env vars)
+        if: ${{ env.ACT != 'true' && matrix.app.has_env_vars == false }}
         run: |
           gcloud run deploy "${SERVICE_NAME}" \
             --project "${GCP_PROJECT_ID}" \
