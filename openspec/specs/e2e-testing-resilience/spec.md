@@ -99,3 +99,16 @@ Headless Firefox WebGL2 tests MAY be skipped (documented reason required). WebGL
 - GIVEN a page containing a WebGL `<canvas>` element
 - WHEN Axe accessibility scan executes
 - THEN `<canvas>` SHALL be excluded via `AxeBuilder.exclude("canvas")`
+
+### Requirement: Composite Action for E2E Setup
+
+`qa-professional.yml` E2E jobs MUST use `.github/actions/setup-node-deps` for shared Node/npm/cache setup, replacing duplicated checkout+node+install+cache blocks.
+
+- **Phase**: 2
+- **Priority**: High
+
+#### Scenario: E2E uses composite action for setup
+
+- GIVEN qa-professional.yml E2E job
+- WHEN the job's setup steps execute
+- THEN the composite action handles Node 22, npm ci, and cache in one step; no inline duplication of those three operations remains

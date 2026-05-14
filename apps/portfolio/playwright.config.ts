@@ -46,7 +46,12 @@ const projects: Project[] = [
   {
     name: "Desktop Chrome Memory Leak",
     testMatch: /hero\.memory-leak\.spec\.ts$/,
-    use: { ...devices["Desktop Chrome"] },
+    use: {
+      ...devices["Desktop Chrome"],
+      launchOptions: {
+        args: ["--js-flags=--expose-gc"],
+      },
+    },
   },
 ];
 

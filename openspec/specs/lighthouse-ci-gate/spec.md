@@ -56,3 +56,48 @@ The Lighthouse CI URL SHALL target `/en` directly, avoiding the 307 redirect fro
 - THEN the first navigation SHALL return HTTP 200
 - AND no HTTP 307 redirect SHALL appear in the trace
 - AND the redirect overhead (~200-500ms) SHALL be eliminated from TTFB/FCP
+
+### Requirement: Turbo-Orchestrated Lighthouse CI
+
+`qa-professional.yml` Lighthouse job MUST use `turbo run qa:lighthouse --filter=<app>` instead of `npm run qa:lighthouse --workspace=...`.
+
+- **Phase**: 2
+- **Priority**: High
+
+#### Scenario: Lighthouse uses turbo orchestration
+
+- GIVEN qa-professional.yml lighthouse-bundle job
+- WHEN Lighthouse CI runs
+- THEN turbo orchestrates the task; no raw npm run qa:lighthouse call exists in the workflow
+
+### Requirement: Reuse Turbo Build Cache for Lighthouse
+
+The `qa:lighthouse` task MUST declare `dependsOn: ["^build"]` so turbo provides the cached build artifact. The Lighthouse job MUST NOT rebuild the Next.js app separately; it SHALL reuse the turbo-cached build output.
+
+- **Phase**: 2
+- **Priority**: High
+
+#### Scenario: No double build for Lighthouse
+
+- GIVEN a CI run where build completed (or is cached)
+- WHEN qa:lighthouse executes
+- THEN Lighthouse reuses the cached build output; no second `npm run build` or `next build` runs
+
+### Requirement: Conditional QA Jobs on Affected Packages
+
+`qa-professional.yml` MUST conditionally skip E2E and Lighthouse jobs when `--filter` analysis determines no relevant packages changed. Jobs SHALL still run on `workflow_dispatch` triggers regardless of affected scope.
+
+- **Phase**: 2
+- **Priority**: Medium
+
+#### Scenario: Skip QA on docs-only changes
+
+- GIVEN a PR that only modifies .md files
+- WHEN --affected analysis determines no app packages changed
+- THEN E2E and Lighthouse jobs are skipped
+
+#### Scenario: Force run on workflow_dispatch
+
+- GIVEN a manual workflow_dispatch trigger
+- WHEN --affected analysis runs
+- THEN jobs execute regardless of affected scope
