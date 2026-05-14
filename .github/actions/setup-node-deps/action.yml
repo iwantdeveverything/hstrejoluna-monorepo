@@ -1,0 +1,37 @@
+name: Setup Node.js and Dependencies
+description: Checkout, Node.js setup, npm ci, and Next.js cache restore
+
+inputs:
+  node-version:
+    description: Node.js version
+    default: '22'
+  nextjs-cache:
+    description: Whether to restore Next.js cache
+    default: 'true'
+
+runs:
+  using: composite
+  steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: npm
+
+    - name: Install dependencies
+      shell: bash
+      run: npm ci
+
+    - name: Next.js Cache
+      if: inputs.nextjs-cache == 'true'
+      uses: actions/cache@v4
+      with:
+        path: |
+          ${{ github.workspace }}/apps/portfolio/.next/cache
+          ${{ github.workspace }}/apps/maestros-del-salmon/.next/cache
+        key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-nextjs-

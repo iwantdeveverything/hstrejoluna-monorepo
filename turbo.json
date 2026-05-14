@@ -6,6 +6,23 @@
       "outputs": [".next/**", "dist/**"]
     },
     "lint": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "typecheck": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "test": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "qa:lighthouse": {
+      "dependsOn": ["^build"],
+      "outputs": [".lighthouseci/**"]
+    },
+    "qa:bundle": {
+      "dependsOn": ["^build"],
       "outputs": []
     },
     "dev": {
