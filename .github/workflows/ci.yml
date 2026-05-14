@@ -52,16 +52,16 @@ jobs:
           exit 1
 
       - name: Lint
-        run: turbo run lint --filter=portfolio --filter=maestros-del-salmon
+        run: npx turbo run lint --filter=portfolio --filter=maestros-del-salmon
 
       - name: Typecheck
-        run: turbo run typecheck --filter=portfolio --filter=maestros-del-salmon
+        run: npx turbo run typecheck --filter=portfolio --filter=maestros-del-salmon
 
       - name: Build
-        run: turbo run build --filter=portfolio --filter=maestros-del-salmon
+        run: npx turbo run build --filter=portfolio --filter=maestros-del-salmon
 
       - name: Test portfolio workspace
-        run: turbo run test --filter=portfolio
+        run: npx turbo run test --filter=portfolio
 
       - name: Storybook static build (portfolio)
         if: ${{ github.event_name == 'workflow_dispatch' || steps.storybook_changes.outputs.storybook == 'true' || env.ACT == 'true' }}

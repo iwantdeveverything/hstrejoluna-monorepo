@@ -149,10 +149,10 @@ jobs:
         uses: ./.github/actions/setup-node-deps
 
       - name: Lighthouse CI gate
-        run: turbo run qa:lighthouse --filter=portfolio
+        run: npx turbo run qa:lighthouse --filter=portfolio
 
       - name: Bundle-size gate
-        run: turbo run qa:bundle --filter=portfolio
+        run: npx turbo run qa:bundle --filter=portfolio
 
       - name: Upload Lighthouse artifacts
         if: always()
