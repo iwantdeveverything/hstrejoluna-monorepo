@@ -8,6 +8,7 @@ module.exports = {
       startServerReadyTimeout: 120000,
       settings: {
         preset: "desktop",
+        chromeFlags: "--no-sandbox --disable-dev-shm-usage",
       },
     },
     assert: {
