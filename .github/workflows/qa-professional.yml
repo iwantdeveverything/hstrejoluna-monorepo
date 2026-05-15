@@ -148,8 +148,35 @@ jobs:
       - name: Setup Node and Dependencies
         uses: ./.github/actions/setup-node-deps
 
+      # Build explicitly so lhci's startServerCommand has a fresh .next.
+      # turbo.json's qa:lighthouse dependsOn ["build"] already handles this,
+      # but running it here makes failures attributable and surfaces build
+      # errors before the Chrome interstitial would mask them.
+      - name: Build portfolio
+        run: npx turbo run build --filter=portfolio
+
+      - name: Smoke-test next start (sanity check before lhci)
+        run: |
+          npx next start --port 4174 --hostname 127.0.0.1 &
+          SERVER_PID=$!
+          for i in {1..30}; do
+            if curl -fsS -o /dev/null http://127.0.0.1:4174/en; then
+              echo "✓ next start serves /en (HTTP 200)"
+              kill $SERVER_PID 2>/dev/null || true
+              wait $SERVER_PID 2>/dev/null || true
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "✗ next start did not respond on /en within 30s"
+          kill $SERVER_PID 2>/dev/null || true
+          exit 1
+        working-directory: apps/portfolio
+
       - name: Lighthouse CI gate
         run: npx turbo run qa:lighthouse --filter=portfolio
+        env:
+          LHCI_DEBUG: "1"
 
       - name: Bundle-size gate
         run: npx turbo run qa:bundle --filter=portfolio
@@ -161,4 +188,5 @@ jobs:
           name: lighthouse-ci-report
           path: |
             apps/portfolio/.lighthouseci
+            apps/portfolio/.lhci-debug.log
           if-no-files-found: ignore

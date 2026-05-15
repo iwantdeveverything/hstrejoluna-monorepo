@@ -3,12 +3,21 @@ module.exports = {
     collect: {
       numberOfRuns: 3,
       url: ["http://127.0.0.1:4173/en"],
-      startServerCommand: "npm run start -- --port 4173",
+      startServerCommand: "npm run start -- --port 4173 --hostname 127.0.0.1",
       startServerReadyPattern: "Ready",
       startServerReadyTimeout: 120000,
       settings: {
         preset: "desktop",
-        chromeFlags: "--no-sandbox --disable-dev-shm-usage",
+        chromeFlags: [
+          "--no-sandbox",
+          "--disable-dev-shm-usage",
+          "--disable-gpu",
+          "--headless=new",
+          "--ignore-certificate-errors",
+          "--allow-insecure-localhost",
+        ].join(" "),
+        maxWaitForLoad: 45000,
+        maxWaitForFcp: 30000,
       },
     },
     assert: {
