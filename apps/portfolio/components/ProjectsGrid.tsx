@@ -71,9 +71,9 @@ export async function ProjectsGrid({ projects, locale }: ProjectsGridProps) {
                       {description}
                     </p>
 
-                    <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary uppercase tracking-wider motion-safe:group-hover:gap-3 transition-all duration-200">
+                    <span className="inline-flex items-center gap-1.5 text-sm font-bold text-on_surface_variant uppercase tracking-wider motion-safe:group-hover:gap-3 motion-safe:group-hover:text-primary transition-all duration-200">
                       {t("viewCaseStudy")}
-                      <span aria-hidden="true" className="text-primary/70">
+                      <span aria-hidden="true" className="text-on_surface_variant motion-safe:group-hover:text-primary">
                         →
                       </span>
                     </span>

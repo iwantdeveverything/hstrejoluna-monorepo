@@ -154,6 +154,8 @@ jobs:
       # errors before the Chrome interstitial would mask them.
       - name: Build portfolio
         run: npx turbo run build --filter=portfolio
+        env:
+          NEXT_PUBLIC_BASE_URL: "http://127.0.0.1:4173"
 
       - name: Smoke-test next start (sanity check before lhci)
         run: |
@@ -177,6 +179,11 @@ jobs:
         run: npx turbo run qa:lighthouse --filter=portfolio
         env:
           LHCI_DEBUG: "1"
+          # Pin metadataBase to the lhci origin so canonical URLs resolve to
+          # the same host Lighthouse is actually testing. Without this, Next
+          # uses the production NEXT_PUBLIC_BASE_URL fallback and Lighthouse
+          # SEO audit fails canonical: "Points to another hreflang location".
+          NEXT_PUBLIC_BASE_URL: "http://127.0.0.1:4173"
 
       - name: Bundle-size gate
         run: npx turbo run qa:bundle --filter=portfolio
