@@ -33,7 +33,10 @@ const defaultLabels: CertificatesPanelLabels = {
   viewCredential: "View Credential",
 };
 
-const formatIssueDate = (value: string | undefined, dateUnavailable: string): string => {
+const formatIssueDate = (
+  value: string | undefined,
+  dateUnavailable: string,
+): string => {
   if (!value) return dateUnavailable;
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return dateUnavailable;
@@ -77,13 +80,17 @@ export const CertificatesPanel = ({
           </p>
           <p className="font-mono text-xs text-on_surface_variant mb-4">
             {resolvedLabels.issued}:{" "}
-            {formatIssueDate(certificate.issueDate, resolvedLabels.dateUnavailable)}
+            {formatIssueDate(
+              certificate.issueDate,
+              resolvedLabels.dateUnavailable,
+            )}
           </p>
           {certificate.credentialUrl ? (
             <a
               href={certificate.credentialUrl}
               target="_blank"
               rel="noopener noreferrer"
+              aria-label={`${resolvedLabels.viewCredential}: ${certificate.name}`}
               className="font-mono text-xs uppercase tracking-widest text-primary hover:text-on_surface transition-colors"
             >
               {resolvedLabels.viewCredential}

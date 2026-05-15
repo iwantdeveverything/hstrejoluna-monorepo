@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { cache } from "react";
+import { cache, Suspense } from "react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { safeJsonLd } from "@/lib/safe-json-ld";
 import { buildPersonJsonLd, buildProjectListJsonLd } from "@/lib/json-ld";
@@ -11,10 +11,11 @@ import {
   Experience,
   Certificate,
 } from "@/types/sanity";
-import { ObsidianStream } from "@/components/ObsidianStream";
+import { HeroText } from "@/components/HeroText";
+import { ObsidianStreamLoader } from "@/components/ObsidianStreamLoader";
 import { ProjectsGrid } from "@/components/ProjectsGrid";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 const profileQuery = '*[_type == "profile"][0]';
 const projectsQuery =
@@ -107,14 +108,19 @@ export default async function PortfolioPage({
         dangerouslySetInnerHTML={{ __html: safeJsonLd(projectListJsonLd) }}
       />
 
-      <ObsidianStream
-        profile={profile}
-        projects={projects}
-        skills={skills}
-        experiences={experiences}
-        certificates={certificates}
-        projectsContent={<ProjectsGrid projects={projects} locale={locale} />}
-      />
+      <HeroText profile={profile} locale={locale} />
+
+      <Suspense fallback={<div aria-hidden="true" className="min-h-screen" />}>
+        <ObsidianStreamLoader
+          profile={profile}
+          projects={projects}
+          skills={skills}
+          experiences={experiences}
+          certificates={certificates}
+          projectsContent={<ProjectsGrid projects={projects} locale={locale} />}
+          skipHero
+        />
+      </Suspense>
     </>
   );
 }

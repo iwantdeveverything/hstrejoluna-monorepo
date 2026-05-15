@@ -137,6 +137,27 @@ describe("ObsidianStream — Post-cleanup: HeroSection always active", () => {
   });
 });
 
+describe("ObsidianStream — BootSequence Removal", () => {
+  it("renders content unconditionally without NEXT_PUBLIC_SKIP_BOOT_SEQUENCE", () => {
+    // Override the beforeEach: simulate NO skip flag (isBooted starts false)
+    vi.stubEnv("NEXT_PUBLIC_SKIP_BOOT_SEQUENCE", "");
+
+    render(<ObsidianStream {...defaultProps} />);
+
+    // HeroSection should render even without the skip flag
+    expect(screen.getByTestId("hero-section")).toBeInTheDocument();
+  });
+
+  it("does not lock body overflow during load", () => {
+    vi.stubEnv("NEXT_PUBLIC_SKIP_BOOT_SEQUENCE", "");
+
+    render(<ObsidianStream {...defaultProps} />);
+
+    // Body overflow should NOT be locked (no boot sequence blocks it)
+    expect(document.body.style.overflow).not.toBe("hidden");
+  });
+});
+
 describe("ObsidianStream — LazyMotion and section wrapper", () => {
   it("does not contain an inner LazyMotion wrapper (MotionProvider handles it globally)", () => {
     const { container } = render(<ObsidianStream {...defaultProps} />);
