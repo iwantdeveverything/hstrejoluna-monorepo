@@ -18,11 +18,11 @@
       "outputs": []
     },
     "qa:lighthouse": {
-      "dependsOn": ["^build"],
+      "dependsOn": ["build"],
       "outputs": [".lighthouseci/**"]
     },
     "qa:bundle": {
-      "dependsOn": ["^build"],
+      "dependsOn": ["build"],
       "outputs": []
     },
     "dev": {
