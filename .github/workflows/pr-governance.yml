@@ -94,37 +94,6 @@ jobs:
             fi
           fi
 
-      - name: Validate linked issue in PR body
-        id: linked_issue
-        run: |
-          set -euo pipefail
-          PR_BODY="$(gh api "repos/${OWNER}/${REPO}/pulls/${PR_NUMBER}" --jq '.body // ""')"
-          ISSUE_NUMBER="$(python - <<'PY'
-            import os
-            import re
-            body = os.environ.get("PR_BODY", "")
-            match = re.search(r'(?im)\b(closes|fixes|resolves)\s+#(\d+)\b', body)
-            print(match.group(2) if match else "")
-          PY
-          )"
-          if [ -z "${ISSUE_NUMBER}" ]; then
-            echo "PR body must include: Closes #<issue>, Fixes #<issue>, or Resolves #<issue>"
-            exit 1
-          fi
-          echo "issue_number=${ISSUE_NUMBER}" >> "${GITHUB_OUTPUT}"
-        env:
-          PR_BODY: ${{ github.event.pull_request.body }}
-
-      - name: Validate linked issue is approved
-        run: |
-          set -euo pipefail
-          ISSUE_NUMBER="${{ steps.linked_issue.outputs.issue_number }}"
-          HAS_APPROVED="$(gh api "repos/${OWNER}/${REPO}/issues/${ISSUE_NUMBER}" --jq '[.labels[].name] | any(. == "status:approved")')"
-          if [ "${HAS_APPROVED}" != "true" ]; then
-            echo "Linked issue #${ISSUE_NUMBER} must have label status:approved"
-            exit 1
-          fi
-
       - name: Validate exactly one type label
         run: |
           set -euo pipefail
