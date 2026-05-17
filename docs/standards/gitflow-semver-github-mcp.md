@@ -5,7 +5,6 @@
 Standardize delivery in this repository with:
 - A Gitflow-compatible branching strategy
 - Semantic Versioning (SemVer) release decisions
-- Issue-first governance through GitHub
 - MCP-first operations for issues, PRs, and workflows
 
 ## Branching Standard (Gitflow-Compatible)
@@ -33,47 +32,6 @@ Examples:
 - `release/1.4.0`
 - `hotfix/1.3.2-navbar-crash`
 
-## PR and Issue Governance
-
-All changes follow issue-first flow:
-
-1. Create issue from template (`bug_report.yml` or `feature_request.yml`)
-2. Issue receives `status:needs-review`
-3. Maintainer adds `status:approved`
-4. Open PR with `Closes #N` / `Fixes #N` / `Resolves #N`
-5. Add exactly one `type:*` PR label
-6. Select exactly one SemVer checkbox in PR template
-7. Merge only when required checks pass
-
-### Gitflow target mapping
-
-- `release/*` and `hotfix/*` MUST target `master`
-- `feat/*`, `fix/*`, `chore/*`, etc. MUST target `develop` when `develop` exists
-- If `develop` does not exist yet, feature/fix PRs target `master` as fallback
-
-### Enforced by CI
-
-Workflow: `.github/workflows/pr-governance.yml`
-
-It validates:
-- Branch naming format
-- Linked issue reference in PR body
-- Linked issue has `status:approved`
-- Exactly one `type:*` label on PR
-- Exactly one SemVer checkbox selected
-- Conventional commit format for commits in the PR
-
-Additionally:
-- Blank issues are disabled via `.github/ISSUE_TEMPLATE/config.yml`
-
-Required PR labels:
-- `type:bug`
-- `type:feature`
-- `type:docs`
-- `type:refactor`
-- `type:chore`
-- `type:breaking-change`
-
 ## Semantic Versioning Policy
 
 Versioning follows SemVer `MAJOR.MINOR.PATCH`.
@@ -100,7 +58,6 @@ Preferred tool order for repository operations:
 3. Direct REST calls only when needed
 
 Minimum expected operations per change:
-- Issue creation and triage
 - PR creation and metadata management
 - Workflow run visibility and status checks
 

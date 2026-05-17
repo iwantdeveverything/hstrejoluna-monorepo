@@ -1,6 +1,6 @@
 name: Bug Report
 description: Report a bug to help us improve.
-labels: ["bug", "status:needs-review"]
+labels: ["bug"]
 body:
   - type: checkboxes
     id: pre-flight
@@ -8,8 +8,6 @@ body:
       label: Pre-flight Checks
       options:
         - label: I have searched existing issues and this is not a duplicate
-          required: true
-        - label: I understand this issue needs status:approved before a PR can be opened
           required: true
   - type: textarea
     id: bug-description
