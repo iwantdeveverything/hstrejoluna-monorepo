@@ -93,13 +93,13 @@ jobs:
           set -euo pipefail
           PR_BODY="$(gh api "repos/${OWNER}/${REPO}/pulls/${PR_NUMBER}" --jq '.body // ""')"
           ISSUE_NUMBER="$(python - <<'PY'
-import os
-import re
-body = os.environ.get("PR_BODY", "")
-match = re.search(r'(?im)\b(closes|fixes|resolves)\s+#(\d+)\b', body)
-print(match.group(2) if match else "")
-PY
-)"
+          import os
+          import re
+          body = os.environ.get("PR_BODY", "")
+          match = re.search(r'(?im)\b(closes|fixes|resolves)\s+#(\d+)\b', body)
+          print(match.group(2) if match else "")
+          PY
+          )"
           if [ -z "${ISSUE_NUMBER}" ]; then
             echo "PR body must include: Closes #<issue>, Fixes #<issue>, or Resolves #<issue>"
             exit 1
@@ -132,13 +132,13 @@ PY
           set -euo pipefail
           PR_BODY="$(gh api "repos/${OWNER}/${REPO}/pulls/${PR_NUMBER}" --jq '.body // ""')"
           SEMVER_COUNT="$(python - <<'PY'
-import os
-import re
-body = os.environ.get("PR_BODY", "")
-matches = re.findall(r'(?im)^-\s+\[[xX]\]\s+`semver:(patch|minor|major|none)`', body)
-print(len(matches))
-PY
-)"
+          import os
+          import re
+          body = os.environ.get("PR_BODY", "")
+          matches = re.findall(r'(?im)^-\s+\[[xX]\]\s+`semver:(patch|minor|major|none)`', body)
+          print(len(matches))
+          PY
+          )"
           if [ "${SEMVER_COUNT}" -ne 1 ]; then
             echo "PR template must select exactly one SemVer impact checkbox (`semver:patch|minor|major|none`). Found: ${SEMVER_COUNT}"
             exit 1
