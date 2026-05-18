@@ -394,10 +394,24 @@ body::before {
     both;
 }
 
+@keyframes liquid-nav-backdrop-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.liquid-nav-backdrop {
+  animation: liquid-nav-backdrop-in 0.2s ease-out both;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .liquid-nav-root,
   .liquid-nav-pill,
-  .liquid-nav-mobile-panel {
+  .liquid-nav-mobile-panel,
+  .liquid-nav-backdrop {
     animation: none !important;
     transition: none !important;
     transform: none !important;

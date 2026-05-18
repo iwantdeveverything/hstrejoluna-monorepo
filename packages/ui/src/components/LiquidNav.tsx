@@ -1,6 +1,7 @@
 "use client";
 
 import React, { type MouseEvent, useState } from "react";
+import { createPortal } from "react-dom";
 import { LiquidGlass } from "../liquid-glass";
 import { cn } from "../utils/cn";
 import { LG_FILTER_IDS } from "../liquid-glass/filter-defs";
@@ -41,6 +42,11 @@ const defaultLabels: LiquidNavLabels = {
   close: "Close",
   socialHeading: "Social",
 };
+
+const externalLinkProps = (social: LiquidNavSocialLink) =>
+  social.external
+    ? { target: "_blank" as const, rel: "noopener noreferrer external" }
+    : {};
 
 /**
  * LiquidNav — Disruptive, gooey, refracted navigation dock.
@@ -158,8 +164,7 @@ export const LiquidNav = ({
               href={social.href}
               aria-label={social.label}
               className="text-xs font-mono uppercase text-on_surface_variant transition-colors hover:text-primary focus-visible:outline-none"
-              target={social.external ? "_blank" : undefined}
-              rel={social.external ? "noopener noreferrer external" : undefined}
+              {...externalLinkProps(social)}
             >
               {social.label}
             </a>
@@ -219,12 +224,7 @@ export const LiquidNav = ({
                       key={`mob-soc-${social.kind}`}
                       href={social.href}
                       className="px-3 py-2 rounded-lg bg-surface_container_highest/30 text-xs font-mono text-on_surface transition-colors hover:text-primary"
-                      target={social.external ? "_blank" : undefined}
-                      rel={
-                        social.external
-                          ? "noopener noreferrer external"
-                          : undefined
-                      }
+                      {...externalLinkProps(social)}
                     >
                       {social.label}
                     </a>
@@ -235,6 +235,20 @@ export const LiquidNav = ({
           </LiquidGlass>
         </div>
       )}
+
+      {/* Mobile backdrop: blocks pointer events from reaching content behind
+          the menu panel (e.g. hero CTA with pointer-events-auto) and closes
+          the menu on tap. z-40 sits above the hero (z-[1]) but below the
+          LiquidNav dock (z-50), so the dock remains interactive. */}
+      {isMenuOpen &&
+        createPortal(
+          <div
+            className="liquid-nav-backdrop fixed inset-0 z-40 bg-black/40 backdrop-blur-sm md:hidden"
+            onClick={() => setIsMenuOpen(false)}
+            aria-hidden="true"
+          />,
+          document.body,
+        )}
     </header>
   );
 };
