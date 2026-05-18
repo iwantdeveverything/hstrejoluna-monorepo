@@ -1,7 +1,6 @@
 "use client";
 
-import React, { type MouseEvent, useState } from "react";
-import { createPortal } from "react-dom";
+import React, { type MouseEvent, useEffect, useState } from "react";
 import { LiquidGlass } from "../liquid-glass";
 import { cn } from "../utils/cn";
 import { LG_FILTER_IDS } from "../liquid-glass/filter-defs";
@@ -66,6 +65,22 @@ export const LiquidNav = ({
 }: LiquidNavProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const shouldHide = hideOnScroll && !isMenuOpen;
+
+  // When the mobile menu is open, add a class to <body> that disables
+  // pointer-events on any hero CTA that uses pointer-events-auto
+  // inside a pointer-events-none parent. Without this, Mobile Safari
+  // treats the hero CTA as a click target that intercepts taps meant
+  // for the mobile nav panel buttons.
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.classList.add("mobile-nav-open");
+    } else {
+      document.body.classList.remove("mobile-nav-open");
+    }
+    return () => {
+      document.body.classList.remove("mobile-nav-open");
+    };
+  }, [isMenuOpen]);
   const resolvedLabels = { ...defaultLabels, ...labels };
 
   const handleNavigate = (
@@ -235,20 +250,6 @@ export const LiquidNav = ({
           </LiquidGlass>
         </div>
       )}
-
-      {/* Mobile backdrop: blocks pointer events from reaching content behind
-          the menu panel (e.g. hero CTA with pointer-events-auto) and closes
-          the menu on tap. z-40 sits above the hero (z-[1]) but below the
-          LiquidNav dock (z-50), so the dock remains interactive. */}
-      {isMenuOpen &&
-        createPortal(
-          <div
-            className="liquid-nav-backdrop fixed inset-0 z-40 bg-black/40 backdrop-blur-sm md:hidden"
-            onClick={() => setIsMenuOpen(false)}
-            aria-hidden="true"
-          />,
-          document.body,
-        )}
     </header>
   );
 };
