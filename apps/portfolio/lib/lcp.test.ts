@@ -15,7 +15,7 @@ import { assertH1IsLcpCandidate, observeLcp } from "./lcp";
 function createHeroH1(): HTMLHeadingElement {
   const h1 = document.createElement("h1");
   h1.id = "hero-title";
-  h1.textContent = "H\u00E9ctor Trejo Luna \u2014 Senior Software Architect";
+  h1.textContent = "H\u00E9ctor Trejo Luna \u2014 Fullstack Developer";
   document.body.appendChild(h1);
   return h1;
 }
@@ -142,7 +142,7 @@ describe("HeroSection h1 — LCP candidate verification", () => {
 
     const h1 = document.createElement("h1");
     h1.id = "hero-title";
-    h1.textContent = "H\u00E9ctor Trejo Luna \u2014 Senior Software Architect";
+    h1.textContent = "H\u00E9ctor Trejo Luna \u2014 Fullstack Developer";
     section.appendChild(h1);
     document.body.appendChild(section);
 
@@ -161,7 +161,7 @@ describe("HeroSection h1 — LCP candidate verification", () => {
 
     const h1 = document.createElement("h1");
     h1.id = "hero-title";
-    h1.textContent = "H\u00E9ctor Trejo Luna \u2014 Senior Software Architect";
+    h1.textContent = "H\u00E9ctor Trejo Luna \u2014 Fullstack Developer";
     section.appendChild(h1);
     document.body.appendChild(section);
 

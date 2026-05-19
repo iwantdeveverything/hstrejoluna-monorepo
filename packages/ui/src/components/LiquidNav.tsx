@@ -1,6 +1,6 @@
 "use client";
 
-import React, { type MouseEvent, useEffect, useState } from "react";
+import React, { type MouseEvent, useEffect, useState, useMemo } from "react";
 import { LiquidGlass } from "../liquid-glass";
 import { cn } from "../utils/cn";
 import { LG_FILTER_IDS } from "../liquid-glass/filter-defs";
@@ -81,7 +81,10 @@ export const LiquidNav = ({
       document.body.classList.remove("mobile-nav-open");
     };
   }, [isMenuOpen]);
-  const resolvedLabels = { ...defaultLabels, ...labels };
+  const resolvedLabels = useMemo(
+    () => ({ ...defaultLabels, ...labels }),
+    [labels]
+  );
 
   const handleNavigate = (
     event: MouseEvent<HTMLAnchorElement | HTMLButtonElement>,
@@ -188,7 +191,7 @@ export const LiquidNav = ({
 
         <button
           type="button"
-          className="md:hidden flex items-center justify-center rounded-full bg-surface_container_highest/50 px-4 py-2 text-[11px] font-mono uppercase tracking-wider text-on_surface focus-visible:outline-none cursor-pointer"
+          className="md:hidden flex items-center justify-center rounded-full bg-surface_container_highest/70 px-4 py-2 text-[11px] font-mono uppercase tracking-wider text-on_surface focus-visible:outline-none cursor-pointer"
           aria-expanded={isMenuOpen}
           aria-controls="mobile-liquid-panel"
           onClick={() => setIsMenuOpen((p) => !p)}

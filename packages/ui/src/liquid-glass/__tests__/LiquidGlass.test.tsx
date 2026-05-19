@@ -4,7 +4,7 @@ import { cleanup, render } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { LiquidGlass } from "../LiquidGlass";
-import { LG_VARIANTS, LG_FILTER_IDS } from "../filter-defs";
+import { LG_VARIANTS } from "../filter-defs";
 
 // ── matchMedia / CSS.supports test rig (lightweight) ───────────────────────
 type GateMatchers = {
@@ -185,28 +185,7 @@ describe("LiquidGlass — S1.4 className merge + ref forwarding + spread", () =>
 });
 
 describe("LiquidGlass — gate-driven attributes (REQ-3, REQ-4, REQ-5)", () => {
-  it("when supportsRefraction=true, exposes data-lg-refraction='url' referencing the variant filter id", () => {
-    installMatchMedia(PERMISSIVE);
-    installSupports(true);
-    const { container } = render(
-      <LiquidGlass variant="dock">x</LiquidGlass>,
-    );
-    const root = container.firstElementChild;
-    expect(root?.getAttribute("data-lg-refraction")).toBe("url");
-    // Style-side: the variable must resolve to url(#lg-refraction-dock)
-    const styleAttr = root?.getAttribute("style") ?? "";
-    expect(styleAttr).toContain(`url(#${LG_FILTER_IDS.dock})`);
-  });
 
-  it("when supportsRefraction=false, falls back to data-lg-refraction='none'", () => {
-    installMatchMedia(PERMISSIVE);
-    installSupports(false);
-    const { container } = render(
-      <LiquidGlass variant="dock">x</LiquidGlass>,
-    );
-    const root = container.firstElementChild;
-    expect(root?.getAttribute("data-lg-refraction")).toBe("none");
-  });
 
   it("when reduceTransparency is on, data-lg-fallback='solid' is set", () => {
     installMatchMedia({

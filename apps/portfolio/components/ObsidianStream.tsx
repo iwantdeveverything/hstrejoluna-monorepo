@@ -15,7 +15,9 @@ import { HeroSection } from "./fragments/HeroSection";
 import { ExperienceOverview } from "./fragments/ExperienceOverview";
 import { SkillsOverview } from "./fragments/SkillsOverview";
 import { CertificatesOverview } from "./fragments/CertificatesOverview";
-
+import { streamSectionIds } from "@/lib/sections";
+import type { NavSectionId, StreamSectionId } from "@/lib/sections";
+import { useTranslations } from "next-intl";
 const CommandNav = dynamic(
   () => import("./ui/CommandNav").then((mod) => mod.CommandNav),
   {
@@ -27,11 +29,6 @@ const CommandNav = dynamic(
     ),
   },
 );
-
-import { navSections, navSectionIds, streamSectionIds } from "@/lib/sections";
-import type { NavSectionId, StreamSectionId } from "@/lib/sections";
-import { useTranslations } from "next-intl";
-import { scrollToSection } from "@/lib/navigation";
 
 interface ObsidianStreamProps {
   profile: Profile | null;
@@ -62,7 +59,7 @@ const StreamSection = ({
 }: StreamSectionProps) => (
   <section id={id} className={sectionClassName}>
     <div className={wrapperClassName}>
-      <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tighter mb-12 italic text-on_surface border-b border-surface_container_highest pb-4">
+      <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tighter mb-12 italic text-on_surface border-b border-surface_container_highest pb-4 break-words">
         {title}{" "}
         <span className="text-primary text-sm tracking-widest align-top ml-4">
           {countLabel}
@@ -76,10 +73,9 @@ const StreamSection = ({
 const formatLabelCount = (count: number) => count.toString().padStart(2, "0");
 
 /**
- * ScrollProgressBar — CSS-only scroll progress indicator.
+ * ScrollProgressBar — scroll progress indicator.
  *
- * Uses `animation-timeline: scroll()` for zero-JS browsers that support it,
- * with a scroll-event-driven CSS custom property fallback for universal support.
+ * Uses a scroll-event-driven CSS custom property.
  * Respects `prefers-reduced-motion` by rendering at full width (no animation).
  */
 function ScrollProgressBar({ isReducedMotion }: { isReducedMotion: boolean }) {
@@ -91,17 +87,27 @@ function ScrollProgressBar({ isReducedMotion }: { isReducedMotion: boolean }) {
       return;
     }
 
-    const onScroll = () => {
+    let ticking = false;
+
+    const updateProgress = () => {
       const scrollTop = window.scrollY;
       const docHeight =
         document.documentElement.scrollHeight - window.innerHeight;
       if (docHeight > 0) {
         setProgress(Math.min(scrollTop / docHeight, 1));
       }
+      ticking = false;
+    };
+
+    const onScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(updateProgress);
+        ticking = true;
+      }
     };
 
     window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
+    updateProgress();
     return () => window.removeEventListener("scroll", onScroll);
   }, [isReducedMotion]);
 
@@ -136,7 +142,6 @@ export const ObsidianStream = ({
   const tNav = useTranslations("nav");
   const tPortfolioGrid = useTranslations("fragments.portfolioGrid");
   const isReducedMotion = useReducedMotion();
-  const isNavigationHidden = false;
 
   const activeId = useActiveSection<StreamSectionId>(
     streamSectionIds,
@@ -157,7 +162,7 @@ export const ObsidianStream = ({
               Respects prefers-reduced-motion via no animation. */}
           <div
             aria-hidden="true"
-            className={`fixed inset-0 z-0 flex flex-col justify-center items-center pointer-events-none select-none opacity-5 md:opacity-10 ${
+            className={`fixed inset-0 z-0 flex flex-col justify-center items-center pointer-events-none select-none opacity-5 md:opacity-10 overflow-hidden ${
               isReducedMotion ? "" : "bg-fixed-parallax"
             }`}
           >
@@ -174,7 +179,7 @@ export const ObsidianStream = ({
               certificates: certificates.length,
             }}
             socials={profile?.socials}
-            hideOnScroll={isNavigationHidden}
+            hideOnScroll={false}
           />
 
           <div className="relative z-[2] flex flex-col w-full">

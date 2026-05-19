@@ -46,7 +46,7 @@
   "hero": {
     "eyebrow": "Building digital experiences",
     "h1Name": "Héctor Trejo Luna",
-    "h1Role": "Senior Software Architect",
+    "h1Role": "Fullstack Developer",
     "lead": "Engineering scalable, high-performance digital ecosystems from architecture to pixel",
     "cta": "Explore my work",
     "ctaAriaLabel": "View featured projects and case studies",
@@ -74,9 +74,9 @@
     "privacyLink": "Read our Privacy Policy"
   },
   "seo": {
-    "title": "{name} | Senior Software Architect",
+    "title": "{name} | Fullstack Developer",
     "ogTitle": "{name} | Obsidian Command Portfolio",
-    "description": "Portfolio of {name} — Senior Software Architect specializing in clean architecture, performance engineering, and immersive digital experiences."
+    "description": "Portfolio of {name} — Fullstack Developer specializing in clean architecture, performance engineering, and immersive digital experiences."
   },
   "projectsGrid": {
     "viewCaseStudy": "View Case Study"

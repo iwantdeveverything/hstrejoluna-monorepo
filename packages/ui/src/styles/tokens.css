@@ -66,5 +66,5 @@
 [data-lg-intensity="high"] {
   --lg-refraction-scale: 16px;
   --lg-specular-opacity: 0.28;
-  --lg-blur: 5px;
+  --lg-blur: 16px;
 }

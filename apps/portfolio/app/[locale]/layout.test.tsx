@@ -193,11 +193,7 @@ describe("LocaleLayout — Locale-Aware Rendering", () => {
 
     const { container } = render(Layout as React.ReactElement);
     const expectedIds = [
-      "lg-refraction-panel",
-      "lg-refraction-pill",
-      "lg-refraction-dock",
-      "lg-refraction-circle",
-      "lg-refraction-dialog",
+      "lg-gooey",
     ];
     for (const id of expectedIds) {
       expect(container.querySelector(`#${id}`)).not.toBeNull();

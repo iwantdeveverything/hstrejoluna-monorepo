@@ -4,7 +4,7 @@ import type { Project } from "@/types/sanity";
 
 const DEFAULT_PROFILE = {
   name: "Héctor Trejo Luna",
-  headline: "Senior Software Architect",
+  headline: "Fullstack Developer",
   bio: "Building digital experiences",
   image: {
     asset: {
@@ -45,7 +45,7 @@ describe("buildPersonJsonLd", () => {
       });
 
       expect(result.name).toBe("Héctor Trejo Luna");
-      expect(result.jobTitle).toBe("Senior Software Architect");
+      expect(result.jobTitle).toBe("Fullstack Developer");
     });
 
     it("includes description from profile.bio", () => {

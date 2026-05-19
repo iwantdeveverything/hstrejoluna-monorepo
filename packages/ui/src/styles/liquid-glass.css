@@ -6,14 +6,6 @@
  * Cascade order (most-preferred → least):
  *   0. Universal baseline — every variant gets blur+saturate so the
  *      glass identity is preserved on any browser.
- *   1. Upgrade — when @supports + ≥480px + !reduce-data, the inline
- *      `--lg-backdrop-filter` (set by JS) refines to include the SVG
- *      refraction url(#lg-refraction-{variant}).
- *   2. Override — `prefers-reduced-transparency: reduce` flattens the
- *      surface to a solid token bg, removing all backdrop filters.
- *   3. Override — narrow viewport or `prefers-reduced-data: reduce`
- *      drops the displacement url() but keeps blur+saturate (REQ-5).
- *
  * Specular rim is rendered via the `::after` pseudo-element so the
  * filter graph stays small (ADR-2).
  */
@@ -38,29 +30,11 @@
 .lg-glass[data-lg-variant="circle"] { border-radius: var(--lg-radius-circle); }
 .lg-glass[data-lg-variant="dialog"] { border-radius: var(--lg-radius-dialog); }
 
-/* 1. Upgrade — SVG refraction (CSS-only gate) -----------------------------*/
-@supports (backdrop-filter: url("#x")) {
-  @media (min-width: 480px) {
-    .lg-glass[data-lg-refraction="url"] {
-      backdrop-filter: var(
-        --lg-backdrop-filter,
-        blur(var(--lg-blur)) saturate(var(--lg-saturation))
-      );
-      -webkit-backdrop-filter: var(
-        --lg-backdrop-filter,
-        blur(var(--lg-blur)) saturate(var(--lg-saturation))
-      );
-    }
-  }
-}
+.lg-glass[data-lg-variant="dock"], .lg-glass[data-lg-variant="dialog"] { background-color: color-mix(in oklab, var(--lg-tint) 55%, transparent); }
 
-/* 3. Override — reduced data drops the url() but keeps blur (REQ-5 S5.3) -*/
-@media (prefers-reduced-data: reduce) {
-  .lg-glass {
-    backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-saturation));
-    -webkit-backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-saturation));
-  }
-}
+
+
+
 
 /* 2. Override — reduced transparency wins over everything (REQ-4 S4.1) ---*/
 @media (prefers-reduced-transparency: reduce) {

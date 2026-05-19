@@ -28,7 +28,7 @@ export const ExperienceOverview = ({
   };
 
   return (
-    <div className="relative w-full max-w-5xl mx-auto py-12 px-4 md:px-0">
+    <div className="relative w-full max-w-5xl mx-auto py-12 px-4 md:px-0 overflow-hidden">
       <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-px bg-surface_container_highest -translate-x-1/2 z-0" />
 
       <div className="space-y-4 relative z-10">
@@ -42,10 +42,7 @@ export const ExperienceOverview = ({
               className={`flex flex-col md:flex-row w-full ${isLeft ? "md:flex-row" : "md:flex-row-reverse"} relative`}
             >
               <div
-                className="absolute left-4 md:left-1/2 top-6 -translate-x-1/2 w-3 h-3 bg-surface_container_highest border border-primary/50 rotate-45 z-20 pointer-events-none"
-                style={{
-                  backgroundColor: isExpanded ? "var(--color-primary)" : "",
-                }}
+                className={`absolute left-4 md:left-1/2 top-6 -translate-x-1/2 w-3 h-3 border border-primary/50 rotate-45 z-20 pointer-events-none ${isExpanded ? "bg-primary" : "bg-surface_container_highest"}`}
               />
 
               <div className="w-full md:w-1/2 pl-12 md:pl-0 flex">

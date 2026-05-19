@@ -123,7 +123,6 @@ describe("useLiquidGlassGates", () => {
       "../use-liquid-glass-gates"
     );
     expect(LIQUID_GLASS_SSR_DEFAULTS).toEqual({
-      supportsRefraction: true,
       reduceTransparency: false,
       reduceMotion: false,
       reduceData: false,
@@ -149,7 +148,6 @@ describe("useLiquidGlassGates", () => {
     render(<Probe />);
 
     expect(captured).toEqual({
-      supportsRefraction: true,
       reduceTransparency: false,
       reduceMotion: true,
       reduceData: false,
@@ -157,25 +155,7 @@ describe("useLiquidGlassGates", () => {
     });
   });
 
-  it("flips reduceTransparency when CSS supports refraction is false", async () => {
-    installMatchMedia({
-      ...defaultGates,
-      "(prefers-reduced-transparency: reduce)": true,
-    });
-    installSupports(false);
 
-    const { useLiquidGlassGates } = await import("../use-liquid-glass-gates");
-
-    let captured: ReturnType<typeof useLiquidGlassGates> | null = null;
-    const Probe = () => {
-      captured = useLiquidGlassGates();
-      return null;
-    };
-    render(<Probe />);
-
-    expect(captured?.supportsRefraction).toBe(false);
-    expect(captured?.reduceTransparency).toBe(true);
-  });
 
   it("subscribes to matchMedia changes and re-renders with new state", async () => {
     const controller = installMatchMedia({ ...defaultGates });
