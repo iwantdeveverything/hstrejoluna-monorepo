@@ -7,7 +7,7 @@ import type { Profile } from "@/types/sanity";
 const mockProfile: Profile = {
   name: "Héctor Trejo Luna",
   headline: "Architecting zero-latency ecosystems and immersive digital voids.",
-  bio: "Senior Software Architect specializing in clean architecture and performance engineering.",
+  bio: "Fullstack Developer specializing in clean architecture and performance engineering.",
   socials: [],
 };
 
@@ -15,7 +15,7 @@ const mockProfile: Profile = {
 const heroMessages = {
   eyebrow: "Building digital experiences",
   h1Name: "Héctor Trejo Luna",
-  h1Role: "Senior Software Architect",
+  h1Role: "Fullstack Developer",
   lead: "Engineering scalable, high-performance digital ecosystems from architecture to pixel",
   cta: "Explore my work",
   ctaAriaLabel: "View featured projects and case studies",
@@ -184,9 +184,3 @@ export const Scroll: Story = {
     window.scrollTo({ top: 400, behavior: "instant" });
   },
 };
-
-/**
- * 6. ~~FlagOff~~ — REMOVED in Phase 10 cleanup.
- * Legacy `HeroFragment` and its stories are no longer needed
- * after the liquid-glass migration is stable.
- */

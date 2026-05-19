@@ -46,7 +46,7 @@
   "hero": {
     "eyebrow": "Construyendo experiencias digitales",
     "h1Name": "Héctor Trejo Luna",
-    "h1Role": "Arquitecto Senior de Software",
+    "h1Role": "Desarrollador Fullstack",
     "lead": "Ingeniería de ecosistemas digitales escalables y de alto rendimiento, de la arquitectura al píxel",
     "cta": "Explorar mi trabajo",
     "ctaAriaLabel": "Ver proyectos destacados y casos de estudio",
@@ -74,9 +74,9 @@
     "privacyLink": "Leer nuestra Política de Privacidad"
   },
   "seo": {
-    "title": "{name} | Arquitecto de Software Senior",
+    "title": "{name} | Desarrollador Fullstack",
     "ogTitle": "{name} | Portfolio Obsidian Command",
-    "description": "Portfolio de {name} — Arquitecto de Software Senior especializado en arquitectura limpia, ingeniería de rendimiento y experiencias digitales inmersivas."
+    "description": "Portfolio de {name} — Desarrollador Fullstack especializado en arquitectura limpia, ingeniería de rendimiento y experiencias digitales inmersivas."
   },
   "projectsGrid": {
     "viewCaseStudy": "Ver Caso de Estudio"
