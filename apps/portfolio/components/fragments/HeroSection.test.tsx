@@ -9,7 +9,7 @@ vi.mock("next-intl", () => ({
       hero: {
         eyebrow: "Building digital experiences",
         h1Name: "Héctor Trejo Luna",
-        h1Role: "Senior Software Architect",
+        h1Role: "Fullstack Developer",
         lead: "Engineering scalable, high-performance digital ecosystems from architecture to pixel",
         cta: "Explore my work",
         ctaAriaLabel: "View featured projects and case studies",
@@ -64,7 +64,7 @@ describe("HeroSection — Semantic SSR shell (REQ liquid-glass-hero)", () => {
     const h1 = headings[0];
     expect(h1).toHaveAttribute("id", "hero-title");
     expect(h1).toHaveTextContent("Héctor Trejo Luna");
-    expect(h1).toHaveTextContent("Senior Software Architect");
+    expect(h1).toHaveTextContent("Fullstack Developer");
   });
 
   it("renders an eyebrow <p> with translatable text from hero namespace", () => {
@@ -112,7 +112,7 @@ describe("HeroSection — Semantic SSR shell (REQ liquid-glass-hero)", () => {
     // h1 text from messages (rendered as single text node: "Name — Role")
     const h1 = screen.getByRole("heading", { level: 1 });
     expect(h1).toHaveTextContent("Héctor Trejo Luna");
-    expect(h1).toHaveTextContent("Senior Software Architect");
+    expect(h1).toHaveTextContent("Fullstack Developer");
     // eyebrow from messages
     expect(
       screen.getByText("Building digital experiences"),
@@ -163,7 +163,7 @@ describe("HeroSection — Sanity profile fallback (non-h1 paths only)", () => {
     const h1 = screen.getByRole("heading", { level: 1 });
     // h1 must reflect messages.hero.h1Name + messages.hero.h1Role
     expect(h1).toHaveTextContent("Héctor Trejo Luna");
-    expect(h1).toHaveTextContent("Senior Software Architect");
+    expect(h1).toHaveTextContent("Fullstack Developer");
     // profile.name ("Héctor Trejo Luna") happens to match, but the test
     // verifies the h1 text comes from the mock messages, not from the prop.
     // If profile.name were aliased to h1, changing the mock would break it.

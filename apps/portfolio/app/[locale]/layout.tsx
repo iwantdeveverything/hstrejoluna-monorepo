@@ -21,25 +21,26 @@ const jetBrainsMono = JetBrains_Mono({
   variable: "--font-mono",
 });
 
+const SITE_TITLE = "Héctor Trejo Luna | Fullstack Developer";
+const SITE_DESCRIPTION =
+  "Cinematic Portfolio of a Senior Frontend Engineer specializing in Scalable Ecosystems.";
+
 export const metadata: Metadata = {
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_BASE_URL || "https://hstrejoluna.com",
   ),
-  title: "Héctor Trejo Luna | Senior Software Architect",
-  description:
-    "Cinematic Portfolio of a Senior Frontend Engineer specializing in Scalable Ecosystems.",
+  title: SITE_TITLE,
+  description: SITE_DESCRIPTION,
   openGraph: {
     type: "website",
     siteName: "Dark Kinetic",
-    title: "Héctor Trejo Luna | Senior Software Architect",
-    description:
-      "Cinematic Portfolio of a Senior Frontend Engineer specializing in Scalable Ecosystems.",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
   },
   twitter: {
     card: "summary_large_image",
-    title: "Héctor Trejo Luna | Senior Software Architect",
-    description:
-      "Cinematic Portfolio of a Senior Frontend Engineer specializing in Scalable Ecosystems.",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
   },
 };
 
