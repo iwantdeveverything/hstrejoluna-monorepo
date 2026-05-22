@@ -13,7 +13,7 @@
  * selector for tests and audits (S2.1, S2.3).
  */
 import type { CSSProperties, ReactElement } from "react";
-import { LG_VARIANTS, renderFilter, renderGooeyFilter } from "./filter-defs";
+import { renderGooeyFilter } from "./filter-defs";
 
 const hiddenSvgStyle: CSSProperties = {
   position: "absolute",
@@ -41,7 +41,6 @@ export const LiquidGlassFilters = (): ReactElement => (
     style={hiddenSvgStyle}
   >
     <defs>
-      {LG_VARIANTS.map((variant) => renderFilter(variant))}
       {renderGooeyFilter()}
     </defs>
   </svg>

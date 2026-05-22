@@ -27,11 +27,9 @@ import {
 } from "react";
 
 import { cn } from "../utils/cn";
-import { LG_FILTER_IDS } from "./filter-defs";
 import type {
   LiquidGlassIntensity,
   LiquidGlassProps,
-  LiquidGlassVariant,
 } from "./types";
 import { useLiquidGlassGates } from "./use-liquid-glass-gates";
 
@@ -40,14 +38,6 @@ import { useLiquidGlassGates } from "./use-liquid-glass-gates";
  * `data-lg-*` attributes in `liquid-glass.css`.
  */
 const LG_BASE_CLASS = "lg-glass";
-
-const buildBackdropFilter = (
-  variant: LiquidGlassVariant,
-  supports: boolean,
-): string | undefined => {
-  if (!supports) return undefined;
-  return `url(#${LG_FILTER_IDS[variant]}) blur(var(--lg-blur)) saturate(var(--lg-saturation))`;
-};
 
 interface LiquidGlassImplProps extends LiquidGlassProps<ElementType> {
   forwardedRef?: ForwardedRef<Element>;
@@ -66,28 +56,9 @@ const LiquidGlassImpl = ({
   const Component = as ?? "div";
   const gates = useLiquidGlassGates();
 
-  const refractionState: "url" | "none" = gates.supportsRefraction
-    ? "url"
-    : "none";
   const fallbackState: "solid" | "translucent" = gates.reduceTransparency
     ? "solid"
     : "translucent";
-
-  const backdrop = buildBackdropFilter(variant, gates.supportsRefraction);
-
-  // CSS variables live on the element so the variant→filter-id mapping is
-  // surgical: stylesheet rules read `--lg-backdrop-filter` to apply the
-  // correct `backdrop-filter` value without per-variant CSS branching.
-  const lgStyle: CSSProperties = backdrop
-    ? ({
-        ...(callerStyle as CSSProperties | undefined),
-        ["--lg-backdrop-filter" as never]: backdrop,
-        backdropFilter: backdrop,
-        WebkitBackdropFilter: backdrop,
-      } as CSSProperties)
-    : ({
-        ...(callerStyle as CSSProperties | undefined),
-      } as CSSProperties);
 
   return createElement(
     Component,
@@ -96,10 +67,9 @@ const LiquidGlassImpl = ({
       ref: forwardedRef,
       "data-lg-variant": variant,
       "data-lg-intensity": intensity,
-      "data-lg-refraction": refractionState,
       "data-lg-fallback": fallbackState,
       className: cn(LG_BASE_CLASS, className),
-      style: lgStyle,
+      style: callerStyle,
     },
     children,
   );

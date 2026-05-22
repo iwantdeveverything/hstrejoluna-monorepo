@@ -18,10 +18,9 @@
  * `useSyncExternalStore` patches state from real `matchMedia` + `CSS.supports`.
  */
 import { useSyncExternalStore } from "react";
+import { isBrowser } from "../utils/is-browser";
 
 export interface LiquidGlassGates {
-  /** `@supports (backdrop-filter: url("#x"))` — refraction path available. */
-  supportsRefraction: boolean;
   /** `@media (prefers-reduced-transparency: reduce)`. */
   reduceTransparency: boolean;
   /** `@media (prefers-reduced-motion: reduce)`. */
@@ -33,7 +32,6 @@ export interface LiquidGlassGates {
 }
 
 export const LIQUID_GLASS_SSR_DEFAULTS: LiquidGlassGates = Object.freeze({
-  supportsRefraction: true,
   reduceTransparency: false,
   reduceMotion: false,
   reduceData: false,
@@ -48,29 +46,16 @@ const QUERIES = {
   desktopFloor: "(min-width: 480px)",
 } as const;
 
-const isBrowser = (): boolean =>
-  typeof window !== "undefined" && typeof window.matchMedia === "function";
 
-const probeSupports = (): boolean => {
-  if (typeof CSS === "undefined" || typeof CSS.supports !== "function") {
-    return LIQUID_GLASS_SSR_DEFAULTS.supportsRefraction;
-  }
-  try {
-    return CSS.supports("backdrop-filter", 'url("#x")');
-  } catch {
-    return false;
-  }
-};
 
 const readSnapshot = (): LiquidGlassGates => {
-  if (!isBrowser()) return LIQUID_GLASS_SSR_DEFAULTS;
+  if (!isBrowser() || typeof window.matchMedia !== "function") return LIQUID_GLASS_SSR_DEFAULTS;
   const reduceTransparency = window.matchMedia(QUERIES.reduceTransparency)
     .matches;
   const reduceMotion = window.matchMedia(QUERIES.reduceMotion).matches;
   const reduceData = window.matchMedia(QUERIES.reduceData).matches;
   const desktop = window.matchMedia(QUERIES.desktopFloor).matches;
   return {
-    supportsRefraction: probeSupports(),
     reduceTransparency,
     reduceMotion,
     reduceData,
@@ -78,27 +63,40 @@ const readSnapshot = (): LiquidGlassGates => {
   };
 };
 
+const addMediaListener = (list: MediaQueryList, handler: () => void) => {
+  if (typeof list.addEventListener === "function") {
+    list.addEventListener("change", handler);
+  } else {
+    const legacy = list as unknown as { addListener: (cb: () => void) => void };
+    if (typeof legacy.addListener === "function") {
+      legacy.addListener(handler);
+    }
+  }
+};
+
+const removeMediaListener = (list: MediaQueryList, handler: () => void) => {
+  if (typeof list.removeEventListener === "function") {
+    list.removeEventListener("change", handler);
+  } else {
+    const legacy = list as unknown as { removeListener: (cb: () => void) => void };
+    if (typeof legacy.removeListener === "function") {
+      legacy.removeListener(handler);
+    }
+  }
+};
+
 const subscribe = (notify: () => void): (() => void) => {
-  if (!isBrowser()) return () => undefined;
+  if (!isBrowser() || typeof window.matchMedia !== "function") return () => undefined;
   const lists = Object.values(QUERIES).map((query) =>
     window.matchMedia(query),
   );
   const handler = () => notify();
   for (const list of lists) {
-    if (typeof list.addEventListener === "function") {
-      list.addEventListener("change", handler);
-    } else if (typeof list.addListener === "function") {
-      // Older browsers — keep type-safe via cast.
-      (list as unknown as MediaQueryList).addListener(handler);
-    }
+    addMediaListener(list, handler);
   }
   return () => {
     for (const list of lists) {
-      if (typeof list.removeEventListener === "function") {
-        list.removeEventListener("change", handler);
-      } else if (typeof list.removeListener === "function") {
-        (list as unknown as MediaQueryList).removeListener(handler);
-      }
+      removeMediaListener(list, handler);
     }
   };
 };
@@ -114,7 +112,7 @@ let cachedFingerprint = "";
 
 const getCachedSnapshot = (): LiquidGlassGates => {
   const next = readSnapshot();
-  const fingerprint = `${next.supportsRefraction}|${next.reduceTransparency}|${next.reduceMotion}|${next.reduceData}|${next.isMobile}`;
+  const fingerprint = `${next.reduceTransparency}|${next.reduceMotion}|${next.reduceData}|${next.isMobile}`;
   if (cachedSnapshot && fingerprint === cachedFingerprint) {
     return cachedSnapshot;
   }

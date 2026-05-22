@@ -11,8 +11,6 @@ export { LiquidGlassFilters } from "./LiquidGlassFilters";
 export {
   LG_VARIANTS,
   LG_FILTER_IDS,
-  LG_RESTING_SCALE,
-  renderFilter,
 } from "./filter-defs";
 export {
   useLiquidGlassGates,
@@ -25,10 +23,3 @@ export type {
   LiquidGlassOwnProps,
   LiquidGlassProps,
 } from "./types";
-export {
-  applyDisplacementScale,
-  bindDisplacementScale,
-  useDisplacementScaleAnimation,
-  useRestingScale,
-  type ScaleSource,
-} from "./use-displacement-scale-animation";

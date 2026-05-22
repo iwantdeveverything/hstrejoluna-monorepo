@@ -13,7 +13,7 @@ interface NavigatorWithConnection extends Navigator {
   connection?: { saveData?: boolean };
 }
 
-const isBrowser = (): boolean => typeof window !== "undefined";
+import { isBrowser } from "../utils/is-browser";
 
 const probeWebGL2 = (): boolean => {
   if (!isBrowser()) return false;
@@ -76,7 +76,6 @@ const computeCapability = (
     !hardwareEnough() ||
     saveDataOn() ||
     gates.reduceData ||
-    !gates.supportsRefraction ||
     !probeWebGL2()
   ) {
     return "css-only";
@@ -94,7 +93,6 @@ export function useLiquidHeroCapability(): LiquidHeroCapability {
       gates.reduceMotion,
       gates.reduceTransparency,
       gates.reduceData,
-      gates.supportsRefraction,
       gates.isMobile,
     ],
   );
