@@ -9,6 +9,8 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
 COPY apps/portfolio/package.json apps/portfolio/package.json
 COPY apps/maestros-del-salmon/package.json apps/maestros-del-salmon/package.json
 COPY apps/studio/package.json apps/studio/package.json
+COPY packages/ui/package.json packages/ui/package.json
+COPY packages/compliance/package.json packages/compliance/package.json
 
 RUN pnpm install --frozen-lockfile
 
@@ -36,4 +38,6 @@ USER nextjs
 
 EXPOSE 8080
 
-CMD ["./node_modules/.bin/pnpm", "--filter", "maestros-del-salmon", "run", "start", "--", "-p", "8080", "-H", "0.0.0.0"]
+WORKDIR /app/apps/maestros-del-salmon
+
+CMD ["../../node_modules/.bin/next", "start", "-p", "8080", "-H", "0.0.0.0"]
