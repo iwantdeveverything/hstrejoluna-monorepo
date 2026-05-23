@@ -7,16 +7,12 @@
     "lint": "turbo run lint --filter=portfolio --filter=maestros-del-salmon",
     "typecheck": "turbo run typecheck --filter=portfolio --filter=maestros-del-salmon",
     "test": "turbo run test --filter=portfolio --filter=maestros-del-salmon",
-    "storybook": "npm run storybook --workspace=apps/portfolio",
-    "storybook:build": "npm run storybook:build --workspace=apps/portfolio",
-    "storybook:build:expect-fail": "npm run storybook:build:expect-fail --workspace=apps/portfolio",
+    "storybook": "pnpm --filter portfolio storybook",
+    "storybook:build": "pnpm --filter portfolio storybook:build",
+    "storybook:build:expect-fail": "pnpm --filter portfolio storybook:build:expect-fail",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
-  "packageManager": "npm@10.33.0",
+  "packageManager": "pnpm@10.4.0",
   "devDependencies": {
     "@sanity/client": "^7.20.0",
     "@tailwindcss/postcss": "^4.2.2",
