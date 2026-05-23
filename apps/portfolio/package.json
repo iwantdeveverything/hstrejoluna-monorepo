@@ -25,6 +25,8 @@
     "@portabletext/react": "^6.0.3",
     "@sanity/image-url": "^1.1.0",
     "apify-client": "^2.22.3",
+    "framer-motion": "^12.38.0",
+    "lucide-react": "latest",
     "next": "latest",
     "next-intl": "^4.9.1",
     "next-sanity": "^12.2.1",
@@ -47,6 +49,7 @@
     "autoprefixer": "latest",
     "jsdom": "^29.0.2",
     "postcss": "latest",
+    "storybook": "latest",
     "tailwindcss": "latest",
     "typescript": "latest",
     "vitest": "^4.1.4"
