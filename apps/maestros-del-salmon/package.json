@@ -6,11 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "npx tsc -p tsconfig.json --noEmit",
+    "lint": "pnpm exec tsc -p tsconfig.json --noEmit",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@hstrejoluna/compliance": "*",
+    "@hstrejoluna/compliance": "workspace:*",
     "next": "latest",
     "react": "latest",
     "react-dom": "latest",
