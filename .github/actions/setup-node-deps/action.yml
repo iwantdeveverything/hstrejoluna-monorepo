@@ -16,11 +16,11 @@ runs:
       uses: actions/setup-node@v4
       with:
         node-version: ${{ inputs.node-version }}
-        cache: npm
+        cache: pnpm
 
     - name: Install dependencies
       shell: bash
-      run: npm ci
+      run: pnpm install --frozen-lockfile
 
     - name: Next.js Cache
       if: inputs.nextjs-cache == 'true'
@@ -29,6 +29,6 @@ runs:
         path: |
           ${{ github.workspace }}/apps/portfolio/.next/cache
           ${{ github.workspace }}/apps/maestros-del-salmon/.next/cache
-        key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}
+        key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}
         restore-keys: |
           ${{ runner.os }}-nextjs-
