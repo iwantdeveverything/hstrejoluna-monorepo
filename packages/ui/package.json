@@ -14,5 +14,11 @@
     "framer-motion": "^12.38.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@storybook/nextjs-vite": "latest",
+    "@storybook/react": "latest",
+    "@testing-library/react": "^16.3.2",
+    "vitest": "^4.1.4"
   }
 }
