@@ -1,5 +1,5 @@
 name: Setup Node.js and Dependencies
-description: Node.js setup, npm ci, and Next.js cache restore (requires checkout first)
+description: Node.js setup, pnpm install, and Next.js cache restore (requires checkout first)
 
 inputs:
   node-version:
@@ -12,6 +12,12 @@ inputs:
 runs:
   using: composite
   steps:
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        version: 10.4.0
+        run_install: false
+
     - name: Setup Node
       uses: actions/setup-node@v4
       with:
