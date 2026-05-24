@@ -1,5 +1,12 @@
 @import "tailwindcss";
-@import "@hstrejoluna/ui/styles/tokens.css";
+/* Tailwind v4: third-party token stylesheets MUST be imported into the
+ * `theme` layer so the @theme block and the :root custom properties they
+ * declare are merged with Tailwind's theme. Without `layer(theme)`, Tailwind
+ * treats this import as an unlayered late stylesheet, which made the
+ * intensity-scoped `--lg-blur` overrides stale across rebuilds and produced
+ * missing/dim backdrop-filter blur on <LiquidGlass intensity="high">.
+ */
+@import "@hstrejoluna/ui/styles/tokens.css" layer(theme);
 @source "../../../packages/ui/src";
 
 @theme {
