@@ -333,13 +333,19 @@ body::before {
   }
 }
 
+/* On md+ the dock is centered via Tailwind's `md:-translate-x-1/2`, which
+ * Tailwind v4 compiles to the standalone CSS `translate:` property. Keep
+ * this keyframe limited to the Y axis so the animated `transform:` does
+ * NOT compose with the Tailwind `translate:` (composing would double-shift
+ * the element by -100% of its own width → right-aligned dock).
+ */
 @keyframes liquid-nav-rise-md {
   from {
-    transform: translate(-50%, 100px);
+    transform: translateY(100px);
     opacity: 0;
   }
   to {
-    transform: translate(-50%, 0);
+    transform: translateY(0);
     opacity: 1;
   }
 }
@@ -355,8 +361,9 @@ body::before {
   .liquid-nav-root {
     animation-name: liquid-nav-rise-md;
   }
+  /* Y-only hide transform; X centering comes from Tailwind's `translate:`. */
   .liquid-nav-root[data-hidden="true"] {
-    transform: translate(-50%, 140px);
+    transform: translateY(140px);
     opacity: 0;
   }
 }
@@ -413,11 +420,10 @@ body.mobile-nav-open #hero .pointer-events-auto {
     transform: none !important;
     opacity: 1 !important;
   }
-  @media (min-width: 768px) {
-    .liquid-nav-root {
-      transform: translateX(-50%) !important;
-    }
-  }
+  /* No md+ override needed: Tailwind v4 emits `md:-translate-x-1/2` on the
+   * standalone `translate:` property, which is independent from `transform:`
+   * and survives the `transform: none !important` reset above.
+   */
 }
 
 /* ── CookieBanner — slide-in from bottom (post-framer-motion) ── */
