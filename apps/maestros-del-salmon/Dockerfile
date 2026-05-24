@@ -2,17 +2,21 @@ FROM node:20-alpine AS builder
 
 WORKDIR /workspace
 
-COPY package.json package-lock.json turbo.json ./
+# Install pnpm via corepack
+RUN corepack enable
+
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
 COPY apps/portfolio/package.json apps/portfolio/package.json
 COPY apps/maestros-del-salmon/package.json apps/maestros-del-salmon/package.json
 COPY apps/studio/package.json apps/studio/package.json
+COPY packages/ui/package.json packages/ui/package.json
+COPY packages/compliance/package.json packages/compliance/package.json
 
-RUN npm ci
+RUN pnpm install --frozen-lockfile
 
 COPY . .
 
-RUN npx turbo run build --filter=maestros-del-salmon
-RUN npm prune --omit=dev
+RUN pnpm turbo run build --filter=maestros-del-salmon
 
 FROM node:20-alpine AS runner
 
@@ -26,11 +30,14 @@ RUN addgroup -S nodejs && adduser -S nextjs -G nodejs
 
 COPY --from=builder --chown=nextjs:nodejs /workspace/node_modules ./node_modules
 COPY --from=builder --chown=nextjs:nodejs /workspace/package.json ./package.json
-COPY --from=builder --chown=nextjs:nodejs /workspace/package-lock.json ./package-lock.json
+COPY --from=builder --chown=nextjs:nodejs /workspace/pnpm-lock.yaml ./pnpm-lock.yaml
+COPY --from=builder --chown=nextjs:nodejs /workspace/pnpm-workspace.yaml ./pnpm-workspace.yaml
 COPY --from=builder --chown=nextjs:nodejs /workspace/apps/maestros-del-salmon ./apps/maestros-del-salmon
 
 USER nextjs
 
 EXPOSE 8080
 
-CMD ["npm", "run", "start", "--workspace=apps/maestros-del-salmon", "--", "-p", "8080", "-H", "0.0.0.0"]
+WORKDIR /app/apps/maestros-del-salmon
+
+CMD ["../../node_modules/.bin/next", "start", "-p", "8080", "-H", "0.0.0.0"]

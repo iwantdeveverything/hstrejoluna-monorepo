@@ -40,13 +40,13 @@ jobs:
               - 'apps/portfolio/**'
               - 'packages/**'
               - 'package.json'
-              - 'package-lock.json'
+              - 'pnpm-lock.yaml'
               - 'turbo.json'
             lighthouse:
               - 'apps/portfolio/**'
               - 'packages/**'
               - 'package.json'
-              - 'package-lock.json'
+              - 'pnpm-lock.yaml'
               - 'turbo.json'
 
   e2e:
@@ -72,7 +72,7 @@ jobs:
 
       - name: Get Playwright version
         id: playwright-version
-        run: echo "PLAYWRIGHT_VERSION=$(npx playwright --version | awk '{print $2}')" >> $GITHUB_ENV
+        run: echo "PLAYWRIGHT_VERSION=$(pnpm playwright --version | awk '{print $2}')" >> $GITHUB_ENV
         working-directory: apps/portfolio
 
       - name: Cache Playwright Browsers
@@ -84,12 +84,12 @@ jobs:
 
       - name: Install Playwright browsers
         if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: npx playwright install --with-deps chromium firefox webkit
+        run: pnpm playwright install --with-deps chromium firefox webkit
         working-directory: apps/portfolio
 
       - name: Install Playwright OS dependencies
         if: steps.playwright-cache.outputs.cache-hit == 'true'
-        run: npx playwright install-deps chromium firefox webkit
+        run: pnpm playwright install-deps chromium firefox webkit
         working-directory: apps/portfolio
 
       # ── E2E: project-based parallelism ──────────────────────────
@@ -105,15 +105,15 @@ jobs:
         run: |
           case "${{ matrix.suite }}" in
             "Desktop Chrome + Memory Leak")
-              npx playwright test \
+              pnpm playwright test \
                 --project="Desktop Chrome" \
                 --project="Desktop Chrome Memory Leak"
               ;;
             "Desktop Firefox + Mobile Chrome")
-              npx playwright test --project="Desktop Firefox" --project="Mobile Chrome"
+              pnpm playwright test --project="Desktop Firefox" --project="Mobile Chrome"
               ;;
             "WebKit + Reduced Motion")
-              npx playwright test \
+              pnpm playwright test \
                 --project="Desktop Safari" \
                 --project="Mobile Safari" \
                 --project="Desktop Chrome Reduced Motion"
@@ -153,13 +153,13 @@ jobs:
       # but running it here makes failures attributable and surfaces build
       # errors before the Chrome interstitial would mask them.
       - name: Build portfolio
-        run: npx turbo run build --filter=portfolio
+        run: pnpm turbo run build --filter=portfolio
         env:
           NEXT_PUBLIC_BASE_URL: "http://127.0.0.1:4173"
 
       - name: Smoke-test next start (sanity check before lhci)
         run: |
-          npx next start --port 4174 --hostname 127.0.0.1 &
+          pnpm next start --port 4174 --hostname 127.0.0.1 &
           SERVER_PID=$!
           for i in {1..30}; do
             if curl -fsS -o /dev/null http://127.0.0.1:4174/en; then
@@ -176,7 +176,7 @@ jobs:
         working-directory: apps/portfolio
 
       - name: Lighthouse CI gate
-        run: npx turbo run qa:lighthouse --filter=portfolio
+        run: pnpm turbo run qa:lighthouse --filter=portfolio
         env:
           LHCI_DEBUG: "1"
           # Pin metadataBase to the lhci origin so canonical URLs resolve to

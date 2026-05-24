@@ -1,5 +1,5 @@
 name: Setup Node.js and Dependencies
-description: Node.js setup, npm ci, and Next.js cache restore (requires checkout first)
+description: Node.js setup, pnpm install, and Next.js cache restore (requires checkout first)
 
 inputs:
   node-version:
@@ -12,15 +12,21 @@ inputs:
 runs:
   using: composite
   steps:
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        version: 10.4.0
+        run_install: false
+
     - name: Setup Node
       uses: actions/setup-node@v4
       with:
         node-version: ${{ inputs.node-version }}
-        cache: npm
+        cache: pnpm
 
     - name: Install dependencies
       shell: bash
-      run: npm ci
+      run: pnpm install --frozen-lockfile
 
     - name: Next.js Cache
       if: inputs.nextjs-cache == 'true'
@@ -29,6 +35,6 @@ runs:
         path: |
           ${{ github.workspace }}/apps/portfolio/.next/cache
           ${{ github.workspace }}/apps/maestros-del-salmon/.next/cache
-        key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}
+        key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}
         restore-keys: |
           ${{ runner.os }}-nextjs-

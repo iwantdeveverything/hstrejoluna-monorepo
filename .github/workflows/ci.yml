@@ -53,21 +53,21 @@ jobs:
           exit 1
 
       - name: Lint
-        run: npx turbo run lint --filter=portfolio --filter=maestros-del-salmon
+        run: pnpm turbo run lint --filter=portfolio --filter=maestros-del-salmon
 
       - name: Typecheck
-        run: npx turbo run typecheck --filter=portfolio --filter=maestros-del-salmon
+        run: pnpm turbo run typecheck --filter=portfolio --filter=maestros-del-salmon
 
       - name: Build
-        run: npx turbo run build --filter=portfolio --filter=maestros-del-salmon
+        run: pnpm turbo run build --filter=portfolio --filter=maestros-del-salmon
 
       - name: Test portfolio workspace
-        run: npx turbo run test --filter=portfolio
+        run: pnpm turbo run test --filter=portfolio
 
       - name: Storybook static build (portfolio)
         if: ${{ github.event_name == 'workflow_dispatch' || steps.storybook_changes.outputs.storybook == 'true' || env.ACT == 'true' }}
-        run: npm run storybook:build --workspace=apps/portfolio
+        run: pnpm --filter portfolio storybook:build
 
       - name: Storybook failure contract (portfolio)
         if: ${{ github.event_name == 'workflow_dispatch' || steps.storybook_changes.outputs.storybook == 'true' || env.ACT == 'true' }}
-        run: npm run storybook:build:expect-fail --workspace=apps/portfolio
+        run: pnpm --filter portfolio storybook:build:expect-fail

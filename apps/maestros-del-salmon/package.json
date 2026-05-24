@@ -6,11 +6,13 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "npx tsc -p tsconfig.json --noEmit",
+    "lint": "pnpm exec tsc -p tsconfig.json --noEmit",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@hstrejoluna/compliance": "*",
+    "@hstrejoluna/compliance": "workspace:*",
+    "@hstrejoluna/ui": "workspace:*",
+    "framer-motion": "^12.38.0",
     "next": "latest",
     "react": "latest",
     "react-dom": "latest",
@@ -21,8 +23,12 @@
     "@types/node": "latest",
     "@types/react": "latest",
     "@types/react-dom": "latest",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
     "autoprefixer": "latest",
+    "jsdom": "^29.0.2",
     "postcss": "latest",
-    "tailwindcss": "latest"
+    "tailwindcss": "latest",
+    "vitest": "^4.1.4"
   }
 }

@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "npx tsc -p tsconfig.json --noEmit",
+    "lint": "pnpm exec tsc -p tsconfig.json --noEmit",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -17,14 +17,16 @@
     "qa:e2e": "playwright test",
     "qa:e2e:headed": "playwright test --headed",
     "qa:lighthouse": "lhci autorun --config=./lighthouserc.cjs",
-    "qa:gate": "npm run lint && npm run test && npm run qa:e2e && npm run qa:lighthouse"
+    "qa:gate": "pnpm run lint && pnpm run test && pnpm run qa:e2e && pnpm run qa:lighthouse"
   },
   "dependencies": {
-    "@hstrejoluna/compliance": "*",
-    "@hstrejoluna/ui": "*",
+    "@hstrejoluna/compliance": "workspace:*",
+    "@hstrejoluna/ui": "workspace:*",
     "@portabletext/react": "^6.0.3",
     "@sanity/image-url": "^1.1.0",
     "apify-client": "^2.22.3",
+    "framer-motion": "^12.38.0",
+    "lucide-react": "latest",
     "next": "latest",
     "next-intl": "^4.9.1",
     "next-sanity": "^12.2.1",
@@ -47,6 +49,7 @@
     "autoprefixer": "latest",
     "jsdom": "^29.0.2",
     "postcss": "latest",
+    "storybook": "latest",
     "tailwindcss": "latest",
     "typescript": "latest",
     "vitest": "^4.1.4"
