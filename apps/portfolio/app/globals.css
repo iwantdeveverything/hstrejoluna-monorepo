@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 /* Tailwind v4: third-party token stylesheets MUST be imported into the
  * `theme` layer so the @theme block and the :root custom properties they
  * declare are merged with Tailwind's theme. Without `layer(theme)`, Tailwind

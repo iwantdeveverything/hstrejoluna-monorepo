@@ -25,11 +25,14 @@ const SITE_TITLE = "Héctor Trejo Luna | Fullstack Developer";
 const SITE_DESCRIPTION =
   "Cinematic Portfolio of a Senior Frontend Engineer specializing in Scalable Ecosystems.";
 
+import { DEFAULT_BASE_URL } from "../../lib/utils";
+
 export const metadata: Metadata = {
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_BASE_URL || "https://hstrejoluna.com",
-  ),
-  title: SITE_TITLE,
+  metadataBase: new URL(DEFAULT_BASE_URL),
+  title: {
+    template: `%s | ${SITE_TITLE}`,
+    default: SITE_TITLE,
+  },
   description: SITE_DESCRIPTION,
   openGraph: {
     type: "website",
