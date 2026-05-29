@@ -25,14 +25,19 @@ vi.mock("next-intl/server", () => ({
 }));
 
 // Mock Sanity client and helpers
-vi.mock("@/lib/sanity", () => ({
-  client: {
-    fetch: vi.fn(),
-  },
-  urlFor: () => ({
+vi.mock("@/lib/sanity", () => {
+  const mockBuilder = {
+    width: () => mockBuilder,
+    height: () => mockBuilder,
     url: () => "https://sanity.io/image.png",
-  }),
-}));
+  };
+  return {
+    client: {
+      fetch: vi.fn(),
+    },
+    urlFor: () => mockBuilder,
+  };
+});
 
 // Mock child components
 vi.mock("@/components/Breadcrumbs", () => ({
@@ -73,9 +78,12 @@ vi.mock("@/lib/safe-json-ld", () => ({
   safeJsonLd: (data: any) => JSON.stringify(data),
 }));
 
-// Mock blockToPlainText for generateMetadata tests
+// Mock utils for generateMetadata tests
 vi.mock("@/lib/utils", () => ({
   blockToPlainText: vi.fn(),
+  DEFAULT_BASE_URL: "https://hstrejoluna.com",
+  slugify: (t: string) => t.toLowerCase().replace(/\s+/g, "-"),
+  extractTextFromReactNode: (node: any) => String(node),
 }));
 
 const mockProject: any = {

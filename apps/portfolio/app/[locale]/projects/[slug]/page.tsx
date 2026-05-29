@@ -15,6 +15,10 @@ import { AUTHOR_NAME, SITE_NAME } from "@/constants/brand";
 
 
 
+const isValidYear = (year?: string | null): boolean => {
+  return typeof year === 'string' && /^\d{4}$/.test(year);
+};
+
 const portableTextComponents = {
   block: {
     h2: ({ children }: { children?: React.ReactNode }) => {
@@ -32,8 +36,19 @@ const portableTextComponents = {
   },
   marks: {
     link: ({ children, value }: { children?: React.ReactNode; value?: { href?: string } }) => {
-      const href = value?.href ?? "#";
+      let href = value?.href ?? "#";
       const isExternal = href.startsWith("http");
+
+      const safeProtocols = ["http:", "https:", "mailto:", "tel:"];
+      try {
+        const urlObj = new URL(href, href.startsWith("/") ? DEFAULT_BASE_URL : undefined);
+        if (!safeProtocols.includes(urlObj.protocol)) {
+          href = "#";
+        }
+      } catch (e) {
+        href = "#";
+      }
+
       return (
         <a
           href={href}
@@ -106,7 +121,7 @@ export async function generateMetadata({
       description,
       type: "article",
       siteName: SITE_NAME,
-      publishedTime: project.year ? `${project.year}-01-01` : undefined,
+      publishedTime: isValidYear(project.year) ? `${project.year}-01-01` : undefined,
       authors: [name],
       images: project.image
         ? [
@@ -175,7 +190,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
       name: authorName,
       url: DEFAULT_BASE_URL,
     },
-    datePublished: project.year ? `${project.year}-01-01` : undefined,
+    datePublished: isValidYear(project.year) ? `${project.year}-01-01` : undefined,
     programmingLanguage: project.techStack?.filter(Boolean).map((s) => s.name),
     codeRepository: project.externalLink?.includes("github.com")
       ? project.externalLink
