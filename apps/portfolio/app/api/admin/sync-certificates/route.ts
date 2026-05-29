@@ -3,6 +3,7 @@ import {
   buildDefaultSyncDeps,
   syncLinkedinCertificates,
 } from "@/lib/certificates/sync";
+import { normalizeCertificates } from "@/lib/certificates/normalize";
 
 const requiredEnv = [
   "APIFY_TOKEN",
@@ -36,10 +37,26 @@ export async function POST(request: Request) {
   }
 
   try {
-    const result = await syncLinkedinCertificates(
-      linkedinProfileUrl,
-      buildDefaultSyncDeps(apifyToken)
-    );
+    const body = await request.json().catch(() => null);
+
+    let result;
+    if (body && Array.isArray(body) && body.length > 0) {
+      const { certificates, warnings } = normalizeCertificates({ certifications: body });
+      const deps = buildDefaultSyncDeps(apifyToken);
+      const upserted = await deps.repository.upsertMany(certificates);
+      
+      result = {
+        fetched: body.length,
+        upserted,
+        skipped: warnings.length,
+        warnings,
+      };
+    } else {
+      result = await syncLinkedinCertificates(
+        linkedinProfileUrl,
+        buildDefaultSyncDeps(apifyToken)
+      );
+    }
 
     return NextResponse.json(result, { status: 200 });
   } catch (error) {
