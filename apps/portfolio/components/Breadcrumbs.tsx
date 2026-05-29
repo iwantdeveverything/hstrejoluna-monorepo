@@ -1,5 +1,6 @@
 import { Link as LocalizedLink } from "@/i18n/navigation";
 import { safeJsonLd } from "@/lib/safe-json-ld";
+import { DEFAULT_BASE_URL } from "@/lib/utils";
 
 interface BreadcrumbItem {
   label: string;
@@ -45,7 +46,7 @@ export const Breadcrumbs = ({ items }: BreadcrumbsProps) => {
               "@type": "ListItem",
               "position": index + 1,
               "name": item.label,
-              ...(item.href && { "item": `${process.env.NEXT_PUBLIC_BASE_URL || ""}${item.href}` }),
+              ...(item.href && { "item": new URL(item.href, DEFAULT_BASE_URL).toString() }),
             })),
           }),
         }}

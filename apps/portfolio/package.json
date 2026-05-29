@@ -50,6 +50,7 @@
     "jsdom": "^29.0.2",
     "postcss": "latest",
     "storybook": "latest",
+    "@tailwindcss/typography": "latest",
     "tailwindcss": "latest",
     "typescript": "latest",
     "vitest": "^4.1.4"

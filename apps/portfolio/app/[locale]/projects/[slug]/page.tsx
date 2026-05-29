@@ -1,3 +1,4 @@
+import React from "react";
 import { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
@@ -8,9 +9,45 @@ import { client, urlFor } from "@/lib/sanity";
 import { Project, PortableTextBlock } from "@/types/sanity";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { PortableText } from "@portabletext/react";
-import { blockToPlainText } from "@/lib/utils";
+import { blockToPlainText, slugify, extractTextFromReactNode, DEFAULT_BASE_URL } from "@/lib/utils";
 import { TelemetryHUD, LiquidGlass } from "@hstrejoluna/ui";
 import { AUTHOR_NAME, SITE_NAME } from "@/constants/brand";
+
+
+
+const portableTextComponents = {
+  block: {
+    h2: ({ children }: { children?: React.ReactNode }) => {
+      const text = extractTextFromReactNode(children);
+      return <h2 id={slugify(text)}>{children}</h2>;
+    },
+    h3: ({ children }: { children?: React.ReactNode }) => {
+      const text = extractTextFromReactNode(children);
+      return <h3 id={slugify(text)}>{children}</h3>;
+    },
+    h4: ({ children }: { children?: React.ReactNode }) => {
+      const text = extractTextFromReactNode(children);
+      return <h4 id={slugify(text)}>{children}</h4>;
+    },
+  },
+  marks: {
+    link: ({ children, value }: { children?: React.ReactNode; value?: { href?: string } }) => {
+      const href = value?.href ?? "#";
+      const isExternal = href.startsWith("http");
+      return (
+        <a
+          href={href}
+          {...(isExternal && {
+            target: "_blank",
+            rel: "noopener noreferrer",
+          })}
+        >
+          {children}
+        </a>
+      );
+    },
+  },
+};
 
 interface ProjectPageProps {
   params: Promise<{ locale: string; slug: string }>;
@@ -58,27 +95,43 @@ export async function generateMetadata({
       : descriptionRaw;
   const name = tCommon("fullName") || AUTHOR_NAME;
 
+
+
   return {
-    title: `${project.title} | ${tSeo("title", { name })}`,
+    title: project.title,
     description,
+    keywords: project.seoKeywords,
     openGraph: {
       title: project.title,
       description,
       type: "article",
       siteName: SITE_NAME,
-      images: project.image ? [urlFor(project.image).url()] : [],
+      publishedTime: project.year ? `${project.year}-01-01` : undefined,
+      authors: [name],
+      images: project.image
+        ? [
+            {
+              url: urlFor(project.image).width(1200).height(630).url(),
+              width: 1200,
+              height: 630,
+              alt: project.image.alt || project.title,
+            },
+          ]
+        : [],
     },
     twitter: {
       card: "summary_large_image",
       title: project.title,
       description,
-      images: project.image ? [urlFor(project.image).url()] : [],
+      images: project.image
+        ? [urlFor(project.image).width(1200).height(630).url()]
+        : [],
     },
     alternates: {
-      canonical: `/${locale}/projects/${slug}`,
+      canonical: `${DEFAULT_BASE_URL}/${locale}/projects/${slug}`,
       languages: {
-        en: `/en/projects/${slug}`,
-        es: `/es/projects/${slug}`,
+        en: `${DEFAULT_BASE_URL}/en/projects/${slug}`,
+        es: `${DEFAULT_BASE_URL}/es/projects/${slug}`,
       },
     },
   };
@@ -100,6 +153,8 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
   const authorName = tCommon("fullName") || AUTHOR_NAME;
 
+
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": ["SoftwareSourceCode", "CreativeWork"],
@@ -108,17 +163,25 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
       project.shortDescription && project.shortDescription.length > 0
         ? project.shortDescription
         : blockToPlainText(project.description),
+    image: project.image
+      ? urlFor(project.image).width(1200).height(630).url()
+      : undefined,
+    thumbnailUrl: project.image
+      ? urlFor(project.image).width(400).height(225).url()
+      : undefined,
     genre: "Software Development",
     author: {
       "@type": "Person",
       name: authorName,
+      url: DEFAULT_BASE_URL,
     },
-    datePublished: project.year,
+    datePublished: project.year ? `${project.year}-01-01` : undefined,
     programmingLanguage: project.techStack?.filter(Boolean).map((s) => s.name),
     codeRepository: project.externalLink?.includes("github.com")
       ? project.externalLink
       : undefined,
-    url: project.externalLink,
+    url: project.externalLink || `${DEFAULT_BASE_URL}/${locale}/projects/${project.slug?.current}`,
+    keywords: project.seoKeywords,
   };
 
   const breadcrumbs = [
@@ -137,7 +200,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
   };
 
   return (
-    <div className="min-h-screen bg-background text-white pt-32 pb-24 px-4 md:px-8">
+    <article className="min-h-screen bg-background text-white pt-32 pb-24 px-4 md:px-8">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
@@ -215,6 +278,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
             <div className="prose prose-invert prose-lg max-w-none prose-headings:font-black prose-headings:uppercase prose-headings:italic prose-headings:tracking-tighter prose-p:text-on_surface_variant prose-p:font-light prose-strong:text-white prose-a:text-primary">
               <PortableText
                 value={renderContent(project.content, project.description)}
+                components={portableTextComponents}
               />
             </div>
 
@@ -266,6 +330,6 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           </aside>
         </div>
       </div>
-    </div>
+    </article>
   );
 }
