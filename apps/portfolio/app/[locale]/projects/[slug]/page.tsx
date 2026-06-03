@@ -93,10 +93,7 @@ export async function generateMetadata({
 }: ProjectPageProps): Promise<Metadata> {
   const { locale, slug } = await params;
   const project = await getProject(slug);
-  const [tSeo, tCommon] = await Promise.all([
-    getTranslations({ locale, namespace: "seo" }),
-    getTranslations({ locale, namespace: "common" }),
-  ]);
+  const tCommon = await getTranslations({ locale, namespace: "common" });
 
   if (!project) return {};
 
@@ -234,7 +231,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
               }
               className="mb-8"
             />
-            <h1 className="text-6xl md:text-8xl font-black uppercase tracking-tighter italic leading-none mb-8">
+            <h1 className="text-4xl md:text-8xl font-black uppercase tracking-tighter italic leading-none mb-8">
               {project.title}
             </h1>
 
