@@ -48,6 +48,7 @@ This project uses **Gentleman Guardian Angel** to ensure high code quality and c
 | `judgment-day`   | Adversarial code review                             | When a deep review is needed                    |
 | `skill-creator`  | Create new AI skills                                | When a new pattern needs documenting            |
 | `task-git-sync`  | Enforces automated Git workflow (add, commit, push) | Generating plans or finishing feature tasks     |
+| `pr-governance`  | Cross-cutting governance guard for issues, PRs, branches, and commits | Auto-triggers on issue/PR/branch/commit actions |
 
 ## Project Strategies
 

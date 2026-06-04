@@ -8,13 +8,13 @@ Definir la visualizacion de certificados dentro del portfolio stream y su integr
 
 ### Requirement: Certificates Data Query
 
-The system MUST fetch certificate documents from Sanity in the portfolio page data pipeline and provide them to the stream renderer.
+The system MUST fetch certificate documents from Sanity in the portfolio page data pipeline and provide them to the stream renderer. The query MUST NOT depend on or evaluate any `source` field.
 
 #### Scenario: Certificates are available
 
 - GIVEN certificate documents exist in Sanity
 - WHEN the portfolio page server data loader executes
-- THEN the system MUST include certificates in the page data payload
+- THEN the system MUST include certificates in the page data payload without requiring external syncing
 - AND the stream renderer SHALL receive certificates as a dedicated prop
 
 #### Scenario: Certificates query returns no items
@@ -26,7 +26,7 @@ The system MUST fetch certificate documents from Sanity in the portfolio page da
 
 ### Requirement: Certificates Section Rendering
 
-The system MUST render a `certificates` section in the stream and SHALL expose each certificate with title, issuer, issue metadata, and source link when available.
+The system MUST render a `certificates` section in the stream and SHALL expose each certificate with title, issuer, issue metadata, and credential/source URL when available. The UI and TS types MUST NOT include or require an internal `source` field.
 
 #### Scenario: Standard certificate card display
 

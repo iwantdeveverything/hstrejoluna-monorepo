@@ -36,16 +36,6 @@ export default defineType({
       title: "Credential URL",
       type: "url",
     }),
-    defineField({
-      name: "source",
-      title: "Source",
-      type: "string",
-      options: {
-        list: [{ title: "LinkedIn", value: "linkedin" }],
-      },
-      initialValue: "linkedin",
-      validation: (rule) => rule.required(),
-    }),
   ],
   preview: {
     select: {
