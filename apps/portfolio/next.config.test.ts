@@ -20,7 +20,7 @@ describe("next.config.ts", () => {
     const wrappedConfig = mockWithNextIntl.mock.calls[0][0];
     expect(wrappedConfig).toHaveProperty("transpilePackages");
     expect(wrappedConfig).toHaveProperty("images");
-    expect(wrappedConfig).toHaveProperty("rewrites");
+    expect(wrappedConfig).toHaveProperty("headers");
   });
 
   it("includes all 6 security headers via async headers()", async () => {

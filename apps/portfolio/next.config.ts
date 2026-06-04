@@ -3,8 +3,6 @@ import createNextIntlPlugin from "next-intl/plugin";
 
 const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
 
-const salmonOrigin = process.env.SALMON_ORIGIN ?? "http://localhost:3001";
-
 const cspValue = [
   "default-src 'self'",
   "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com",
@@ -59,14 +57,6 @@ const nextConfig: NextConfig = {
             value: "strict-origin-when-cross-origin",
           },
         ],
-      },
-    ];
-  },
-  async rewrites() {
-    return [
-      {
-        source: "/maestros-del-salmon/:path*",
-        destination: `${salmonOrigin}/maestros-del-salmon/:path*`,
       },
     ];
   },
