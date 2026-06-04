@@ -87,12 +87,5 @@ export interface Certificate {
   expiryDate?: string;
   credentialId?: string;
   credentialUrl?: string;
-  source: "linkedin";
 }
 
-export interface SyncCertificatesResult {
-  fetched: number;
-  upserted: number;
-  skipped: number;
-  warnings: string[];
-}

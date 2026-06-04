@@ -9,7 +9,7 @@
     "certificates": {
       "dateUnavailable": "DATE_UNAVAILABLE",
       "streamEmpty": "CERTIFICATE_STREAM: EMPTY",
-      "noCertificates": "No synced certificates yet. Trigger sync and the latest LinkedIn credentials will appear here.",
+      "noCertificates": "No certificates available.",
       "issuerUnavailable": "Issuer unavailable",
       "issued": "ISSUED",
       "viewCredential": "View Credential"

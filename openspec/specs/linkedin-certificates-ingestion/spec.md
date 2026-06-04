@@ -1,61 +1,65 @@
 # linkedin-certificates-ingestion Specification
 
+> **DEPRECATED**: This capability has been removed as part of the `refactor-certificates` change. The system no longer supports automated ingestion of certificates via Apify. All certificates are now managed directly in Sanity as standard documents without external syncing.
+
 ## Purpose
 
-Definir el comportamiento para extraer certificados desde LinkedIn via Apify y persistirlos en Sanity de forma idempotente.
+~~Definir el comportamiento para extraer certificados desde LinkedIn via Apify y persistirlos en Sanity de forma idempotente.~~
 
 ## Requirements
 
-### Requirement: Apify Certificate Extraction
+All requirements below are deprecated and no longer enforced.
 
-The system MUST execute the Apify actor `dev_fusion/linkedin-profile-scraper` with configured profile URLs and consume only `certifications` data for certificate ingestion.
+### Requirement: Apify Certificate Extraction (Deprecated)
 
-#### Scenario: Successful extraction from actor output
+~~The system MUST execute the Apify actor `dev_fusion/linkedin-profile-scraper` with configured profile URLs and consume only `certifications` data for certificate ingestion.~~
 
-- GIVEN valid `APIFY_TOKEN` and `LINKEDIN_PROFILE_URL` configuration
-- WHEN the ingestion flow runs and the actor returns a successful dataset item
-- THEN the system MUST parse `certifications[]` from the first profile result
-- AND the system SHALL ignore unrelated actor fields (for example contact enrichment data)
+#### Scenario: Successful extraction from actor output (Deprecated)
 
-#### Scenario: Missing or empty certifications
+~~- GIVEN valid `APIFY_TOKEN` and `LINKEDIN_PROFILE_URL` configuration~~
+~~- WHEN the ingestion flow runs and the actor returns a successful dataset item~~
+~~- THEN the system MUST parse `certifications[]` from the first profile result~~
+~~- AND the system SHALL ignore unrelated actor fields (for example contact enrichment data)~~
 
-- GIVEN the actor run succeeds but `certifications` is missing or empty
-- WHEN ingestion mapping executes
-- THEN the system MUST return an empty normalized certificate collection
-- AND the system MUST NOT fail the run solely due to missing certifications
+#### Scenario: Missing or empty certifications (Deprecated)
 
-### Requirement: Certificate Normalization and Upsert
+~~- GIVEN the actor run succeeds but `certifications` is missing or empty~~
+~~- WHEN ingestion mapping executes~~
+~~- THEN the system MUST return an empty normalized certificate collection~~
+~~- AND the system MUST NOT fail the run solely due to missing certifications~~
 
-The system MUST normalize raw certification payloads to a stable certificate model and SHALL upsert records in Sanity without creating duplicates.
+### Requirement: Certificate Normalization and Upsert (Deprecated)
 
-#### Scenario: Upsert by stable identity key
+~~The system MUST normalize raw certification payloads to a stable certificate model and SHALL upsert records in Sanity without creating duplicates.~~
 
-- GIVEN normalized certificate entries with identity candidates (for example `credentialId` or normalized `name+issuer`)
-- WHEN persistence executes
-- THEN the system MUST upsert existing documents by identity key
-- AND the system SHALL create new documents only when no matching key exists
+#### Scenario: Upsert by stable identity key (Deprecated)
 
-#### Scenario: Partial certificate data
+~~- GIVEN normalized certificate entries with identity candidates (for example `credentialId` or normalized `name+issuer`)~~
+~~- WHEN persistence executes~~
+~~- THEN the system MUST upsert existing documents by identity key~~
+~~- AND the system SHALL create new documents only when no matching key exists~~
 
-- GIVEN a certificate without optional fields (for example missing expiry date or credential URL)
-- WHEN normalization runs
-- THEN the system MUST persist required fields when present
-- AND the system SHOULD default optional missing fields to null-safe values
+#### Scenario: Partial certificate data (Deprecated)
 
-### Requirement: Fault Tolerance and Observability
+~~- GIVEN a certificate without optional fields (for example missing expiry date or credential URL)~~
+~~- WHEN normalization runs~~
+~~- THEN the system MUST persist required fields when present~~
+~~- AND the system SHOULD default optional missing fields to null-safe values~~
 
-The system SHOULD handle actor failures and malformed entries defensively while preserving operational visibility.
+### Requirement: Fault Tolerance and Observability (Deprecated)
 
-#### Scenario: Actor/API failure
+~~The system SHOULD handle actor failures and malformed entries defensively while preserving operational visibility.~~
 
-- GIVEN Apify returns timeout, auth, or non-success run status
-- WHEN ingestion is triggered
-- THEN the system MUST fail with a structured error result
-- AND the system SHALL avoid writing partial or inconsistent certificate documents
+#### Scenario: Actor/API failure (Deprecated)
 
-#### Scenario: Mixed valid and invalid certificate entries
+~~- GIVEN Apify returns timeout, auth, or non-success run status~~
+~~- WHEN ingestion is triggered~~
+~~- THEN the system MUST fail with a structured error result~~
+~~- AND the system SHALL avoid writing partial or inconsistent certificate documents~~
 
-- GIVEN actor output contains some malformed certificate objects
-- WHEN normalization validates each entry
-- THEN the system SHOULD skip invalid entries with warning metadata
-- AND the system MUST continue processing valid certificate entries
+#### Scenario: Mixed valid and invalid certificate entries (Deprecated)
+
+~~- GIVEN actor output contains some malformed certificate objects~~
+~~- WHEN normalization validates each entry~~
+~~- THEN the system SHOULD skip invalid entries with warning metadata~~
+~~- AND the system MUST continue processing valid certificate entries~~

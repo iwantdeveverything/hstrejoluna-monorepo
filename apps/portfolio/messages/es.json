@@ -9,7 +9,7 @@
     "certificates": {
       "dateUnavailable": "FECHA_NO_DISPONIBLE",
       "streamEmpty": "FLUJO_CERTIFICADOS: VACÍO",
-      "noCertificates": "Aún no hay certificados sincronizados. Inicia la sincronización y las últimas credenciales de LinkedIn aparecerán aquí.",
+      "noCertificates": "No hay certificados disponibles.",
       "issuerUnavailable": "Emisor no disponible",
       "issued": "EMITIDO",
       "viewCredential": "Ver Credencial"

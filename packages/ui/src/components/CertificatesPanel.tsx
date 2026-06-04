@@ -6,7 +6,6 @@ export interface CertificatesPanelItem {
   issuer?: string;
   issueDate?: string;
   credentialUrl?: string;
-  source: string;
 }
 
 export interface CertificatesPanelProps {
@@ -26,8 +25,7 @@ export interface CertificatesPanelLabels {
 const defaultLabels: CertificatesPanelLabels = {
   dateUnavailable: "DATE_UNAVAILABLE",
   streamEmpty: "CERTIFICATE_STREAM: EMPTY",
-  noCertificates:
-    "No synced certificates yet. Trigger sync and the latest LinkedIn credentials will appear here.",
+  noCertificates: "No certificates available.",
   issuerUnavailable: "Issuer unavailable",
   issued: "ISSUED",
   viewCredential: "View Credential",
@@ -69,9 +67,7 @@ export const CertificatesPanel = ({
           key={certificate._id}
           className="border-b md:border-b-0 md:border-r border-surface_container_highest bg-background p-6"
         >
-          <p className="font-mono text-xs uppercase tracking-wider text-primary mb-2">
-            {certificate.source}
-          </p>
+
           <h3 className="text-xl font-bold text-on_surface uppercase tracking-tight mb-2">
             {certificate.name}
           </h3>

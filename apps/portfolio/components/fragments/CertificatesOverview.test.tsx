@@ -16,7 +16,6 @@ describe("CertificatesOverview", () => {
               issuer: "Amazon Web Services",
               issueDate: "2024-03-01",
               credentialUrl: "https://example.com/cert",
-              source: "linkedin",
             },
           ]}
         />
