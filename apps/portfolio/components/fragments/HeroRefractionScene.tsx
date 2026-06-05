@@ -52,13 +52,6 @@ export function disposeScene(
 
   // Dispose renderer
   gl.dispose();
-
-  // Force context loss to release GPU memory
-  const context = gl.getContext();
-  const ext = context.getExtension('WEBGL_lose_context');
-  if (ext) {
-    ext.loseContext();
-  }
 }
 
 // ─── Inner scene content (must be inside Canvas) ────────────────────
