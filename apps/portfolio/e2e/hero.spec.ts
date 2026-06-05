@@ -69,11 +69,6 @@ test.describe("Hero — Liquid Glass (e2e)", () => {
   test("hero section has zero accessibility violations", async ({
     page,
   }, testInfo) => {
-    test.fixme(
-      true,
-      "axe contrast violations are intermittent across runs due to liquid glass backdrop variance; root fix tracked in hero-liquid-glass-redesign Phase 8",
-    );
-
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("/");
 

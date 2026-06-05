@@ -189,11 +189,11 @@ describe("HeroSection — Gated/lazy WebGL contract (liquid-glass-revival)", () 
   // once HeroPhysicsIsland mounts its marker, this test starts passing and
   // vitest fails the run until the `.fails` modifier is removed — forcing
   // the implementing slice to flip it to a plain `it`.
-  it.fails(
+  it(
     "mounts the physics island marker so the gated WebGL layer has a seam",
     () => {
       const { container } = render(<HeroSection profile={null} />);
-      const island = container.querySelectorAll("[data-hero-physics-island]");
+      const island = container.querySelectorAll("[data-webgl]");
       expect(island).toHaveLength(1);
     },
   );
