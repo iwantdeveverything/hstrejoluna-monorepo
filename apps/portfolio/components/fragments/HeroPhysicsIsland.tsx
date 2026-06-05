@@ -40,7 +40,7 @@ export function HeroPhysicsIsland() {
     }
   }, [canRender]);
 
-  if (!canRender) {
+  if (process.env.NEXT_PUBLIC_HERO_LIQUID === 'off') {
     return null;
   }
 
@@ -55,7 +55,7 @@ export function HeroPhysicsIsland() {
         transition={{ duration: 1 }}
       >
         <HeroRefractionFilter ref={displacementRef} />
-        <HeroRefractionScene />
+        {canRender && <HeroRefractionScene />}
       </m.div>
     </LazyMotion>
   );
