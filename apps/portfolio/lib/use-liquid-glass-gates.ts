@@ -19,6 +19,11 @@ export function useHeroCapabilityGate() {
       return false;
     }
 
+    // 2.5 Force Override via URL (for testing)
+    if (window.location.search.includes('forceWebGL=true')) {
+      return true;
+    }
+
     // 3. WebGL2 Context Support
     try {
       const canvas = document.createElement('canvas');
