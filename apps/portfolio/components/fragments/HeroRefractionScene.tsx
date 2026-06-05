@@ -2,7 +2,7 @@
 
 import { useRef, useEffect, useCallback } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Environment } from '@react-three/drei';
+import { MeshTransmissionMaterial, Environment } from '@react-three/drei';
 import type { Mesh, WebGLRenderer, Object3D } from 'three';
 import * as THREE from 'three';
 import { createHeroUniforms, type HeroUniforms } from './hero-uniform-store';
@@ -88,13 +88,21 @@ function RefractionMesh() {
 
   return (
     <mesh ref={meshRef} position={[0, 0, 0]}>
-      <sphereGeometry args={[1.2, 64, 64]} />
-      <meshPhysicalMaterial
+      <sphereGeometry args={[1.5, 64, 64]} />
+      <MeshTransmissionMaterial
         transmission={1}
         transparent={true}
-        opacity={1}
-        roughness={0.1}
-        thickness={0.5}
+        roughness={0.05}
+        thickness={1.5}
+        ior={1.2}
+        chromaticAberration={0.05}
+        anisotropy={0.1}
+        distortion={0.3}
+        distortionScale={0.5}
+        temporalDistortion={0.1}
+        envMapIntensity={0.2}
+        color="#111111"
+        background={new THREE.Color(0x000000)}
         onBeforeCompile={handleBeforeCompile}
       />
     </mesh>
@@ -138,7 +146,7 @@ export default function HeroRefractionScene() {
         pointerEvents: 'none',
       }}
     >
-      <Environment preset="city" />
+      <Environment preset="night" />
       <RefractionMesh />
       <SceneCleanup />
     </Canvas>
