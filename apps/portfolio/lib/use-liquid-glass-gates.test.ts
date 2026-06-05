@@ -16,9 +16,9 @@ describe('useHeroCapabilityGate', () => {
       matchMedia: vi.fn().mockReturnValue({ matches: false }),
     });
     // Stub WebGL2 support
-    vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockImplementation((type) => {
-      return type === 'webgl2' ? ({} as WebGL2RenderingContext) : null;
-    });
+    vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockImplementation(((type: string) => {
+      return type === 'webgl2' ? ({} as any) : null;
+    }) as any);
     
     // Default Flag
     vi.stubEnv('NEXT_PUBLIC_HERO_LIQUID', 'on');
