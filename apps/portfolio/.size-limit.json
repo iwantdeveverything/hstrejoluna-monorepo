@@ -1,0 +1,14 @@
+[
+  {
+    "name": "initial-js-delta",
+    "path": ".next/static/chunks/app/[locale]/page-*.js",
+    "limit": "5 KB",
+    "gzip": true
+  },
+  {
+    "name": "hero-webgl-lazy-chunk",
+    "path": ".next/static/chunks/**/HeroRefractionScene*.js",
+    "limit": "200 KB",
+    "gzip": true
+  }
+]
