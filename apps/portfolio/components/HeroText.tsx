@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import type { Profile } from "@/types/sanity";
 import { HeroContent, mapHeroTranslations } from "./fragments/HeroContent";
+import { HeroPhysicsIsland } from "./fragments/HeroPhysicsIsland";
 
 interface HeroTextProps {
   profile: Profile | null;
@@ -20,44 +21,23 @@ export const HeroText = async ({ profile, locale }: HeroTextProps) => {
   const heroProps = mapHeroTranslations(t, lead);
 
   return (
-    <HeroContent
-      {...heroProps}
-      blobs={
-        <>
-          <div
-            className="hero-blob hero-blob--primary absolute w-[60vw] h-[60vw] max-w-[800px] max-h-[800px] rounded-full opacity-60"
-            style={{
-              background:
-                "radial-gradient(circle, rgba(255,86,55,0.3) 0%, rgba(255,86,55,0.05) 50%, transparent 70%)",
-              left: "calc(0.5 * 100% - 30vw)",
-              top: "calc(0.5 * 100% - 30vw)",
-              filter: "blur(40px)",
-            }}
-          />
-
-          <div
-            className="hero-blob hero-blob--secondary absolute w-[40vw] h-[40vw] max-w-[500px] max-h-[500px] rounded-full opacity-40"
-            style={{
-              background:
-                "radial-gradient(circle, rgba(209,77,255,0.2) 0%, rgba(209,77,255,0.03) 60%, transparent 80%)",
-              right: "calc(0.5 * 100% - 20vw)",
-              bottom: "calc(0.5 * 100% - 20vw)",
-              filter: "blur(50px)",
-            }}
-          />
-
-          <div
-            className="hero-blob hero-blob--accent absolute w-[30vw] h-[30vw] max-w-[350px] max-h-[350px] rounded-full opacity-30"
-            style={{
-              background:
-                "radial-gradient(circle, rgba(34,197,94,0.15) 0%, rgba(34,197,94,0.02) 60%, transparent 80%)",
-              left: "calc(0.5 * 100% - 20vw)",
-              bottom: "calc(0.5 * 100% - 25vw)",
-              filter: "blur(35px)",
-            }}
-          />
-        </>
-      }
-    />
+    <div className="relative overflow-hidden w-full">
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+        <div
+          className="hero-blob hero-blob-drift-1 absolute -top-[10%] -left-[5%] w-[45%] h-[55%] rounded-[40%_60%_60%_40%/45%_45%_55%_55%] bg-gradient-to-br from-ember/15 via-ember/5 to-transparent blur-3xl"
+          aria-hidden="true"
+        />
+        <div
+          className="hero-blob hero-blob-drift-2 absolute top-[5%] -right-[10%] w-[40%] h-[50%] rounded-[60%_40%_40%_60%/55%_55%_45%_45%] bg-gradient-to-tl from-primary/10 via-primary/5 to-transparent blur-3xl"
+          aria-hidden="true"
+        />
+        <div
+          className="hero-blob hero-blob-drift-3 absolute -bottom-[15%] left-[20%] w-[35%] h-[45%] rounded-[50%_50%_45%_55%/60%_40%_60%_40%] bg-gradient-to-tr from-accent/8 via-accent/3 to-transparent blur-3xl"
+          aria-hidden="true"
+        />
+      </div>
+      <HeroPhysicsIsland />
+      <HeroContent {...heroProps} />
+    </div>
   );
 };
