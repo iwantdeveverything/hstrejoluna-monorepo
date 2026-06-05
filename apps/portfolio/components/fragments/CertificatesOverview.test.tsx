@@ -36,7 +36,6 @@ describe("CertificatesOverview", () => {
       </NextIntlClientProvider>,
     );
 
-    expect(screen.getByText(/certificate_stream: empty/i)).toBeInTheDocument();
-    expect(screen.getByText(/No synced certificates yet/i)).toBeInTheDocument();
+    expect(screen.getByText(/No certificates available/i)).toBeInTheDocument();
   });
 });
