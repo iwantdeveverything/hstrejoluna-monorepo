@@ -48,7 +48,7 @@ export function HeroPhysicsIsland() {
     <LazyMotion features={domAnimation} strict>
       <m.div
         ref={islandRef}
-        className="absolute inset-0 z-0 overflow-hidden pointer-events-none"
+        className="absolute inset-0 z-[1] overflow-hidden pointer-events-none"
         data-webgl="true"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
