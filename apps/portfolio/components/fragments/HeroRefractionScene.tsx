@@ -2,8 +2,9 @@
 
 import { useRef, useEffect, useCallback } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { MeshTransmissionMaterial } from '@react-three/drei';
+import { MeshTransmissionMaterial, Environment } from '@react-three/drei';
 import type { Mesh, WebGLRenderer, Object3D } from 'three';
+import * as THREE from 'three';
 import { createHeroUniforms, type HeroUniforms } from './hero-uniform-store';
 
 // ─── Texture map keys to check during dispose ───────────────────────
@@ -67,9 +68,13 @@ function RefractionMesh() {
   const uniformsRef = useRef<HeroUniforms>(createHeroUniforms());
 
   // Mutate uniforms in useFrame — refs only, React Compiler safe
-  useFrame(() => {
-    // Uniforms are mutated externally via the ref;
-    // useFrame just ensures demand-mode invalidation if needed
+  useFrame((state) => {
+    // Make the mesh smoothly follow the pointer
+    if (meshRef.current) {
+      const x = (state.pointer.x * state.viewport.width) / 2;
+      const y = (state.pointer.y * state.viewport.height) / 2;
+      meshRef.current.position.lerp(new THREE.Vector3(x, y, 0), 0.05);
+    }
   });
 
   const handleBeforeCompile = useCallback(
@@ -83,7 +88,7 @@ function RefractionMesh() {
 
   return (
     <mesh ref={meshRef} position={[0, 0, 0]}>
-      <sphereGeometry args={[1, 64, 64]} />
+      <sphereGeometry args={[2.5, 64, 64]} />
       <MeshTransmissionMaterial
         transmission={1}
         roughness={0.1}
@@ -136,6 +141,7 @@ export default function HeroRefractionScene() {
         pointerEvents: 'none',
       }}
     >
+      <Environment preset="city" />
       <RefractionMesh />
       <SceneCleanup />
     </Canvas>
