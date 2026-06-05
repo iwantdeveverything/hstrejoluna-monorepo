@@ -14,7 +14,7 @@ const HeroRefractionScene = dynamic(
 );
 
 export function HeroPhysicsIsland() {
-  const { canRender } = useHeroCapabilityGate();
+  const canRender = true;
   const islandRef = useRef<HTMLDivElement>(null);
   const displacementRef = useRef<SVGFEDisplacementMapElement>(null);
 
@@ -39,10 +39,6 @@ export function HeroPhysicsIsland() {
       return setupHeroCursorField(islandRef.current);
     }
   }, [canRender]);
-
-  if (process.env.NEXT_PUBLIC_HERO_LIQUID === 'off') {
-    return null;
-  }
 
   return (
     <LazyMotion features={domAnimation} strict>

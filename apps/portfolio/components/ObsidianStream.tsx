@@ -11,7 +11,6 @@ import {
   Experience,
   Certificate,
 } from "@/types/sanity";
-import { HeroSection } from "./fragments/HeroSection";
 import { ExperienceOverview } from "./fragments/ExperienceOverview";
 import { SkillsOverview } from "./fragments/SkillsOverview";
 import { CertificatesOverview } from "./fragments/CertificatesOverview";
@@ -183,7 +182,6 @@ export const ObsidianStream = ({
           />
 
           <div className="relative z-[2] flex flex-col w-full">
-            {!skipHero && <HeroSection profile={profile} />}
             <StreamSection
               id="projects"
               sectionClassName="stream-section bg-surface_container_lowest"
