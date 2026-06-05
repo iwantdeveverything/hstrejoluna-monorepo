@@ -16,56 +16,30 @@ const TEXTURE_KEYS = [
   'envMap',
 ] as const;
 
-/**
- * Disposes all GPU resources from a Three.js scene and renderer.
- * Exported for testability. Called on unmount to prevent memory leaks.
- *
- * Order: geometry → material textures → material → renderer → forceContextLoss
- */
-export function disposeScene(
-  scene: { traverse: (cb: (child: Object3D) => void) => void },
-  gl: WebGLRenderer
-): void {
-  scene.traverse((child) => {
-    const mesh = child as unknown as Mesh;
-    if (!mesh.isMesh) return;
-
-    // Dispose geometry
-    mesh.geometry?.dispose();
-
-    // Dispose material(s)
-    const materials = Array.isArray(mesh.material)
-      ? mesh.material
-      : [mesh.material];
-    for (const mat of materials) {
-      if (!mat) continue;
-      // Dispose texture maps
-      for (const key of TEXTURE_KEYS) {
-        const texture = (mat as unknown as Record<string, unknown>)[key];
-        if (texture && typeof (texture as { dispose?: () => void }).dispose === 'function') {
-          (texture as { dispose: () => void }).dispose();
-        }
-      }
-      mat.dispose();
-    }
-  });
-
-  // Dispose renderer
-  gl.dispose();
-}
+// Scene is managed and cleaned up automatically by React Three Fiber
 
 // ─── Inner scene content (must be inside Canvas) ────────────────────
 
 function RefractionMesh() {
   const meshRef = useRef<Mesh>(null);
   const uniformsRef = useRef<HeroUniforms>(createHeroUniforms());
+  const targetPos = useRef(new THREE.Vector2(0, 0));
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      targetPos.current.x = (e.clientX / window.innerWidth) * 2 - 1;
+      targetPos.current.y = -(e.clientY / window.innerHeight) * 2 + 1;
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
 
   // Mutate uniforms in useFrame — refs only, React Compiler safe
   useFrame((state) => {
     // Make the mesh smoothly follow the pointer
     if (meshRef.current) {
-      const x = (state.pointer.x * state.viewport.width) / 2;
-      const y = (state.pointer.y * state.viewport.height) / 2;
+      const x = (targetPos.current.x * state.viewport.width) / 2;
+      const y = (targetPos.current.y * state.viewport.height) / 2;
       meshRef.current.position.lerp(new THREE.Vector3(x, y, 0), 0.05);
     }
   });
@@ -102,20 +76,6 @@ function RefractionMesh() {
   );
 }
 
-// ─── Cleanup hook ───────────────────────────────────────────────────
-
-function SceneCleanup() {
-  const { gl, scene } = useThree();
-
-  useEffect(() => {
-    return () => {
-      disposeScene(scene, gl);
-    };
-  }, [gl, scene]);
-
-  return null;
-}
-
 // ─── Main scene component (loaded via dynamic import, ssr:false) ────
 
 export default function HeroRefractionScene() {
@@ -141,7 +101,6 @@ export default function HeroRefractionScene() {
     >
       <Environment preset="night" />
       <RefractionMesh />
-      <SceneCleanup />
     </Canvas>
   );
 }
