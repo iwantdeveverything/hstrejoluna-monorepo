@@ -3,21 +3,30 @@ import { expect, test } from "@playwright/test";
 
 test.describe("Hero — Liquid Glass (e2e)", () => {
   // ═══════════════════════════════════════════════════════════════════
-  // Desktop — CSS blob hero renders (no canvas)
+  // Gated/lazy WebGL contract (liquid-glass-revival)
+  //
+  // The WebGL refraction scene is capability-gated and lazy-loaded. These
+  // tests pin the CLOSED-gate behavior deterministically:
+  //   - desktop + prefers-reduced-motion: reduce → gate closed → no canvas
+  //   - mobile viewport → gate closed (mobile/coarse-pointer exclusion)
+  // In both cases the 3-blob CSS fallback and the h1 LCP candidate must
+  // survive. The OPEN-gate (canvas mounts lazily) e2e lands with the scene
+  // implementation in a later slice.
   // ═══════════════════════════════════════════════════════════════════
-  test("desktop 1440x900: hero renders with CSS blobs, no canvas", async ({
+  test("desktop 1440x900 + reduced motion: gate closed — CSS blob fallback, no canvas", async ({
     page,
   }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("/");
 
     const heroSection = page.locator('section[aria-labelledby="hero-title"]');
     await expect(heroSection).toBeVisible();
 
-    // Verify zero canvas — the hero is pure CSS (no WebGL layer)
+    // Gate closed (reduced motion) — the lazy WebGL layer must never mount
     await expect(heroSection.locator("canvas")).toHaveCount(0);
 
-    // CSS blobs are rendered as div.hero-blob (aria-hidden, visual only)
+    // CSS blob fallback stays as the visual layer when the gate is closed
     const blobs = heroSection.locator('[class*="hero-blob"]');
     await expect(blobs).toHaveCount(3);
 
@@ -29,9 +38,9 @@ test.describe("Hero — Liquid Glass (e2e)", () => {
   });
 
   // ═══════════════════════════════════════════════════════════════════
-  // Mobile — CSS blob hero renders (no canvas)
+  // Mobile — gate closed by mobile/coarse-pointer exclusion
   // ═══════════════════════════════════════════════════════════════════
-  test("mobile 375x812: hero renders with CSS blobs, no canvas", async ({
+  test("mobile 375x812: gate closed — CSS blob fallback, no canvas", async ({
     page,
   }) => {
     await page.setViewportSize({ width: 375, height: 812 });
@@ -40,10 +49,10 @@ test.describe("Hero — Liquid Glass (e2e)", () => {
     const heroSection = page.locator('section[aria-labelledby="hero-title"]');
     await expect(heroSection).toBeVisible();
 
-    // Zero canvas — pure CSS hero works on all viewport sizes
+    // Mobile viewports are excluded from the WebGL gate — no canvas, ever
     await expect(heroSection.locator("canvas")).toHaveCount(0);
 
-    // CSS blobs are present and visible
+    // CSS blob fallback is present and visible
     const blobs = heroSection.locator('[class*="hero-blob"]');
     await expect(blobs).toHaveCount(3);
 

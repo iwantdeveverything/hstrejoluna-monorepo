@@ -170,30 +170,50 @@ describe("HeroSection — Sanity profile fallback (non-h1 paths only)", () => {
   });
 });
 
-describe("HeroSection — Post-cleanup: zero WebGL / HeroLiquidField", () => {
-  it("renders zero <canvas> elements (HeroLiquidWebGL removed in PR1)", () => {
+describe("HeroSection — Gated/lazy WebGL contract (liquid-glass-revival)", () => {
+  // Contract: the WebGL scene is capability-gated AND lazy. The SSR shell
+  // never ships a <canvas>; the physics island mounts a marker element and
+  // only attaches WebGL client-side when every gate dimension passes. In
+  // jsdom (SSR-equivalent: no WebGL2, no matchMedia signals) the gate is
+  // closed, so the initial render must stay canvas-free with the CSS blob
+  // fallback intact.
+
+  it("renders zero <canvas> elements in the initial (SSR) render — WebGL is lazy", () => {
     const { container } = render(<HeroSection profile={null} />);
     const canvases = container.querySelectorAll("canvas");
     expect(canvases).toHaveLength(0);
   });
 
-  it("renders no portal mount points or HeroLiquidField fragments", () => {
+  // RED contract for the physics island (implemented in a later slice).
+  // `it.fails` keeps this slice's CI green while pinning the expectation:
+  // once HeroPhysicsIsland mounts its marker, this test starts passing and
+  // vitest fails the run until the `.fails` modifier is removed — forcing
+  // the implementing slice to flip it to a plain `it`.
+  it.fails(
+    "mounts the physics island marker so the gated WebGL layer has a seam",
+    () => {
+      const { container } = render(<HeroSection profile={null} />);
+      const island = container.querySelectorAll("[data-hero-physics-island]");
+      expect(island).toHaveLength(1);
+    },
+  );
+
+  it("keeps the 3-blob CSS fallback so a closed gate still renders a visual layer", () => {
     const { container } = render(<HeroSection profile={null} />);
-    const portalMounts = container.querySelectorAll(
-      "[id*='visual-mount'], [id*='portal'], [id*='liquid']",
-    );
-    expect(portalMounts).toHaveLength(0);
+    const blobs = container.querySelectorAll("[class*='hero-blob']");
+    expect(blobs).toHaveLength(3);
   });
 
-  it("hero visual layer is pure CSS blobs, zero JS runtime", () => {
+  it("keeps the h1 in the SSR shell — the island never owns the LCP candidate", () => {
+    render(<HeroSection profile={null} />);
+    const h1 = screen.getByRole("heading", { level: 1 });
+    expect(h1).toHaveAttribute("id", "hero-title");
+    expect(h1).toHaveTextContent("Héctor Trejo Luna");
+  });
+
+  it("embeds no inline <script> — the island hydrates via the bundle only", () => {
     const { container } = render(<HeroSection profile={null} />);
-    // No script elements embedded in the hero
     const scripts = container.querySelectorAll("script");
     expect(scripts).toHaveLength(0);
-    // No WebGL attributes on any element
-    const webglElements = container.querySelectorAll(
-      "[data-webgl], [data-three], [data-r3f]",
-    );
-    expect(webglElements).toHaveLength(0);
   });
 });

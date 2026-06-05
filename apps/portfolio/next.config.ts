@@ -18,6 +18,9 @@ const cspValue = [
 ].join("; ");
 
 const nextConfig: NextConfig = {
+  experimental: {
+    rootParams: true,
+  },
   transpilePackages: ["@hstrejoluna/ui"],
   images: {
     remotePatterns: [
