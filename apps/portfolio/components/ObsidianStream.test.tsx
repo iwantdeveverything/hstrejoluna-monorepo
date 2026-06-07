@@ -36,13 +36,6 @@ vi.mock("@/hooks/useActiveSection", () => ({
   useActiveSection: () => "hero",
 }));
 
-vi.mock("./fragments/HeroSection", () => ({
-  HeroSection: () => (
-    <section id="hero">
-      <div data-testid="hero-section">Hero</div>
-    </section>
-  ),
-}));
 vi.mock("./fragments/ExperienceOverview", () => ({
   ExperienceOverview: () => <div>Experience</div>,
 }));
@@ -103,11 +96,11 @@ describe("ObsidianStream — Decorative Content Isolation", () => {
   });
 });
 
-describe("ObsidianStream — Post-cleanup: HeroSection always active", () => {
-  it("always renders HeroSection (feature flag + HeroFragment removed in Phase 10)", () => {
+describe("ObsidianStream — Post-cleanup: legacy hero removed", () => {
+  it("renders no legacy hero fragment (legacy hero deleted; HeroText RSC owns the hero)", () => {
     render(<ObsidianStream {...defaultProps} />);
 
-    expect(screen.getByTestId("hero-section")).toBeInTheDocument();
+    expect(screen.queryByTestId("hero-section")).not.toBeInTheDocument();
     expect(screen.queryByTestId("hero-fragment")).not.toBeInTheDocument();
   });
 });
@@ -119,8 +112,8 @@ describe("ObsidianStream — BootSequence Removal", () => {
 
     render(<ObsidianStream {...defaultProps} />);
 
-    // HeroSection should render even without the skip flag
-    expect(screen.getByTestId("hero-section")).toBeInTheDocument();
+    // Content sections should render even without the skip flag
+    expect(screen.getByText("Experience")).toBeInTheDocument();
   });
 
   it("does not lock body overflow during load", () => {
@@ -146,17 +139,13 @@ describe("ObsidianStream — LazyMotion and section wrapper", () => {
     expect(lazyWrappers).toHaveLength(0);
   });
 
-  it("HeroSection provides id='hero' for useActiveSection, ObsidianStream adds no wrapper", () => {
+  it("does not render a section#hero wrapper (hero lives in the HeroText RSC outside this stream)", () => {
     render(<ObsidianStream {...defaultProps} />);
 
-    // HeroSection owns id="hero" (needed by useActiveSection for CommandNav).
-    const heroElement = document.getElementById("hero");
-    expect(heroElement).toBeInTheDocument();
-    expect(heroElement?.tagName).toBe("SECTION");
-
-    // ObsidianStream must NOT add a duplicate section#hero wrapper.
+    // The hero section is owned by the HeroText server component;
+    // ObsidianStream must not add its own section#hero wrapper.
     const heroSections = document.querySelectorAll("section#hero");
-    expect(heroSections).toHaveLength(1);
+    expect(heroSections).toHaveLength(0);
   });
 });
 

@@ -1,7 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import type { Profile } from "@/types/sanity";
 import { HeroContent, mapHeroTranslations } from "./fragments/HeroContent";
-import { HeroPhysicsIsland } from "./fragments/HeroPhysicsIsland";
 
 interface HeroTextProps {
   profile: Profile | null;
@@ -36,7 +35,6 @@ export const HeroText = async ({ profile, locale }: HeroTextProps) => {
           aria-hidden="true"
         />
       </div>
-      <HeroPhysicsIsland />
       <HeroContent {...heroProps} />
     </div>
   );
