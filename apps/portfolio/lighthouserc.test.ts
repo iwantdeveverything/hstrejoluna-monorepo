@@ -8,7 +8,7 @@ import path from "node:path";
  * Revival state (hero-video-liquid-glass, spec: lighthouse-ci-gate):
  * Performance/Accessibility/SEO assertions are temporarily suspended
  * while the video + WebGL hero lands — commented in the config with a
- * TODO referencing the follow-up issue that re-enables calibrated
+ * TODO referencing the follow-up issue (#146) that re-enables calibrated
  * thresholds. Best Practices stays active. The Playwright axe e2e spec
  * remains the active accessibility gate.
  */

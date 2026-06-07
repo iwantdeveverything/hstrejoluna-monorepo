@@ -25,7 +25,7 @@ module.exports = {
         // Performance/Accessibility/SEO assertions are suspended during the
         // hero-video-liquid-glass revival (issue #145). The Playwright axe
         // e2e spec remains the active accessibility gate.
-        // TODO(#TBD-perf-gate-revival): re-enable
+        // TODO(#146): re-enable
         // "categories:performance": ["error", { minScore: 0.65 }],
         // "categories:accessibility": ["error", { minScore: 0.95 }],
         // "categories:seo": ["error", { minScore: 0.95 }],
