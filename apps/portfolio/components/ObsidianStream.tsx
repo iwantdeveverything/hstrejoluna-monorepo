@@ -2,7 +2,9 @@
 
 import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
-import { useReducedMotion } from "@hstrejoluna/ui";
+import {
+  useLiquidGlassGates,
+} from "@hstrejoluna/ui";
 import { useActiveSection } from "@/hooks/useActiveSection";
 import {
   Profile,
@@ -77,6 +79,10 @@ const formatLabelCount = (count: number) => count.toString().padStart(2, "0");
  * Uses a scroll-event-driven CSS custom property.
  * Respects `prefers-reduced-motion` by rendering at full width (no animation).
  */
+interface ScrollProgressStyle extends React.CSSProperties {
+  "--scroll-progress": number;
+}
+
 function ScrollProgressBar({ isReducedMotion }: { isReducedMotion: boolean }) {
   const [progress, setProgress] = useState(0);
 
@@ -110,6 +116,8 @@ function ScrollProgressBar({ isReducedMotion }: { isReducedMotion: boolean }) {
     return () => window.removeEventListener("scroll", onScroll);
   }, [isReducedMotion]);
 
+  const progressStyle: ScrollProgressStyle = { "--scroll-progress": progress };
+
   return (
     <div
       aria-hidden="true"
@@ -117,11 +125,7 @@ function ScrollProgressBar({ isReducedMotion }: { isReducedMotion: boolean }) {
     >
       <div
         className="h-full bg-primary origin-left scroll-progress-fill"
-        style={
-          { "--scroll-progress": progress } as React.CSSProperties & {
-            "--scroll-progress": number;
-          }
-        }
+        style={progressStyle}
       />
     </div>
   );
@@ -140,7 +144,7 @@ export const ObsidianStream = ({
   const tBrand = useTranslations("brand");
   const tNav = useTranslations("nav");
   const tPortfolioGrid = useTranslations("fragments.portfolioGrid");
-  const isReducedMotion = useReducedMotion();
+  const { reduceMotion: isReducedMotion } = useLiquidGlassGates();
 
   const activeId = useActiveSection<StreamSectionId>(
     streamSectionIds,
