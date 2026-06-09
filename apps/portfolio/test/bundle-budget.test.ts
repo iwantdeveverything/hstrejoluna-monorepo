@@ -69,5 +69,9 @@ describe("bundle-budget size gate config", () => {
       expect(stdout).not.toContain("[FAIL]");
       expect(stdout).not.toContain("[STALE GLOB]");
     },
+    // Spawns `pnpm run size` (size-limit over the production build); the
+    // child-process duration is load-dependent under the parallel suite,
+    // so the default 5s timeout flakes. Generous explicit budget instead.
+    60_000,
   );
 });
