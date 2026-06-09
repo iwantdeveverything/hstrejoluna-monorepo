@@ -17,6 +17,11 @@ export {
   LIQUID_GLASS_SSR_DEFAULTS,
   type LiquidGlassGates,
 } from "./use-liquid-glass-gates";
+export {
+  useHeroTier,
+  type HeroTier,
+  type HeroTierResult,
+} from "./use-hero-tier";
 export type {
   LiquidGlassVariant,
   LiquidGlassIntensity,
