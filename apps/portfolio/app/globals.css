@@ -107,13 +107,6 @@ body::before {
     --my: 0.5;
   }
 
-  /* ── Hero liquid glass: blob layers ────────────────────────────── */
-  .hero-blob {
-    pointer-events: none;
-    will-change: transform, opacity;
-    transform-origin: center center;
-  }
-
   /* ── Hero liquid glass: tinted backdrop for text contrast ──────── */
   .hero-card-tint {
     position: absolute;
@@ -125,33 +118,9 @@ body::before {
   }
 }
 
-/* Blob-specific drift animations — only active when user has NO reduced-motion
-   preference.  Using (prefers-reduced-motion: no-preference) avoids cascade/
-   specificity fights with the @media (prefers-reduced-motion: reduce) block. */
-@media (prefers-reduced-motion: no-preference) {
-  .hero-blob.hero-blob-drift-1 {
-    animation: hero-blob-drift-1 8s ease-in-out infinite alternate;
-  }
-  .hero-blob.hero-blob-drift-2 {
-    animation: hero-blob-drift-2 10s ease-in-out infinite alternate;
-  }
-  .hero-blob.hero-blob-drift-3 {
-    animation: hero-blob-drift-3 12s ease-in-out infinite alternate;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
-  }
-
-  /* Freeze hero blob animations — spec § "reduced-motion freezes the CSS layer" */
-  .hero-blob,
-  .hero-blob.hero-blob-drift-1,
-  .hero-blob.hero-blob-drift-2,
-  .hero-blob.hero-blob-drift-3 {
-    animation: none !important;
-    animation-play-state: paused !important;
   }
 
   /* Skip hero entrance fade — instant visible, no motion */
@@ -212,55 +181,6 @@ body::before {
   }
   100% {
     clip: rect(30px, 9999px, 10px, 0);
-  }
-}
-
-/* ── Hero liquid glass: blob drift keyframes ───────────────────────
- * Three elliptical translations at different speeds / directions
- * to create an organic lava-lamp floating effect.
- */
-@keyframes hero-blob-drift-1 {
-  0% {
-    transform: translate(0, 0) rotate(0deg) scale(1);
-  }
-  25% {
-    transform: translate(4%, -3%) rotate(2deg) scale(1.05);
-  }
-  50% {
-    transform: translate(-2%, 5%) rotate(-1deg) scale(0.96);
-  }
-  75% {
-    transform: translate(-5%, -2%) rotate(3deg) scale(1.03);
-  }
-  100% {
-    transform: translate(0, 0) rotate(0deg) scale(1);
-  }
-}
-
-@keyframes hero-blob-drift-2 {
-  0% {
-    transform: translate(0, 0) rotate(0deg) scale(1);
-  }
-  33% {
-    transform: translate(-6%, 4%) rotate(-3deg) scale(0.94);
-  }
-  66% {
-    transform: translate(3%, -5%) rotate(2deg) scale(1.06);
-  }
-  100% {
-    transform: translate(0, 0) rotate(0deg) scale(1);
-  }
-}
-
-@keyframes hero-blob-drift-3 {
-  0% {
-    transform: translate(0, 0) rotate(0deg) scale(1);
-  }
-  50% {
-    transform: translate(-4%, -6%) rotate(-4deg) scale(1.08);
-  }
-  100% {
-    transform: translate(0, 0) rotate(0deg) scale(1);
   }
 }
 
