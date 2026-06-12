@@ -7,22 +7,45 @@
  *  - `static`     → null. The poster `<img>` is already SSR'd by HeroText, so
  *                   the island renders nothing (no video network request).
  *  - `css-only`   → HeroVideoLayer wrapped in HeroGlassCss SVG refraction.
- *  - `css+webgl`  → HeroVideoLayer + WebGL glass refraction (slice 5 seam).
+ *  - `css+webgl`  → HeroVideoLayer + HeroGlassWebGL (R3F glass refracting the
+ *                   live VideoTexture), mounted only after the video is ready.
  *
  * No component hardcodes `canRender`; output is a pure function of the gate.
- * The css-only glass landed in slice 4; the webgl glass lands in slice 5 —
- * this island locks the tier→layer mapping and the `null` static branch.
+ *
+ * Lazy chunk boundary (design §7): HeroGlassWebGL is the SOLE
+ * `next/dynamic(..., { ssr: false })` import — three/R3F/drei live ONLY in that
+ * chunk, so `static` and `css-only` never request it. The chunk is loaded
+ * lazily here AND mounting waits for `onVideoReady` (the VideoTexture needs a
+ * live `<video>` element), per the §8 load sequence (t4: canplay → bind).
  */
+import dynamic from "next/dynamic";
+import { useState } from "react";
 import { useHeroTier } from "@hstrejoluna/ui";
 import { HeroGlassCss } from "./HeroGlassCss";
 import { HeroVideoLayer } from "./HeroVideoLayer";
 
+const HeroGlassWebGL = dynamic(
+  () => import("./HeroGlassWebGL").then((mod) => mod.HeroGlassWebGL),
+  { ssr: false },
+);
+
 export const HeroBackdrop = () => {
-  const { tier, gates } = useHeroTier();
+  const { tier, gates, reportWebglFailure } = useHeroTier();
+  const [videoEl, setVideoEl] = useState<HTMLVideoElement | null>(null);
 
   if (tier === "static") return null;
 
-  const videoLayer = <HeroVideoLayer isMobile={gates.isMobile} />;
+  const isWebgl = tier === "css+webgl";
+
+  // In the webgl tier, capture the live <video> on canplay so HeroGlassWebGL
+  // can build the THREE.VideoTexture from it (design §8 t4). The css-only tier
+  // refracts via the SVG filter and needs no element handle.
+  const videoLayer = (
+    <HeroVideoLayer
+      isMobile={gates.isMobile}
+      onVideoReady={isWebgl ? setVideoEl : undefined}
+    />
+  );
 
   return (
     <div
@@ -37,7 +60,12 @@ export const HeroBackdrop = () => {
       ) : (
         videoLayer
       )}
-      {/* slice 5 seam: <HeroGlassWebGL /> (tier === "css+webgl", next/dynamic ssr:false) */}
+      {isWebgl && videoEl ? (
+        <HeroGlassWebGL
+          videoEl={videoEl}
+          reportWebglFailure={reportWebglFailure}
+        />
+      ) : null}
     </div>
   );
 };
