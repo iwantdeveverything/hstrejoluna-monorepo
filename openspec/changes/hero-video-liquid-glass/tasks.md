@@ -47,12 +47,12 @@ PR boundary: branch `hero-vlg/01-demolition` → base `feature/hero-video-liquid
 
 ## Phase 2: Gate Consolidation (PR 2)
 
-- [ ] 2.1 RED: `packages/ui/src/liquid-glass/use-liquid-glass-gates.test.tsx` extension — `saveData` gate scenario.
-- [ ] 2.2 GREEN: extend `packages/ui/src/liquid-glass/use-liquid-glass-gates.ts` with `navigator.connection.saveData`.
-- [ ] 2.3 RED: `packages/ui/src/liquid-glass/use-hero-tier.test.tsx` — full tier matrix: kill switch, each preference gate, SSR snapshot=`static`, mobile <1024px cap, WebGL2 probe fail, `reportWebglFailure` demotion, runtime matchMedia reactivity (spec: Three-Tier Capability Gate, Rollback flag).
-- [ ] 2.4 GREEN: implement `packages/ui/src/liquid-glass/use-hero-tier.ts` per design §3 decision order.
-- [ ] 2.5 Delete `packages/ui/src/hooks/useReducedMotion.ts`; migrate consumers to gates hook. Confirm no `?forceWebGL` reads remain: `rg "forceWebGL"` → no hits.
-- [ ] 2.6 Verify: `pnpm --filter @hstrejoluna/ui test && pnpm --filter portfolio lint`.
+- [x] 2.1 RED: `packages/ui/src/liquid-glass/use-liquid-glass-gates.test.tsx` extension — `saveData` gate scenario.
+- [x] 2.2 GREEN: extend `packages/ui/src/liquid-glass/use-liquid-glass-gates.ts` with `navigator.connection.saveData`.
+- [x] 2.3 RED: `packages/ui/src/liquid-glass/use-hero-tier.test.tsx` — full tier matrix: kill switch, each preference gate, SSR snapshot=`static`, mobile <1024px cap, WebGL2 probe fail, `reportWebglFailure` demotion, runtime matchMedia reactivity (spec: Three-Tier Capability Gate, Rollback flag).
+- [x] 2.4 GREEN: implement `packages/ui/src/liquid-glass/use-hero-tier.ts` per design §3 decision order.
+- [x] 2.5 Delete `packages/ui/src/hooks/useReducedMotion.ts`; migrate consumers to gates hook. Confirm no `?forceWebGL` reads remain: `rg "forceWebGL"` → no hits.
+- [x] 2.6 Verify: `pnpm --filter @hstrejoluna/ui test && pnpm --filter portfolio lint`.
 
 PR boundary: `hero-vlg/02-gates` → base `hero-vlg/01-demolition`. Pure logic, no visual change; rollback = revert.
 

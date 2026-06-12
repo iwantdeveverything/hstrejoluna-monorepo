@@ -1,8 +1,10 @@
 "use client";
 
 import { useMemo } from "react";
-import { LiquidNav } from "@hstrejoluna/ui";
-import { useReducedMotion } from "@hstrejoluna/ui";
+import {
+  LiquidNav,
+  useLiquidGlassGates,
+} from "@hstrejoluna/ui";
 import { normalizeSocialLinks, scrollToSection } from "@/lib/navigation";
 import { navSectionIds, navSections } from "@/lib/sections";
 import type { NavSectionId, StreamSectionId } from "@/lib/sections";
@@ -26,10 +28,19 @@ interface CommandNavProps {
 const formatCount = (value: number): string =>
   value.toString().padStart(2, "0");
 
+interface CommandNavLabels {
+  initializing: string;
+  systemOnline: string;
+  projectsPrefix: string;
+  experiencePrefix: string;
+  skills: string;
+  certificatesPrefix: string;
+}
+
 const resolveLabel = (
   activeId: string,
   counts: CommandNavCounts,
-  labels: any,
+  labels: CommandNavLabels,
 ): string => {
   if (!activeId) return labels.initializing;
   if (activeId === "hero") return labels.systemOnline;
@@ -51,7 +62,7 @@ export const CommandNav = ({
 }: CommandNavProps) => {
   const tBrand = useTranslations("brand");
   const tNav = useTranslations("nav");
-  const isReducedMotion = useReducedMotion();
+  const { reduceMotion: isReducedMotion } = useLiquidGlassGates();
   const socialLinks = useMemo(() => normalizeSocialLinks(socials), [socials]);
 
   const handleSectionNavigation = (sectionId: string) => {

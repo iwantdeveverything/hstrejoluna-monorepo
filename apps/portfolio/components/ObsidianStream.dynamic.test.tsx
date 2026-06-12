@@ -40,7 +40,7 @@ vi.mock("@hstrejoluna/ui", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@hstrejoluna/ui")>();
   return {
     ...actual,
-    useReducedMotion: () => false,
+    useLiquidGlassGates: () => actual.LIQUID_GLASS_SSR_DEFAULTS,
     BootSequence: () => null,
   };
 });

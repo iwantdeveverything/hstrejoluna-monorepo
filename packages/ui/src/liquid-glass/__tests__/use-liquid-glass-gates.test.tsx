@@ -89,6 +89,41 @@ const installMatchMedia = (gates: GateMatchers) => {
   };
 };
 
+type ConnectionListener = () => void;
+
+interface FakeConnection {
+  saveData: boolean;
+  addEventListener: (type: string, listener: ConnectionListener) => void;
+  removeEventListener: (type: string, listener: ConnectionListener) => void;
+}
+
+/**
+ * Installs a fake Network Information API (`navigator.connection`) and
+ * returns a controller to flip `saveData` at runtime, notifying listeners.
+ */
+const installConnection = (saveData: boolean) => {
+  const listeners = new Set<ConnectionListener>();
+  const connection: FakeConnection = {
+    saveData,
+    addEventListener: (_type, listener) => listeners.add(listener),
+    removeEventListener: (_type, listener) => listeners.delete(listener),
+  };
+  Object.defineProperty(navigator, "connection", {
+    configurable: true,
+    value: connection,
+  });
+  return {
+    update: (value: boolean) => {
+      connection.saveData = value;
+      for (const listener of listeners) listener();
+    },
+  };
+};
+
+const uninstallConnection = () => {
+  delete (navigator as { connection?: unknown }).connection;
+};
+
 let supportsSpy: MockInstance | undefined;
 
 const installSupports = (result: boolean) => {
@@ -114,6 +149,7 @@ afterEach(() => {
   cleanup();
   supportsSpy?.mockRestore();
   supportsSpy = undefined;
+  uninstallConnection();
 });
 
 describe("useLiquidGlassGates", () => {
@@ -126,6 +162,7 @@ describe("useLiquidGlassGates", () => {
       reduceTransparency: false,
       reduceMotion: false,
       reduceData: false,
+      saveData: false,
       isMobile: false,
     });
   });
@@ -151,8 +188,67 @@ describe("useLiquidGlassGates", () => {
       reduceTransparency: false,
       reduceMotion: true,
       reduceData: false,
+      saveData: false,
       isMobile: true, // (min-width: 480px) is false → mobile
     });
+  });
+
+  it("reads navigator.connection.saveData as the saveData gate", async () => {
+    installMatchMedia({ ...defaultGates });
+    installSupports(true);
+    installConnection(true);
+
+    const { useLiquidGlassGates } = await import("../use-liquid-glass-gates");
+
+    let captured: ReturnType<typeof useLiquidGlassGates> | null = null;
+    const Probe = () => {
+      captured = useLiquidGlassGates();
+      return null;
+    };
+    render(<Probe />);
+
+    expect(captured?.saveData).toBe(true);
+    expect(captured?.reduceData).toBe(false); // independent gates
+  });
+
+  it("defaults saveData to false when navigator.connection is unavailable", async () => {
+    installMatchMedia({ ...defaultGates });
+    installSupports(true);
+    uninstallConnection();
+
+    const { useLiquidGlassGates } = await import("../use-liquid-glass-gates");
+
+    let captured: ReturnType<typeof useLiquidGlassGates> | null = null;
+    const Probe = () => {
+      captured = useLiquidGlassGates();
+      return null;
+    };
+    render(<Probe />);
+
+    expect(captured?.saveData).toBe(false);
+  });
+
+  it("reacts to runtime connection change events", async () => {
+    installMatchMedia({ ...defaultGates });
+    installSupports(true);
+    const connection = installConnection(false);
+
+    const { useLiquidGlassGates } = await import("../use-liquid-glass-gates");
+
+    let captured: ReturnType<typeof useLiquidGlassGates> | null = null;
+    const Probe = () => {
+      captured = useLiquidGlassGates();
+      return null;
+    };
+    render(<Probe />);
+
+    expect(captured?.saveData).toBe(false);
+
+    act(() => {
+      connection.update(true);
+    });
+
+    expect(captured?.saveData).toBe(true);
   });
 
 

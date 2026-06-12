@@ -13,7 +13,7 @@
  *    `useLiquidGlassGates` mirrors gate state for two narrow uses only:
  *      1. Choosing whether to apply the SVG refraction filter URL inline
  *         (so consumers do not need to know the variant→id mapping).
- *      2. Animation gating in the bridge (`useReducedMotion` short-circuit).
+ *      2. Animation gating in the bridge (`reduceMotion` gate short-circuit).
  *  - className is composed via the local `cn` helper (utils/cn.ts) so the
  *    caller string is appended without duplicating internal tokens (S1.4).
  */
@@ -27,10 +27,7 @@ import {
 } from "react";
 
 import { cn } from "../utils/cn";
-import type {
-  LiquidGlassIntensity,
-  LiquidGlassProps,
-} from "./types";
+import type { LiquidGlassProps } from "./types";
 import { useLiquidGlassGates } from "./use-liquid-glass-gates";
 
 /**
@@ -45,7 +42,7 @@ interface LiquidGlassImplProps extends LiquidGlassProps<ElementType> {
 
 const LiquidGlassImpl = ({
   variant,
-  intensity = "med" as LiquidGlassIntensity,
+  intensity = "med",
   className,
   children,
   as,
@@ -101,8 +98,9 @@ LiquidGlassFR.displayName = "LiquidGlass";
  * @param props.intensity - Depth of the refraction/blur ('low', 'med', 'high'). Default is 'med'.
  * @param props.as - The underlying HTML element to render (polymorphic). Default is 'div'.
  */
-export const LiquidGlass = LiquidGlassFR as unknown as <
-  T extends ElementType = "div",
->(
-  props: LiquidGlassProps<T>,
-) => ReactElement;
+interface LiquidGlassComponent {
+  <T extends ElementType = "div">(props: LiquidGlassProps<T>): ReactElement;
+  displayName?: string;
+}
+
+export const LiquidGlass = LiquidGlassFR as LiquidGlassComponent;
