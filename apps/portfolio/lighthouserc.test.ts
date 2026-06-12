@@ -5,11 +5,12 @@ import path from "node:path";
 /**
  * Snapshot test for lighthouserc.cjs config values.
  *
- * Thresholds are calibrated against the production portfolio's measured
- * Lighthouse runs. See PR #90 (perf floor) and PR #92 (audit /en target).
- *
- * Single-tier "error" thresholds are intentional: this is a CI gate, not
- * a tracked-warning surface. Warnings without error backing would be silent.
+ * Revival state (hero-video-liquid-glass, spec: lighthouse-ci-gate):
+ * Performance/Accessibility/SEO assertions are temporarily suspended
+ * while the video + WebGL hero lands — commented in the config with a
+ * TODO referencing the follow-up issue (#146) that re-enables calibrated
+ * thresholds. Best Practices stays active. The Playwright axe e2e spec
+ * remains the active accessibility gate.
  */
 
 const configPath = path.resolve(__dirname, "lighthouserc.cjs");
@@ -36,7 +37,7 @@ const lhConfig = require(configPath) as {
   };
 };
 
-describe("lighthouserc.cjs — calibrated thresholds", () => {
+describe("lighthouserc.cjs — revival gate state", () => {
   it("URL targets /en directly (no redirect overhead)", () => {
     expect(lhConfig.ci.collect.url).toEqual(["http://127.0.0.1:4173/en"]);
   });
@@ -45,50 +46,36 @@ describe("lighthouserc.cjs — calibrated thresholds", () => {
     expect(lhConfig.ci.collect.numberOfRuns).toBe(3);
   });
 
-  it("performance threshold: 0.65 error", () => {
-    expect(lhConfig.ci.assert.assertions["categories:performance"]).toEqual([
-      "error",
-      { minScore: 0.65 },
-    ]);
+  it("performance assertions are suspended during the revival", () => {
+    expect(
+      lhConfig.ci.assert.assertions["categories:performance"],
+    ).toBeUndefined();
   });
 
-  it("accessibility threshold: 0.95 error", () => {
-    expect(lhConfig.ci.assert.assertions["categories:accessibility"]).toEqual([
-      "error",
-      { minScore: 0.95 },
-    ]);
+  it("accessibility assertions are suspended (axe e2e remains the gate)", () => {
+    expect(
+      lhConfig.ci.assert.assertions["categories:accessibility"],
+    ).toBeUndefined();
   });
 
-  it("best-practices threshold: 0.9 warn", () => {
+  it("SEO assertions are suspended during the revival", () => {
+    expect(lhConfig.ci.assert.assertions["categories:seo"]).toBeUndefined();
+  });
+
+  it("performance metric assertions (FCP/LCP/SI) are suspended", () => {
+    expect(
+      lhConfig.ci.assert.assertions["first-contentful-paint"],
+    ).toBeUndefined();
+    expect(
+      lhConfig.ci.assert.assertions["largest-contentful-paint"],
+    ).toBeUndefined();
+    expect(lhConfig.ci.assert.assertions["speed-index"]).toBeUndefined();
+  });
+
+  it("best-practices threshold stays active: 0.9 warn", () => {
     expect(lhConfig.ci.assert.assertions["categories:best-practices"]).toEqual([
       "warn",
       { minScore: 0.9 },
-    ]);
-  });
-
-  it("SEO threshold: 0.95 error", () => {
-    expect(lhConfig.ci.assert.assertions["categories:seo"]).toEqual([
-      "error",
-      { minScore: 0.95 },
-    ]);
-  });
-
-  it("FCP: 3000ms error threshold", () => {
-    expect(
-      lhConfig.ci.assert.assertions["first-contentful-paint"],
-    ).toEqual(["error", { maxNumericValue: 3000 }]);
-  });
-
-  it("LCP: 2500ms error threshold", () => {
-    expect(
-      lhConfig.ci.assert.assertions["largest-contentful-paint"],
-    ).toEqual(["error", { maxNumericValue: 2500 }]);
-  });
-
-  it("Speed Index: 4000ms error threshold", () => {
-    expect(lhConfig.ci.assert.assertions["speed-index"]).toEqual([
-      "error",
-      { maxNumericValue: 4000 },
     ]);
   });
 

@@ -203,7 +203,7 @@ test.describe("Hero — Liquid Glass (e2e)", () => {
       lcpInfo.reason === "no-element-field" ||
       lcpInfo.reason === "no-lcp-entries"
     ) {
-      // Fallback: verify h1 meets all LCP candidate conditions from lib/lcp.ts
+      // Fallback: verify h1 meets all LCP candidate conditions
       const candidate = await h1.evaluate((el) => {
         // Inline the assertH1IsLcpCandidate logic for E2E self-sufficiency
         const failures: string[] = [];

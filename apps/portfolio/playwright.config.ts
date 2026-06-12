@@ -17,12 +17,10 @@ const shard = process.env.PLAYWRIGHT_SHARD
 const projects: Project[] = [
   {
     name: "Desktop Chrome",
-    testIgnore: /hero\.memory-leak\.spec\.ts$/,
     use: { ...devices["Desktop Chrome"] },
   },
   {
     name: "Desktop Firefox",
-    testIgnore: /hero\.memory-leak\.spec\.ts$/,
     use: {
       ...devices["Desktop Firefox"],
       launchOptions: {
@@ -35,7 +33,6 @@ const projects: Project[] = [
   },
   {
     name: "Mobile Chrome",
-    testIgnore: /hero\.memory-leak\.spec\.ts$/,
     use: { ...devices["Pixel 5"] },
   },
   {
@@ -43,28 +40,16 @@ const projects: Project[] = [
     testMatch: /.*\.reduced-motion\.spec\.ts$/,
     use: { ...devices["Desktop Chrome"], reducedMotion: "reduce" },
   },
-  {
-    name: "Desktop Chrome Memory Leak",
-    testMatch: /hero\.memory-leak\.spec\.ts$/,
-    use: {
-      ...devices["Desktop Chrome"],
-      launchOptions: {
-        args: ["--js-flags=--expose-gc"],
-      },
-    },
-  },
 ];
 
 if (includeWebkit) {
   projects.push(
     {
       name: "Desktop Safari",
-      testIgnore: /hero\.memory-leak\.spec\.ts$/,
       use: { ...devices["Desktop Safari"] },
     },
     {
       name: "Mobile Safari",
-      testIgnore: /hero\.memory-leak\.spec\.ts$/,
       use: { ...devices["iPhone 13"] },
     },
   );

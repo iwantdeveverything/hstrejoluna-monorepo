@@ -49,9 +49,6 @@ vi.mock("@/hooks/useActiveSection", () => ({
   useActiveSection: () => "hero",
 }));
 
-vi.mock("./fragments/HeroSection", () => ({
-  HeroSection: () => <section id="hero">Hero</section>,
-}));
 vi.mock("./fragments/ExperienceOverview", () => ({
   ExperienceOverview: () => null,
 }));

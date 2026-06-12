@@ -13,11 +13,10 @@ interface AuditRule {
   run: () => Promise<boolean>;
 }
 
-const MIGRATED_FILES = [
+const migratedFiles = [
   "apps/portfolio/components/fragments/Footer.tsx",
   "packages/ui/src/components/GlassNav.tsx",
   "packages/ui/src/components/CommandSurface.tsx",
-  "apps/portfolio/components/fragments/HeroSection.tsx",
   "apps/portfolio/components/fragments/CookieBanner.tsx",
   "apps/portfolio/components/fragments/ProjectsOverview.tsx",
   "packages/ui/src/components/HudChip.tsx",
@@ -26,7 +25,7 @@ const MIGRATED_FILES = [
   "apps/portfolio/app/[locale]/projects/[slug]/page.tsx",
 ];
 
-const RULES: AuditRule[] = [
+const rules: AuditRule[] = [
   {
     id: "no-userAgent-in-primitive",
     description:
@@ -67,7 +66,7 @@ const RULES: AuditRule[] = [
     description: "S7.1: no backdrop-blur in enumerated migrated files.",
     run: async () => {
       let allPass = true;
-      for (const file of MIGRATED_FILES) {
+      for (const file of migratedFiles) {
         try {
           execSync(`rg "backdrop-blur" ${file}`);
           // If we find it, it's a fail
@@ -86,7 +85,7 @@ const RULES: AuditRule[] = [
       "S7.2: every migrated file imports LiquidGlass or uses it transitively (via HeroLiquid*/LiquidGlass*).",
     run: async () => {
       let allPass = true;
-      for (const file of MIGRATED_FILES) {
+      for (const file of migratedFiles) {
         try {
           execSync(`rg -q "LiquidGlass|HeroLiquid" ${file}`);
         } catch {
@@ -137,7 +136,7 @@ const RULES: AuditRule[] = [
 
 async function main(): Promise<void> {
   const summary: { id: string; status: "pass" | "fail" }[] = [];
-  for (const rule of RULES) {
+  for (const rule of rules) {
     const passed = await rule.run();
     summary.push({
       id: rule.id,
