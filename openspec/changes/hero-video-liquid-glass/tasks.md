@@ -73,11 +73,11 @@ PR boundary: `hero-vlg/03-video` → base `hero-vlg/02-gates`. Ships static+vide
 
 ## Phase 4: CSS Tier (PR 4)
 
-- [ ] 4.1 RED: tokens test — `--color-accent` / `--color-glitch-cyan` resolve in built CSS (spec: Z-Stack and Design Tokens).
-- [ ] 4.2 GREEN: define `--color-accent: #e2725b` and `--color-glitch-cyan: #6ee7ff` in `apps/portfolio/app/globals.css` `@theme`; add CSS comment referencing design §1 grain-retention rationale (ADR-4).
-- [ ] 4.3 RED: `components/hero/HeroGlassCss.test.tsx` — `filter: url(#hero-refraction)` applied to video wrapper; displacement bridge responds to pointer/scroll/burst signals (spec: CSS tier filters the video).
-- [ ] 4.4 GREEN: implement `apps/portfolio/components/hero/HeroGlassCss.tsx` + `HeroRefractionFilter` SVG defs (`feDisplacementMap`); wire into `HeroBackdrop` css-only branch; `isolation: isolate` z-stack per design §1.
-- [ ] 4.5 Verify: `pnpm --filter portfolio test`; manual smoke `pnpm --filter portfolio dev`.
+- [x] 4.1 RED: tokens test — `--color-accent` / `--color-glitch-cyan` resolve in built CSS (spec: Z-Stack and Design Tokens).
+- [x] 4.2 GREEN: define `--color-accent: #e2725b` and `--color-glitch-cyan: #6ee7ff` in `apps/portfolio/app/globals.css` `@theme`; add CSS comment referencing design §1 grain-retention rationale (ADR-4).
+- [x] 4.3 RED: `components/hero/HeroGlassCss.test.tsx` — `filter: url(#hero-refraction)` applied to video wrapper; displacement bridge responds to pointer/scroll/burst signals (spec: CSS tier filters the video).
+- [x] 4.4 GREEN: implement `apps/portfolio/components/hero/HeroGlassCss.tsx` + `HeroRefractionFilter` SVG defs (`feDisplacementMap`); wire into `HeroBackdrop` css-only branch; `isolation: isolate` z-stack per design §1.
+- [x] 4.5 Verify: `pnpm --filter portfolio test`; manual smoke `pnpm --filter portfolio dev`.
 
 PR boundary: `hero-vlg/04-css-tier` → base `hero-vlg/03-video`.
 

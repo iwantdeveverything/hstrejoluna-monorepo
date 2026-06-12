@@ -169,3 +169,51 @@ Placeholder renditions are intentionally tiny (high CRF). Master: 8s/192f @24fps
 Phase 4 — CSS Tier (`hero-vlg/04-css-tier`, base `hero-vlg/03-video`): tasks 4.1–4.5 (`--color-accent`/`--color-glitch-cyan` tokens, `HeroGlassCss` + `HeroRefractionFilter` SVG `feDisplacementMap`, wire into HeroBackdrop css-only branch — fill the slice-4 seam left in `HeroBackdrop.tsx`).
 
 Pending orchestrator actions: open PR 3 `hero-vlg/03-video` → `hero-vlg/02-gates` (~440 changed lines incl. 6 binary placeholder assets + 335-line deletion of useLiquidHeroCapability; meaningful new impl ~370 lines — within budget, note binary + deletion ratio in PR body).
+
+## Slice 4 — CSS Tier (`hero-vlg/04-css-tier`) — COMPLETE
+
+### Tasks
+
+- [x] 4.1 RED: `app/hero-tokens.test.ts` — source-read assertion (mirrors `packages/ui/.../tokens.test.ts`) that `--color-accent: #e2725b` and `--color-glitch-cyan: #6ee7ff` are declared INSIDE the `@theme` block of `app/globals.css` and resolve to a non-empty value. Brace-matched the `@theme` block to assert tokens live in-theme, not just anywhere in the file. Ran BEFORE impl: 3 failed (tokens undefined).
+- [x] 4.2 GREEN: added `--color-accent: #e2725b` (molten copper) + `--color-glitch-cyan: #6ee7ff` (cold focus counterpoint) to the `globals.css` `@theme` alongside `--color-void`/`--color-ember`, with a CSS comment citing design §1 / ADR-4 grain-retention rationale (z-50 body::before grain dithers near-black video banding; warm/cold tokens chosen to read THROUGH the 5% soft-light dither). 3/3 green; full suite 349.
+- [x] 4.3 RED: `components/hero/HeroGlassCss.test.tsx` (10 tests) — `computeDisplacementScale` rests at base / responds to each of pointerVelocity, scrollProgress, burst / clamps to max; `HeroGlassCss` applies `filter: url(#hero-refraction)` to the `[data-hero-refraction-target]` wrapper that CONTAINS the video element; mounts `<filter id="hero-refraction">` defs with an `feDisplacementMap`; `isolation: isolate` on the root; the `feDisplacementMap` `scale` attribute reflects the signals. Ran BEFORE impl: failed (`Failed to resolve import "./hero-displacement-bridge"`).
+- [x] 4.4 GREEN: implemented (a) `hero-displacement-bridge.ts` — pure `computeDisplacementScale(signals)` mapping pointer/scroll/burst (0..1 each) → px scale (base 12, max 48, weights 14/10/20); (b) `HeroGlassCss.tsx` — `HeroRefractionFilter` SVG `<defs>` (`feTurbulence` field + `feDisplacementMap in="SourceGraphic"`), a `filter: url(#hero-refraction)` target wrapper holding the video children, `isolation: isolate` root (design §1 own stacking context). Wired into `HeroBackdrop` css-only branch: `css-only` → `<HeroGlassCss>{videoLayer}</HeroGlassCss>`; `css+webgl` → bare video (slice-5 seam untouched). 10/10 green; full suite 358.
+- [x] 4.5 Verify: `pnpm --filter portfolio test` PASS (62 files / 358 tests); `pnpm --filter portfolio lint` (tsc --noEmit) PASS (exit 0). Manual smoke `pnpm --filter portfolio dev` NOT run (manual step — left for human verification).
+
+### TDD Cycle Evidence
+
+| Task | RED | GREEN | REFACTOR |
+|------|-----|-------|----------|
+| 4.1–4.2 (tokens) | `hero-tokens.test.ts` written first; ran → 3 failed (both tokens undefined in `@theme`) | tokens added to `@theme` with ADR-4 grain-retention comment → 3/3 green | brace-matched `@theme` isolation kept (asserts in-theme placement, not file-anywhere) |
+| 4.3–4.4 (HeroGlassCss) | 10-test suite written first vs `./hero-displacement-bridge` + `./HeroGlassCss`; ran → suite failed (modules absent) | bridge + component + filter defs + HeroBackdrop wiring → 10/10 green, full suite 358 | displacement math extracted to a pure, side-effect-free `computeDisplacementScale` so Phase-4 tests pin the response WITHOUT pulling Phase-6 hooks; `{@link}` JSDoc tags converted to backticks (see gotcha below) |
+
+### Commits (on `hero-vlg/04-css-tier`, base `hero-vlg/03-video`)
+
+| Hash | Message |
+|------|---------|
+| 4f01d0f | feat(portfolio): define hero accent and glitch-cyan design tokens (#145) (2 files, +80) |
+| def8c6e | feat(portfolio): add HeroGlassCss feDisplacementMap refraction tier (#145) (4 files, +322/−8) |
+
+### Verification (final, post all commits)
+
+- `pnpm --filter portfolio test`: PASS — 62 files / 358 tests, 0 failures (slice-3 was 60 files / 346; +2 files = `hero-tokens.test.ts` (3 tests) + `HeroGlassCss.test.tsx` (9 tests) = +12 tests → 358)
+- `pnpm --filter portfolio lint` (tsc --noEmit): PASS (exit 0, 0 errors)
+- jsdom probe confirmed `filter: url(#hero-refraction)` serializes as `url("#hero-refraction")` (quoted) → assertions use a quote-tolerant regex `/url\(["']?#hero-refraction["']?\)/`
+
+### Deviations from tasks.md
+
+1. **Phase-6 scope guard honored**: task 4.3 mentions "displacement bridge responds to pointer/scroll/burst signals". Per the slice-4 instructions, only the PLUMBING is delivered — `computeDisplacementScale` is a pure signal sink driven by a `signals` prop, and `HeroGlassCss` mounts it at REST. The actual `useLiquidPointer`/`useScroll`/`hero-burst-store` wiring is a documented seam (Phase 6), commented in both `HeroGlassCss.tsx` and the `HeroBackdrop` css-only branch. No Phase-6 hooks imported.
+2. **Slice-5 seam untouched**: the `css+webgl` branch in `HeroBackdrop` renders the bare video layer (no fake glass pinned) — the `{/* slice 5 seam */}` comment is preserved.
+3. **Token test location**: placed at `apps/portfolio/app/hero-tokens.test.ts` (not under `components/hero/`) because it asserts `app/globals.css`, co-located with the file under test like the existing `packages/ui` tokens suite pattern.
+4. **GGA pre-commit reviewer hallucinations (recurring)**: the Gentleman Guardian Angel Gemini reviewer FAILED the HeroGlassCss commit 3× citing nonexistent violations — a phantom "leading space in `\" @hstrejoluna/ui\"`" import (byte-verified false via `cat -A`: `from·"@hstrejoluna/ui"`) and "JSDoc links to `linkedin-certificates-extracted.json`" (zero such refs exist; verified with `rg`). This is the SAME reviewer instability slice 2 documented (deviation #3). ROOT CAUSE isolated this time: the `{@link Symbol}` JSDoc tags triggered the substitution — the reviewer replaced `@link` with an unrelated repo file path. Converting all three `{@link …}` tags to plain backticks removed the trigger; the review then PASSED on genuine merits (no code-behavior change). `gga cache clear` run before the passing commit.
+
+### jsdom / Tailwind gotchas (for sdd-verify + future slices)
+
+- jsdom does NOT compute `filter: url(...)` visually; it DOES serialize the inline style. Assert on `element.style.filter` (quote-tolerant) + DOM presence of `<filter id="hero-refraction">` and its `feDisplacementMap` child — never on rendered pixels (slice-7 e2e covers visual).
+- The `@theme` token test reads `globals.css` SOURCE (not a built/applied stylesheet) — Tailwind v4 `@theme` is not evaluated in jsdom. This matches the established `packages/ui` tokens-test convention; the "resolves in built CSS" spec intent is satisfied at the source-declaration level for unit tests, with the e2e/visual layer (slice 7) covering applied resolution.
+
+### Next slice
+
+Phase 5 — WebGL Tier (`hero-vlg/05-webgl`, base `hero-vlg/04-css-tier`): tasks 5.1–5.4 (`HeroRefractionScene` source-level uniform/dispose tests, custom ShaderMaterial sampling `THREE.VideoTexture` with `SRGBColorSpace` per ADR-1, `HeroGlassWebGL` via `next/dynamic ssr:false` + `frameloop="always"` + IntersectionObserver pause per ADR-2 + `reportWebglFailure` demotion, `.size-limit.json` hero chunk entry). Fill the `{/* slice 5 seam */}` left in `HeroBackdrop.tsx` css+webgl branch. Keep GLSL in a dedicated commit (budget risk High — may need `size:exception`).
+
+Pending orchestrator actions: open PR 4 `hero-vlg/04-css-tier` → `hero-vlg/03-video` (~400 changed lines, Low risk per workload forecast).
