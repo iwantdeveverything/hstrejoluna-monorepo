@@ -7,9 +7,9 @@ import { describe, expect, it } from "vitest";
  * Hero design tokens (spec: Z-Stack and Design Tokens / "no undefined tokens").
  *
  * `--color-accent` (molten copper) and `--color-glitch-cyan` (cold focus
- * counterpoint) are consumed by the hero (e.g. `from-accent/8` gradient,
- * focus rings) but were previously undefined, so `var(--color-accent)`
- * resolved to nothing. They MUST be declared in the `@theme` block of
+ * counterpoint) tint the hero glass tiers (edge glow + focus/burst flash)
+ * landing in slices 4-5. They were previously undefined, so `var(--color-accent)`
+ * would resolve to nothing. They MUST be declared in the `@theme` block of
  * `app/globals.css` so the custom properties resolve to defined values
  * (design §1 palette). Source-read assertion mirrors the established
  * packages/ui tokens test.

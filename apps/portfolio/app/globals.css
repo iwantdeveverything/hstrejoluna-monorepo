@@ -46,9 +46,10 @@
 
   /* ── Hero "Molten Ink Under Glass" palette (design §1, ADR-4) ──────────
    * --color-accent (molten copper): deeper ember sibling for gradient stops
-   *   and the glass edge glow facing the video's bright filaments. Already
-   *   consumed (`from-accent/8` in HeroText) — defined here so the var
-   *   resolves instead of collapsing to nothing.
+   *   and the glass edge glow facing the video's bright filaments. The old
+   *   `from-accent/8` blob consumer was removed in slice 3; this token is
+   *   defined ahead of its glass-tier consumers (css/webgl, slices 4-5) so
+   *   `var(--color-accent)` resolves instead of collapsing to nothing.
    * --color-glitch-cyan (cold counterpoint): the ONLY cold accent against an
    *   all-warm palette, reserved for focus rings + the burst peak flash so
    *   focus states stay unmistakable (a11y: non-color-only + high contrast).
