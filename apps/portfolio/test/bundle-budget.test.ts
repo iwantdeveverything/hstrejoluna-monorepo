@@ -12,8 +12,10 @@ import { describe, expect, it } from "vitest";
  * configured glob matches zero files (see scripts/size-limit-globs.test.ts
  * for the per-entry glob assertions), so every declared entry is binding.
  *
- * Budgets are informational ceilings during the revival; slice 5 re-adds
- * a dedicated hero WebGL chunk entry once that chunk exists.
+ * Budgets are informational ceilings during the revival; slice 5 adds a
+ * dedicated hero WebGL chunk entry (three/R3F lazy boundary, design §7) so the
+ * heaviest chunk is independently bounded and the glob-guard confirms its
+ * coverage.
  */
 
 const portfolioRoot = path.resolve(__dirname, "..");
@@ -47,6 +49,13 @@ describe("bundle-budget size gate config", () => {
     const total = config.find((entry) => entry.name === "client-js-total");
     expect(total).toBeDefined();
     expect(total?.limit).toBe("600 KB");
+  });
+
+  it("declares the dedicated hero WebGL chunk ceiling (three/R3F boundary)", () => {
+    const config = readConfig();
+    const heroChunk = config.find((entry) => entry.name === "hero-webgl-chunk");
+    expect(heroChunk).toBeDefined();
+    expect(heroChunk?.limit).toBe("300 KB");
   });
 
   it("wires the size gate into the qa:gate script so it fails the build", () => {
