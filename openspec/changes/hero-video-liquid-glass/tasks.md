@@ -60,14 +60,14 @@ PR boundary: `hero-vlg/02-gates` → base `hero-vlg/01-demolition`. Pure logic, 
 
 > Real Blender asset is the external longest pole. Use a placeholder loop (tiny ffmpeg-generated dark gradient clip + poster) under the FINAL filenames so code lands now; asset swap later is a binary-only commit.
 
-- [ ] 3.1 Create `apps/portfolio/public/` with placeholder renditions per design §5 names: `hero-loop-1080.{webm,mp4}`, `hero-loop-720.{webm,mp4}`, `hero-poster.{avif,jpg}`. Document encoding matrix in `public/README` line comment or PR body.
-- [ ] 3.2 RED: `components/hero/HeroVideoLayer.test.tsx` — attrs contract (`autoplay muted loop playsinline preload="none" poster aria-hidden`), no `<source>` before idle, AV1→H.264 injection order, same-origin URLs, mobile rendition pick, `onVideoReady` on `canplay` (spec: Self-Hosted Video Layer Contract, Poster-First Delivery).
-- [ ] 3.3 GREEN: implement `apps/portfolio/components/hero/HeroVideoLayer.tsx` with `requestIdleCallback` source injection (fallback setTimeout 2000ms).
-- [ ] 3.4 RED: `components/hero/HeroBackdrop.test.tsx` — exactly-one-tier render vs mocked gate; static → `null`; no hardcoded `canRender`.
-- [ ] 3.5 GREEN: implement `apps/portfolio/components/hero/HeroBackdrop.tsx` on `useHeroTier()`.
-- [ ] 3.6 RED: `components/HeroText.test.tsx` update — blobs gone, SSR poster `<img>` (ADR-6), kill-switch-off renders no `HeroBackdrop`, h1 semantic shell snapshot unchanged.
-- [ ] 3.7 GREEN: modify `apps/portfolio/components/HeroText.tsx` — delete 3 blob divs + `hero-blob*` CSS, add poster img + conditional `<HeroBackdrop />` (RSC kill switch, ADR-3).
-- [ ] 3.8 Verify: `pnpm --filter portfolio test && pnpm --filter portfolio lint`.
+- [x] 3.1 Create `apps/portfolio/public/` with placeholder renditions per design §5 names: `hero-loop-1080.{webm,mp4}`, `hero-loop-720.{webm,mp4}`, `hero-poster.{avif,jpg}`. Document encoding matrix in `public/README` line comment or PR body.
+- [x] 3.2 RED: `components/hero/HeroVideoLayer.test.tsx` — attrs contract (`autoplay muted loop playsinline preload="none" poster aria-hidden`), no `<source>` before idle, AV1→H.264 injection order, same-origin URLs, mobile rendition pick, `onVideoReady` on `canplay` (spec: Self-Hosted Video Layer Contract, Poster-First Delivery).
+- [x] 3.3 GREEN: implement `apps/portfolio/components/hero/HeroVideoLayer.tsx` with `requestIdleCallback` source injection (fallback setTimeout 2000ms).
+- [x] 3.4 RED: `components/hero/HeroBackdrop.test.tsx` — exactly-one-tier render vs mocked gate; static → `null`; no hardcoded `canRender`.
+- [x] 3.5 GREEN: implement `apps/portfolio/components/hero/HeroBackdrop.tsx` on `useHeroTier()`.
+- [x] 3.6 RED: `components/HeroText.test.tsx` update — blobs gone, SSR poster `<img>` (ADR-6), kill-switch-off renders no `HeroBackdrop`, h1 semantic shell snapshot unchanged.
+- [x] 3.7 GREEN: modify `apps/portfolio/components/HeroText.tsx` — delete 3 blob divs + `hero-blob*` CSS, add poster img + conditional `<HeroBackdrop />` (RSC kill switch, ADR-3).
+- [x] 3.8 Verify: `pnpm --filter portfolio test && pnpm --filter portfolio lint`.
 
 PR boundary: `hero-vlg/03-video` → base `hero-vlg/02-gates`. Ships static+video foundation; rollback = kill switch or revert.
 

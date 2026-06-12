@@ -110,3 +110,62 @@ Verification post-fixes: `pnpm --filter portfolio lint` PASS; `pnpm --filter por
 Phase 3 — Video Pipeline (`hero-vlg/03-video`, base `hero-vlg/02-gates`): tasks 3.1–3.8 (placeholder renditions, `HeroVideoLayer`, `HeroBackdrop` on `useHeroTier()`, `HeroText` poster + kill switch).
 
 Pending orchestrator actions: open PR 2 `hero-vlg/02-gates` → `hero-vlg/01-demolition` (~690 changed lines incl. 350-line test matrix; meaningful impl delta well under budget — note test-heavy ratio in PR body).
+
+## Slice 3 — Video Pipeline (`hero-vlg/03-video`) — COMPLETE
+
+### Tasks
+
+- [x] 3.1 Created `apps/portfolio/public/` with 6 PLACEHOLDER renditions under the final design §5 names: `hero-loop-1080.{webm,mp4}`, `hero-loop-720.{webm,mp4}`, `hero-poster.{avif,jpg}`. ffmpeg-generated 8s/192f dark-void clip (two drifting ember/copper radial glows, lower-right per §1 art direction). svt-av1 (CRF 50) + libx264 (CRF 30, +faststart) for video, libaom-av1 still + JPEG for poster. Encoding matrix documented in `public/README.md`. All 6 files verified non-empty (22k–366k each).
+- [x] 3.2 RED: `components/hero/HeroVideoLayer.test.tsx` (9 tests) — attrs contract (`autoplay muted loop playsinline preload="none" poster="/hero-poster.jpg" aria-hidden`), NO `<source>` before idle, AV1/WebM→H.264 injection order, same-origin `/hero-loop-*` URLs, mobile 720 rendition pick, `video.load()` after injection, `onVideoReady(videoEl)` on `canplay`, setTimeout(2000) fallback when rIC absent. Ran BEFORE impl: failed (module `./HeroVideoLayer` unresolved).
+- [x] 3.3 GREEN: `components/hero/HeroVideoLayer.tsx` — props `{ onVideoReady?, videoRef?, isMobile? }`; `<source>` injected via `requestIdleCallback` (fallback `setTimeout(…, 2000)`), then `video.load()`. AV1/WebM first, H.264 mp4 second; rendition from gate-fed `isMobile` (ADR-5). 9/9 green.
+- [x] 3.4 RED: `components/hero/HeroBackdrop.test.tsx` (5 tests) — exactly-one-tier render against mocked `useHeroTier`: `static`→null, `css-only`→video layer, `css+webgl`→video layer; pure-function-of-gate assertion (flip mock → flip output); no hardcoded `canRender`. Ran BEFORE impl: failed (module unresolved).
+- [x] 3.5 GREEN: `components/hero/HeroBackdrop.tsx` consuming `useHeroTier()` from `@hstrejoluna/ui`. `static`→`null`; both non-static tiers render `HeroVideoLayer` with `isMobile={gates.isMobile}`. Glass layers left as clearly-marked slice 4–5 seams (no fake-glass stubs). 5/5 green.
+- [x] 3.6 RED: `components/HeroText.test.tsx` (created — 7 tests) — blob divs gone, SSR poster `<img>` present (z-0, aria-hidden, `hero-poster`), kill-switch off (`""`/`"false"`) renders NO `HeroBackdrop`, only `"true"` mounts it, h1 semantic shell intact. Ran BEFORE impl: 3 failed / 4 passed (no poster img, no kill-switch branch).
+- [x] 3.7 GREEN: `components/HeroText.tsx` — deleted 3 blob divs + the wrapping blob container; added `next/image` poster `<img>` (`/hero-poster.avif`, fill, priority, z-0, aria-hidden — ADR-6); conditional `<HeroBackdrop />` only when `process.env.NEXT_PUBLIC_HERO_LIQUID === "true"` (ADR-3). Removed `.hero-blob` rules + `@keyframes hero-blob-drift-*` + reduced-motion freeze block from `app/globals.css`. `<HeroContent />` + h1 byte-identical. 7/7 green.
+- [x] 3.8 Verify: `pnpm --filter portfolio test` PASS; `pnpm --filter portfolio lint` (tsc --noEmit) PASS.
+
+### Additional cleanup (design §3 — flagged by slice-2 review)
+
+- [x] Deleted `packages/ui/src/hooks/useLiquidHeroCapability.ts` + `.test.ts` + its `index.ts` export. Zero app consumers (only the barrel referenced it). `useHeroTier` is the ONLY tier decider per design §3. `rg "useLiquidHeroCapability"` → 0 source hits.
+
+### TDD Cycle Evidence
+
+| Task | RED | GREEN | REFACTOR |
+|------|-----|-------|----------|
+| 3.2–3.3 (HeroVideoLayer) | 9-test suite written first; ran → suite failed (`Failed to resolve import "./HeroVideoLayer"`). Idle mocked via `requestIdleCallback` stub + fake timers for the fallback path | Component implemented → 9/9 passed; full suite 343 passed | Idle scheduling + rendition selection extracted to typed helpers; ref-forwarding (function + object) handled |
+| 3.4–3.5 (HeroBackdrop) | 5-test suite written first vs mocked `@hstrejoluna/ui`/`./HeroVideoLayer`; ran → failed (module unresolved) | Tier-dispatch island implemented → 5/5 passed; full suite 348 passed | Glass layers left as labeled seams, not stubs (avoids pinning fake glass) |
+| 3.6–3.7 (HeroText) | `HeroText.test.tsx` created first; ran → 3 failed / 4 passed (missing poster img + kill-switch branch) | Poster `<img>` + RSC kill switch added, blob CSS removed → 7/7 passed; full suite 354 passed | Kill switch extracted to `heroLiquidEnabled()` helper |
+| cleanup (useLiquidHeroCapability) | Removal-driven: deleting the hook + barrel export with zero consumers keeps suite green | Files removed → suite 346 passed, lint green | Barrel export line removed |
+
+### Commits (on `hero-vlg/03-video`, base `hero-vlg/02-gates`)
+
+| Hash | Message |
+|------|---------|
+| cc4f1ff | feat(portfolio): add placeholder hero video renditions and poster (#145) (7 files, +47, 6 binaries) |
+| 79908b1 | feat(portfolio): add poster-first HeroVideoLayer with idle source injection (#145) (2 files, +277) |
+| 2b87e2d | feat(portfolio): add HeroBackdrop tier-dispatch island on useHeroTier (#145) (2 files, +129) |
+| 07cfbe4 | feat(portfolio): replace hero blobs with SSR poster and kill-switched backdrop (#145) (3 files, +143/−96) |
+| 298f123 | refactor(ui): delete overlapping useLiquidHeroCapability tier decider (#145) (3 files, −335) |
+
+### Verification (final, post all commits)
+
+- `pnpm --filter portfolio test`: PASS — 60 files / 346 tests, 0 failures (added 21 hero tests: 9 video + 5 backdrop + 7 herotext; removed the 8-test useLiquidHeroCapability suite → net 60 files / 346 from slice-2's 58 / 334)
+- `pnpm --filter portfolio lint` (tsc --noEmit): PASS
+- `rg "useLiquidHeroCapability"` → 0 source hits; `rg "hero-blob" apps/portfolio` → only e2e specs (slice 7 scope) + this slice's HeroText.test prose
+- 6 placeholder assets present and non-empty under `apps/portfolio/public/`
+
+### Encoding note (PR-body style)
+
+Placeholder renditions are intentionally tiny (high CRF). Master: 8s/192f @24fps, 1920×1080 near-void `#131313` with two slow drifting ember (`#ffb4a5`) / copper (`#e2725b`) radial glows lower-right. Commands in `apps/portfolio/public/README.md`. The real Blender "Molten Ink Under Glass" loop swaps in later as a binary-only commit under these exact filenames; slice 7's `hero.contrast.spec` timestamps must be re-pinned then.
+
+### Deviations from tasks.md
+
+1. jsdom logs `Not implemented: HTMLMediaElement's load() method` during HeroVideoLayer/HeroBackdrop tests — harmless jsdom limitation; the `load()` spy still records the call, so the contract is verified. No assertion affected.
+2. The additional `useLiquidHeroCapability` deletion (flagged by slice-2 review deviation #4, design §3) was done in this slice in its own commit, as instructed — it is not enumerated in tasks.md Phase 3 but is required cleanup.
+3. Poster uses `next/image` `fill` (AVIF, `/hero-poster.avif`) for the SSR `<img>` per ADR-6; the raw JPG (`/hero-poster.jpg`) is wired into the `<video poster>` attribute inside HeroVideoLayer.
+
+### Next slice
+
+Phase 4 — CSS Tier (`hero-vlg/04-css-tier`, base `hero-vlg/03-video`): tasks 4.1–4.5 (`--color-accent`/`--color-glitch-cyan` tokens, `HeroGlassCss` + `HeroRefractionFilter` SVG `feDisplacementMap`, wire into HeroBackdrop css-only branch — fill the slice-4 seam left in `HeroBackdrop.tsx`).
+
+Pending orchestrator actions: open PR 3 `hero-vlg/03-video` → `hero-vlg/02-gates` (~440 changed lines incl. 6 binary placeholder assets + 335-line deletion of useLiquidHeroCapability; meaningful new impl ~370 lines — within budget, note binary + deletion ratio in PR body).
