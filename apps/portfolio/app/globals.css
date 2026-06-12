@@ -44,6 +44,24 @@
   --color-void: #131313;
   --color-ember: #ffb4a5;
 
+  /* ── Hero "Molten Ink Under Glass" palette (design §1, ADR-4) ──────────
+   * --color-accent (molten copper): deeper ember sibling for gradient stops
+   *   and the glass edge glow facing the video's bright filaments. Already
+   *   consumed (`from-accent/8` in HeroText) — defined here so the var
+   *   resolves instead of collapsing to nothing.
+   * --color-glitch-cyan (cold counterpoint): the ONLY cold accent against an
+   *   all-warm palette, reserved for focus rings + the burst peak flash so
+   *   focus states stay unmistakable (a11y: non-color-only + high contrast).
+   *
+   * Grain-retention rationale (design §1 / ADR-4): the body::before grain at
+   * z-50 is deliberately RETAINED above the video because dark, heavily
+   * compressed AV1/H.264 content bands in near-black regions; the 5% soft-light
+   * grain dithers that banding and unifies video + UI into one "filmed"
+   * surface. These warm/cold tokens tint the glass edges that sit beneath
+   * that grain pass, so they are chosen to read THROUGH the dither. */
+  --color-accent: #e2725b;
+  --color-glitch-cyan: #6ee7ff;
+
   --font-sans: var(--font-sans), "system-ui", "sans-serif";
   --font-display: var(--font-display), "system-ui", "sans-serif";
   --font-mono: var(--font-mono), "monospace";
