@@ -4,6 +4,8 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
+import { ACCENT_RGB } from "./hero-refraction-shaders";
+
 /**
  * HeroRefractionScene — source-level + dispose contract (design §4.2/§4.5,
  * §6; spec: Video Refraction, GPU Lifecycle). jsdom has no WebGL2 context, so
@@ -71,6 +73,45 @@ describe("HeroRefractionScene — GLSL uniform wiring (source-level)", () => {
 
   it("sets SRGBColorSpace on the VideoTexture (ADR-1)", () => {
     expect(SCENE_SRC).toMatch(/colorSpace\s*=\s*THREE\.SRGBColorSpace/);
+  });
+});
+
+describe("hero-refraction-shaders — ACCENT_RGB color space (ADR-1)", () => {
+  // The VideoTexture is tagged SRGBColorSpace, so WebGL decodes the sampled
+  // video to LINEAR space before the fragment shader runs. The accent tint is
+  // added to that linear `video.rgb`, so ACCENT_RGB must ALSO be linear — the
+  // linear form of #e2725b, NOT its sRGB-normalized bytes (the bug fixed here).
+  const parseVec3 = (glsl: string): [number, number, number] => {
+    const m = glsl.match(
+      /vec3\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)\s*\)/,
+    );
+    if (!m) throw new Error(`ACCENT_RGB is not a vec3 literal: ${glsl}`);
+    return [Number(m[1]), Number(m[2]), Number(m[3])];
+  };
+
+  // sRGB → linear per the IEC 61966-2-1 transfer function.
+  const srgbToLinear = (c: number): number =>
+    c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+
+  // #e2725b normalized sRGB bytes.
+  const SRGB = [0xe2 / 255, 0x72 / 255, 0x5b / 255] as const;
+  const EXPECTED_LINEAR = SRGB.map(srgbToLinear) as unknown as [
+    number,
+    number,
+    number,
+  ];
+
+  it("is the linear-space conversion of #e2725b, not the sRGB bytes", () => {
+    const actual = parseVec3(ACCENT_RGB);
+    for (let i = 0; i < 3; i += 1) {
+      expect(actual[i]).toBeCloseTo(EXPECTED_LINEAR[i], 2);
+    }
+  });
+
+  it("is NOT the raw sRGB-normalized value (regression guard)", () => {
+    const actual = parseVec3(ACCENT_RGB);
+    // The old buggy constant was the sRGB bytes (0.886, 0.447, 0.357).
+    expect(actual[0]).not.toBeCloseTo(SRGB[0], 2);
   });
 });
 

@@ -21,8 +21,16 @@
  * already READS all of them so the wiring is dead-code-free today.
  */
 
-/** Edge-tint color (molten copper `--color-accent` #e2725b) in linear-ish RGB. */
-export const ACCENT_RGB = "vec3(0.886, 0.447, 0.357)";
+/**
+ * Edge-tint color: molten copper `--color-accent` #e2725b in LINEAR RGB.
+ *
+ * The VideoTexture is tagged `SRGBColorSpace` (ADR-1), so WebGL decodes the
+ * sampled video to linear space before this shader runs. The tint is added to
+ * that linear `video.rgb`, so the constant MUST be linear too — these are the
+ * sRGB→linear conversion of #e2725b, NOT its sRGB-normalized bytes. Adding the
+ * raw sRGB bytes (0.886, 0.447, 0.357) over-brightens the copper edge.
+ */
+export const ACCENT_RGB = "vec3(0.7605, 0.1684, 0.1046)";
 
 export const HERO_REFRACTION_VERTEX = /* glsl */ `
 varying vec2 vUv;
