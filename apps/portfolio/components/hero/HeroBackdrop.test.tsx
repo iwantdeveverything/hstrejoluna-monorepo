@@ -48,9 +48,15 @@ vi.mock("./HeroVideoLayer", () => ({
 
 // HeroGlassWebGL is loaded via next/dynamic; stub the dynamic loader so the
 // chunk resolves synchronously in jsdom and records the videoEl it receives.
+// `webglShouldThrow` simulates a chunk-load / render failure surfacing inside
+// the lazily-loaded component (the failure mode the parent boundary must absorb).
 let webglVideoEl: HTMLVideoElement | null = null;
+let webglShouldThrow = false;
 vi.mock("next/dynamic", () => ({
   default: () => (props: { videoEl?: HTMLVideoElement }) => {
+    if (webglShouldThrow) {
+      throw new Error("Loading chunk hero-glass-webgl failed");
+    }
     webglVideoEl = props.videoEl ?? null;
     return <div data-testid="hero-glass-webgl" />;
   },
@@ -68,6 +74,7 @@ afterEach(() => {
   vi.clearAllMocks();
   fireVideoReady = undefined;
   webglVideoEl = null;
+  webglShouldThrow = false;
 });
 
 describe("HeroBackdrop — tier mapping", () => {
@@ -89,13 +96,19 @@ describe("HeroBackdrop — tier mapping", () => {
 });
 
 describe("HeroBackdrop — exactly one tier path", () => {
-  it("renders at most one video layer regardless of tier", () => {
+  it("renders exactly the tier-mandated number of video layers", () => {
+    // static → 0 (poster SSR'd upstream); css-only / css+webgl → exactly 1.
+    const expectedLayers: Record<HeroTier, number> = {
+      static: 0,
+      "css-only": 1,
+      "css+webgl": 1,
+    };
     for (const tier of ["static", "css-only", "css+webgl"] as HeroTier[]) {
       const { container, unmount } = renderAtTier(tier);
       const layers = container.querySelectorAll(
         "[data-testid='hero-video-layer']",
       );
-      expect(layers.length).toBeLessThanOrEqual(1);
+      expect(layers.length).toBe(expectedLayers[tier]);
       unmount();
     }
   });
@@ -139,5 +152,26 @@ describe("HeroBackdrop — css+webgl tier WebGL wiring", () => {
       fireVideoReady?.(videoEl);
     });
     expect(queryByTestId("hero-glass-webgl")).toBeNull();
+  });
+});
+
+describe("HeroBackdrop — WebGL chunk-load resilience", () => {
+  it("absorbs a chunk-load failure, keeps the video layer, and demotes the tier", () => {
+    // A next/dynamic chunk-load failure throws BEFORE HeroGlassWebGL's own
+    // WebGLErrorBoundary can mount, so the parent island must own the boundary.
+    // Failure must NOT crash the hero tree: the css video layer stays painted
+    // and reportWebglFailure latches the demotion to css-only.
+    webglShouldThrow = true;
+    const { queryByTestId } = renderAtTier("css+webgl");
+
+    expect(() => {
+      act(() => {
+        fireVideoReady?.(document.createElement("video"));
+      });
+    }).not.toThrow();
+
+    expect(queryByTestId("hero-video-layer")).not.toBeNull();
+    expect(queryByTestId("hero-glass-webgl")).toBeNull();
+    expect(reportWebglFailure).toHaveBeenCalledTimes(1);
   });
 });

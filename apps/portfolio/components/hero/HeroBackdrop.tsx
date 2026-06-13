@@ -19,7 +19,12 @@
  * live `<video>` element), per the §8 load sequence (t4: canplay → bind).
  */
 import dynamic from "next/dynamic";
-import { useState } from "react";
+import {
+  Component,
+  useState,
+  type ErrorInfo,
+  type ReactNode,
+} from "react";
 import { useHeroTier } from "@hstrejoluna/ui";
 import { HeroGlassCss } from "./HeroGlassCss";
 import { HeroVideoLayer } from "./HeroVideoLayer";
@@ -28,6 +33,34 @@ const HeroGlassWebGL = dynamic(
   () => import("./HeroGlassWebGL").then((mod) => mod.HeroGlassWebGL),
   { ssr: false },
 );
+
+/**
+ * Chunk-load boundary for the lazy WebGL glass. `next/dynamic` exposes no
+ * `onError`, and HeroGlassWebGL's own WebGLErrorBoundary only catches render
+ * errors AFTER the component mounts — a failed chunk fetch throws BEFORE that,
+ * which would otherwise crash the whole hero tree. This parent boundary absorbs
+ * the load failure, latches the gate demotion to css-only, and renders nothing
+ * (the css video layer beneath it stays painted).
+ */
+class WebGLChunkBoundary extends Component<
+  { onError: () => void; children: ReactNode },
+  { failed: boolean }
+> {
+  state = { failed: false };
+
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+
+  componentDidCatch(_error: Error, _info: ErrorInfo) {
+    this.props.onError();
+  }
+
+  render() {
+    if (this.state.failed) return null;
+    return this.props.children;
+  }
+}
 
 export const HeroBackdrop = () => {
   const { tier, gates, reportWebglFailure } = useHeroTier();
@@ -61,10 +94,12 @@ export const HeroBackdrop = () => {
         videoLayer
       )}
       {isWebgl && videoEl ? (
-        <HeroGlassWebGL
-          videoEl={videoEl}
-          reportWebglFailure={reportWebglFailure}
-        />
+        <WebGLChunkBoundary onError={reportWebglFailure}>
+          <HeroGlassWebGL
+            videoEl={videoEl}
+            reportWebglFailure={reportWebglFailure}
+          />
+        </WebGLChunkBoundary>
       ) : null}
     </div>
   );
