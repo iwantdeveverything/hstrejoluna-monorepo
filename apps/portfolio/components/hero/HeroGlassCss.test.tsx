@@ -1,6 +1,6 @@
 /// <reference types="vitest/globals" />
-import { cleanup, render } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import { act, cleanup, render } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   BASE_DISPLACEMENT_SCALE,
   MAX_DISPLACEMENT_SCALE,
@@ -107,6 +107,42 @@ describe("HeroGlassCss — refraction filter over the video layer", () => {
     const root = container.querySelector<HTMLElement>("[data-hero-glass-css]");
     expect(root).not.toBeNull();
     expect(root?.style.isolation).toBe("isolate");
+  });
+
+  it("drives the feDisplacementMap scale from live pointer refs via the rAF bridge", () => {
+    // css-only reactivity (spec: Cursor-Reactive Distortion): refs don't
+    // re-render, so a rAF bridge reads them each frame and mutates the live
+    // feDisplacementMap scale. A high pointer velocity must raise it above rest.
+    const rafCbs: FrameRequestCallback[] = [];
+    const rafSpy = vi
+      .spyOn(globalThis, "requestAnimationFrame")
+      .mockImplementation((cb: FrameRequestCallback) => {
+        rafCbs.push(cb);
+        return rafCbs.length;
+      });
+
+    const { container } = render(
+      <HeroGlassCss
+        refraction={{
+          enabled: true,
+          pointerRef: { current: { mx: 0.5, my: 0.5, vx: 1, vy: 1 } },
+          scrollRef: { current: 0 },
+          burstRef: { current: 0 },
+        }}
+      >
+        <video />
+      </HeroGlassCss>,
+    );
+
+    act(() => {
+      rafCbs.forEach((cb) => cb(0));
+    });
+
+    const scale = Number(
+      container.querySelector("feDisplacementMap")?.getAttribute("scale"),
+    );
+    expect(scale).toBeGreaterThan(BASE_DISPLACEMENT_SCALE);
+    rafSpy.mockRestore();
   });
 
   it("reflects the displacement signals onto the feDisplacementMap scale", () => {

@@ -22,13 +22,33 @@
  * jsdom does not paint `filter: url(...)`; the contract is the applied inline
  * style + the DOM presence of the `<filter id="hero-refraction">` defs.
  */
-import type { CSSProperties, ReactNode } from "react";
+import { useRef, type CSSProperties, type ReactNode, type RefObject } from "react";
 import {
   computeDisplacementScale,
   type DisplacementSignals,
 } from "./hero-displacement-bridge";
+import type { PointerSignal } from "./hero-uniform-sync";
+import { useCssRefractionBridge } from "./use-css-refraction-bridge";
 
 const FILTER_ID = "hero-refraction";
+
+/** Pointer ref shape consumed by the rAF bridge (includes velocity). */
+interface PointerVelocitySignal extends PointerSignal {
+  vx: number;
+  vy: number;
+}
+
+/**
+ * Phase 6 live-refraction wiring: the rAF attribute bridge reads the physics
+ * signal refs each frame and mutates the feDisplacementMap scale + `--mx/--my`.
+ * Absent → the static `signals` snapshot drives the rest-state scale (Phase 4).
+ */
+export interface HeroCssRefraction {
+  enabled: boolean;
+  pointerRef: RefObject<PointerVelocitySignal | null>;
+  scrollRef: RefObject<number>;
+  burstRef: RefObject<number>;
+}
 
 const rootStyle: CSSProperties = {
   position: "absolute",
@@ -51,10 +71,12 @@ export interface HeroGlassCssProps {
   /** The video layer element(s) to refract (HeroVideoLayer in production). */
   children?: ReactNode;
   /**
-   * Displacement signals (Phase 6: useLiquidPointer / useScroll / burst store).
-   * Phase 4 leaves this at rest; the seam is wired in Phase 6.
+   * Static displacement-signal snapshot — drives the initial/rest scale. The
+   * live per-frame reactivity comes from `refraction` (the rAF bridge).
    */
   signals?: DisplacementSignals;
+  /** Phase 6 live refraction wiring (rAF bridge reading the physics refs). */
+  refraction?: HeroCssRefraction;
 }
 
 /**
@@ -65,7 +87,13 @@ export interface HeroGlassCssProps {
  * driven by `computeDisplacementScale`. A self-contained `feTurbulence`
  * supplies the displacement field so the filter needs no external image.
  */
-const HeroRefractionFilter = ({ scale }: { scale: number }) => (
+const HeroRefractionFilter = ({
+  scale,
+  mapRef,
+}: {
+  scale: number;
+  mapRef: RefObject<SVGFEDisplacementMapElement | null>;
+}) => (
   <svg aria-hidden="true" data-hero-refraction-defs="" style={hiddenSvgStyle}>
     <defs>
       <filter
@@ -85,6 +113,7 @@ const HeroRefractionFilter = ({ scale }: { scale: number }) => (
           result="hero-noise"
         />
         <feDisplacementMap
+          ref={mapRef}
           in="SourceGraphic"
           in2="hero-noise"
           scale={scale}
@@ -96,13 +125,32 @@ const HeroRefractionFilter = ({ scale }: { scale: number }) => (
   </svg>
 );
 
-export const HeroGlassCss = ({ children, signals }: HeroGlassCssProps) => {
+export const HeroGlassCss = ({
+  children,
+  signals,
+  refraction,
+}: HeroGlassCssProps) => {
+  // Rest-state scale (Phase 4 path). When `refraction` is supplied, the rAF
+  // bridge overwrites this `scale` attribute imperatively each frame.
   const scale = computeDisplacementScale(signals);
+  const mapRef = useRef<SVGFEDisplacementMapElement | null>(null);
+  const targetRef = useRef<HTMLDivElement | null>(null);
+
+  useCssRefractionBridge({
+    enabled: refraction?.enabled ?? false,
+    mapRef,
+    cssTargetRef: targetRef,
+    // Idle refs when no live refraction is wired — the bridge is disabled then.
+    pointerRef: refraction?.pointerRef ?? { current: null },
+    scrollRef: refraction?.scrollRef ?? { current: 0 },
+    burstRef: refraction?.burstRef ?? { current: 0 },
+  });
 
   return (
     <div data-hero-glass-css="" style={rootStyle} aria-hidden="true">
-      <HeroRefractionFilter scale={scale} />
+      <HeroRefractionFilter scale={scale} mapRef={mapRef} />
       <div
+        ref={targetRef}
         data-hero-refraction-target=""
         style={{
           position: "absolute",
