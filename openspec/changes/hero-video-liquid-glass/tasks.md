@@ -83,10 +83,10 @@ PR boundary: `hero-vlg/04-css-tier` → base `hero-vlg/03-video`.
 
 ## Phase 5: WebGL Tier (PR 5)
 
-- [ ] 5.1 RED: `components/hero/HeroRefractionScene.test.ts` (source-level) — every declared uniform referenced in GLSL; no `new THREE.` inside `useFrame` bodies; dispose spy covers geometry, ShaderMaterial, VideoTexture, `gl.dispose()`, listeners (spec: GPU Lifecycle, Video Refraction).
-- [ ] 5.2 GREEN: implement `apps/portfolio/components/hero/HeroRefractionScene.tsx` — full-viewport plane, custom ShaderMaterial sampling `uVideo` VideoTexture with `SRGBColorSpace` (ADR-1); uniforms `uMouse/uScroll/uBurst/uVideo/time` all consumed; scratch objects hoisted. Keep GLSL in a dedicated commit.
-- [ ] 5.3 GREEN: implement `apps/portfolio/components/hero/HeroGlassWebGL.tsx` via `next/dynamic` `ssr:false` (sole three/R3F chunk boundary); `frameloop="always"` + IntersectionObserver pause (ADR-2); `reportWebglFailure` demotion on context/compile fail; wire into `HeroBackdrop`.
-- [ ] 5.4 Update `.size-limit.json` for the new `hero/*` chunk; guard from 1.5 confirms coverage. Verify: `pnpm --filter portfolio test && pnpm --filter portfolio size`.
+- [x] 5.1 RED: `components/hero/HeroRefractionScene.test.ts` (source-level) — every declared uniform referenced in GLSL; no `new THREE.` inside `useFrame` bodies; dispose spy covers geometry, ShaderMaterial, VideoTexture, `gl.dispose()`, listeners (spec: GPU Lifecycle, Video Refraction).
+- [x] 5.2 GREEN: implement `apps/portfolio/components/hero/HeroRefractionScene.tsx` — full-viewport plane, custom ShaderMaterial sampling `uVideo` VideoTexture with `SRGBColorSpace` (ADR-1); uniforms `uMouse/uScroll/uBurst/uVideo/time` all consumed; scratch objects hoisted. Keep GLSL in a dedicated commit.
+- [x] 5.3 GREEN: implement `apps/portfolio/components/hero/HeroGlassWebGL.tsx` via `next/dynamic` `ssr:false` (sole three/R3F chunk boundary); `frameloop="always"` + IntersectionObserver pause (ADR-2); `reportWebglFailure` demotion on context/compile fail; wire into `HeroBackdrop`.
+- [x] 5.4 Update `.size-limit.json` for the new `hero/*` chunk; guard from 1.5 confirms coverage. Verify: `pnpm --filter portfolio test && pnpm --filter portfolio size`.
 
 PR boundary: `hero-vlg/05-webgl` → base `hero-vlg/04-css-tier`. Budget risk High — if >400 meaningful lines, request `size:exception` citing GLSL.
 
