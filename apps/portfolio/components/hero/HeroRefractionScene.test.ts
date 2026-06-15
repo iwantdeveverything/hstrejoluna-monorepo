@@ -127,6 +127,26 @@ describe("HeroRefractionScene — no per-frame allocations (source-level)", () =
   });
 });
 
+describe("HeroRefractionScene — Phase 6 signal wiring (source-level)", () => {
+  it("drives uMouse/uScroll/uBurst via the allocation-free syncHeroUniforms helper", () => {
+    // The physics signals reach the uniforms through the pure, no-alloc sync
+    // helper (not inline new-THREE math), preserving the GC-churn guard.
+    expect(SCENE_SRC).toMatch(/syncHeroUniforms/);
+  });
+
+  it("reads its signal sources from refs (no React state in the frame loop)", () => {
+    // Pointer/scroll/burst are read from `*Ref.current` inside useFrame so the
+    // loop never triggers a re-render (design §4.1/§4.2).
+    const [body = ""] = extractUseFrameBodies(SCENE_SRC);
+    expect(body).toMatch(/\.current/);
+  });
+
+  it("still advances the time uniform from the frame delta", () => {
+    const [body = ""] = extractUseFrameBodies(SCENE_SRC);
+    expect(body).toMatch(/time\.value\s*\+=\s*delta/);
+  });
+});
+
 /* ── Dispose contract (spy-based, mocked three + R3F) ─────────────── */
 
 const mocks = vi.hoisted(() => {

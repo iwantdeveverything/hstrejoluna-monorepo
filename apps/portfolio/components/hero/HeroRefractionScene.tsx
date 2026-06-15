@@ -19,26 +19,44 @@
  *  - useFrame mutates uniform values in place; it never constructs `new THREE.*`
  *    (no per-frame GC churn).
  *
- * Phase 5 scope: uMouse/uScroll/uBurst sit at rest defaults (0.5,0.5 / 0 / 0)
- * and only `time` advances. The GLSL already reads every uniform, so there is
- * no dead machinery. Phase 6 (physics) feeds the live signal sources at the
- * clearly-marked seam below — this file imports NO pointer/scroll/burst hooks.
+ * Phase 6 scope: the live physics signals reach the uniforms through refs —
+ * `pointerRef` (useLiquidPointer), `scrollRef` (useScroll progress), and
+ * `burstRef` (hero-burst-store). `useFrame` copies them into uMouse/uScroll/
+ * uBurst via the pure, allocation-free `syncHeroUniforms` helper (no React
+ * state in the loop, no `new THREE.*` per frame). Sources are OPTIONAL so the
+ * Phase 5 rest-state behavior is preserved when a ref is absent.
  */
 import { useFrame, useThree } from "@react-three/fiber";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, type RefObject } from "react";
 import * as THREE from "three";
 
 import {
   HERO_REFRACTION_FRAGMENT,
   HERO_REFRACTION_VERTEX,
 } from "./hero-refraction-shaders";
+import {
+  syncHeroUniforms,
+  type HeroUniforms,
+  type PointerSignal,
+} from "./hero-uniform-sync";
 
 export interface HeroRefractionSceneProps {
   /** The hero `<video>` element — source for the THREE.VideoTexture (ADR-1). */
   videoEl: HTMLVideoElement;
+  /** Pointer signal ref (useLiquidPointer). Absent → uMouse stays at rest. */
+  pointerRef?: RefObject<PointerSignal | null>;
+  /** Scroll progress ref (0..1). Absent → uScroll stays at rest. */
+  scrollRef?: RefObject<number>;
+  /** Burst ramp ref (0..1, hero-burst-store). Absent → uBurst stays at rest. */
+  burstRef?: RefObject<number>;
 }
 
-export const HeroRefractionScene = ({ videoEl }: HeroRefractionSceneProps) => {
+export const HeroRefractionScene = ({
+  videoEl,
+  pointerRef,
+  scrollRef,
+  burstRef,
+}: HeroRefractionSceneProps) => {
   const gl = useThree((state) => state.gl);
 
   // Created once. Kept in refs so useFrame mutates without re-running useMemo.
@@ -70,15 +88,19 @@ export const HeroRefractionScene = ({ videoEl }: HeroRefractionSceneProps) => {
     [videoTexture],
   );
 
-  // Drive only `time` in Phase 5 — pure in-place mutation, no allocations.
-  // `material` is stable across renders (useMemo), so the closure stays fresh
-  // without a render-phase ref assignment.
-  // ── Phase 6 signal seam ──────────────────────────────────────────────
-  // Phase 6 copies pointerRef -> uMouse, scrollRef -> uScroll, burstRef ->
-  // uBurst here (refs only, no React state). Do NOT construct new THREE
-  // objects inside this callback.
+  // ── Phase 6 signal copy ───────────────────────────────────────────────
+  // Advance `time` from the frame delta, then copy the physics signal refs
+  // into uMouse/uScroll/uBurst via the pure, allocation-free helper. Refs only
+  // (no React state); `syncHeroUniforms` never constructs `new THREE.*`, so the
+  // per-frame GC-churn guard holds.
   useFrame((_state, delta) => {
-    material.uniforms.time.value += delta;
+    const uniforms = material.uniforms as unknown as HeroUniforms;
+    uniforms.time.value += delta;
+    syncHeroUniforms(uniforms, {
+      pointer: pointerRef?.current ?? undefined,
+      scroll: scrollRef?.current ?? undefined,
+      burst: burstRef?.current ?? undefined,
+    });
   });
 
   // GPU dispose contract (spec: GPU Lifecycle). VideoTexture + renderer are
