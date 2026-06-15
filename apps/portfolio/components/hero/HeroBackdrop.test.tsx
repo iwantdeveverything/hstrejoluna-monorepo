@@ -16,6 +16,7 @@ import type { HeroTier, HeroTierResult } from "@hstrejoluna/ui";
 
 const reportWebglFailure = vi.fn();
 let mockTier: HeroTier = "static";
+let mockReduceMotion = false;
 
 vi.mock("@hstrejoluna/ui", () => ({
   useHeroTier: (): HeroTierResult =>
@@ -23,13 +24,32 @@ vi.mock("@hstrejoluna/ui", () => ({
       tier: mockTier,
       gates: {
         reduceTransparency: false,
-        reduceMotion: false,
+        reduceMotion: mockReduceMotion,
         reduceData: false,
         saveData: false,
         isMobile: false,
       },
       reportWebglFailure,
     }) as HeroTierResult,
+}));
+
+// useHeroPhysics is the Phase 6 orchestrator; stub it so HeroBackdrop wiring is
+// verified without the real pointer/scroll/burst machinery. Records the
+// `enabled` flag it was called with so the gate→physics seam can be asserted.
+const physicsRefs = {
+  heroRef: { current: null as HTMLDivElement | null },
+  pointerRef: { current: { mx: 0.5, my: 0.5, vx: 0, vy: 0 } },
+  scrollRef: { current: 0 },
+  burstRef: { current: 0 },
+};
+let lastPhysicsOptions: { enabled?: boolean } | undefined;
+let mockBurst = 0;
+const setInView = vi.fn();
+vi.mock("./use-hero-physics", () => ({
+  useHeroPhysics: (options: { enabled?: boolean }) => {
+    lastPhysicsOptions = options;
+    return { ...physicsRefs, burst: mockBurst, setInView };
+  },
 }));
 
 // Identify the video layer without depending on its internals. Expose a
@@ -47,10 +67,12 @@ vi.mock("./HeroVideoLayer", () => ({
 }));
 
 // HeroGlassWebGL is loaded via next/dynamic; stub the dynamic loader so the
-// chunk resolves synchronously in jsdom and records the videoEl it receives.
-// `webglShouldThrow` simulates a chunk-load / render failure surfacing inside
-// the lazily-loaded component (the failure mode the parent boundary must absorb).
+// chunk resolves synchronously in jsdom and records the videoEl + signal refs
+// it receives. `webglShouldThrow` simulates a chunk-load / render failure
+// surfacing inside the lazily-loaded component (the failure mode the parent
+// boundary must absorb).
 let webglVideoEl: HTMLVideoElement | null = null;
+let webglProps: Record<string, unknown> | null = null;
 let webglShouldThrow = false;
 vi.mock("next/dynamic", () => ({
   default: () => (props: { videoEl?: HTMLVideoElement }) => {
@@ -58,7 +80,35 @@ vi.mock("next/dynamic", () => ({
       throw new Error("Loading chunk hero-glass-webgl failed");
     }
     webglVideoEl = props.videoEl ?? null;
+    webglProps = props as Record<string, unknown>;
     return <div data-testid="hero-glass-webgl" />;
+  },
+}));
+
+// The entrance burst fires from HeroVideoLayer's canplay via the store.
+const triggerBurst = vi.fn();
+const triggerClickBurst = vi.fn();
+vi.mock("./hero-burst-store", () => ({
+  triggerBurst: () => triggerBurst(),
+  triggerClickBurst: () => triggerClickBurst(),
+}));
+
+// Record the signals + live refraction wiring the css tier receives.
+let cssSignals: Record<string, unknown> | undefined;
+let cssRefraction: Record<string, unknown> | undefined;
+vi.mock("./HeroGlassCss", () => ({
+  HeroGlassCss: ({
+    children,
+    signals,
+    refraction,
+  }: {
+    children?: React.ReactNode;
+    signals?: Record<string, unknown>;
+    refraction?: Record<string, unknown>;
+  }) => {
+    cssSignals = signals;
+    cssRefraction = refraction;
+    return <div data-testid="hero-glass-css">{children}</div>;
   },
 }));
 
@@ -74,7 +124,15 @@ afterEach(() => {
   vi.clearAllMocks();
   fireVideoReady = undefined;
   webglVideoEl = null;
+  webglProps = null;
   webglShouldThrow = false;
+  cssSignals = undefined;
+  cssRefraction = undefined;
+  lastPhysicsOptions = undefined;
+  mockReduceMotion = false;
+  mockBurst = 0;
+  physicsRefs.scrollRef.current = 0;
+  physicsRefs.burstRef.current = 0;
 });
 
 describe("HeroBackdrop — tier mapping", () => {
@@ -152,6 +210,51 @@ describe("HeroBackdrop — css+webgl tier WebGL wiring", () => {
       fireVideoReady?.(videoEl);
     });
     expect(queryByTestId("hero-glass-webgl")).toBeNull();
+  });
+});
+
+describe("HeroBackdrop — Phase 6 physics wiring", () => {
+  it("forwards the physics signal refs into HeroGlassWebGL after canplay", () => {
+    renderAtTier("css+webgl");
+    act(() => {
+      fireVideoReady?.(document.createElement("video"));
+    });
+    expect(webglProps?.pointerRef).toBe(physicsRefs.pointerRef);
+    expect(webglProps?.scrollRef).toBe(physicsRefs.scrollRef);
+    expect(webglProps?.burstRef).toBe(physicsRefs.burstRef);
+  });
+
+  it("feeds the css tier live refraction refs + burst seed from the physics hook", () => {
+    mockBurst = 0.6;
+    renderAtTier("css-only");
+    // Rest-state seed.
+    expect(cssSignals?.burst).toBeCloseTo(0.6, 5);
+    // Live per-frame reactivity travels via the refraction refs (not a stale
+    // snapshot): the rAF bridge inside HeroGlassCss reads them each frame.
+    expect(cssRefraction?.pointerRef).toBe(physicsRefs.pointerRef);
+    expect(cssRefraction?.scrollRef).toBe(physicsRefs.scrollRef);
+    expect(cssRefraction?.burstRef).toBe(physicsRefs.burstRef);
+    expect(cssRefraction?.enabled).toBe(true);
+  });
+
+  it("enables the pointer hook when motion is allowed", () => {
+    mockReduceMotion = false;
+    renderAtTier("css+webgl");
+    expect(lastPhysicsOptions?.enabled).toBe(true);
+  });
+
+  it("disables the pointer hook under reduce-motion", () => {
+    mockReduceMotion = true;
+    renderAtTier("css-only");
+    expect(lastPhysicsOptions?.enabled).toBe(false);
+  });
+
+  it("fires the entrance burst once on video-ready", () => {
+    renderAtTier("css+webgl");
+    act(() => {
+      fireVideoReady?.(document.createElement("video"));
+    });
+    expect(triggerBurst).toHaveBeenCalledTimes(1);
   });
 });
 

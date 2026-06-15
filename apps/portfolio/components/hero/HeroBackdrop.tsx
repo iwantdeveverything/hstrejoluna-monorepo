@@ -21,6 +21,8 @@
 import dynamic from "next/dynamic";
 import {
   Component,
+  useCallback,
+  useEffect,
   useState,
   type ErrorInfo,
   type ReactNode,
@@ -28,6 +30,8 @@ import {
 import { useHeroTier } from "@hstrejoluna/ui";
 import { HeroGlassCss } from "./HeroGlassCss";
 import { HeroVideoLayer } from "./HeroVideoLayer";
+import { triggerBurst, triggerClickBurst } from "./hero-burst-store";
+import { useHeroPhysics } from "./use-hero-physics";
 
 const HeroGlassWebGL = dynamic(
   () => import("./HeroGlassWebGL").then((mod) => mod.HeroGlassWebGL),
@@ -66,30 +70,69 @@ export const HeroBackdrop = () => {
   const { tier, gates, reportWebglFailure } = useHeroTier();
   const [videoEl, setVideoEl] = useState<HTMLVideoElement | null>(null);
 
+  // Phase 6 physics orchestrator. Motion prefs are centralized in the gate
+  // (design §3): the pointer hook is disabled under reduce-motion. The hook is
+  // always called (Rules of Hooks) — the early `static` return is below it.
+  const motionEnabled = !gates.reduceMotion;
+  const { heroRef, pointerRef, scrollRef, burstRef, burst, setInView } =
+    useHeroPhysics({ enabled: motionEnabled });
+
+  // Fire the entrance burst once on video-ready (design §4.4; the store latches
+  // so remounts never replay). Capture the live <video> for the WebGL tier.
+  const isWebgl = tier === "css+webgl";
+  const onVideoReady = useCallback(
+    (el: HTMLVideoElement) => {
+      triggerBurst();
+      if (isWebgl) setVideoEl(el);
+    },
+    [isWebgl],
+  );
+
+  // IntersectionObserver gates scroll updates: `uScroll` SHALL NOT update while
+  // the hero is off-viewport (spec). Observes the hero root via heroRef.
+  useEffect(() => {
+    const target = heroRef.current;
+    if (!target || typeof IntersectionObserver === "undefined") return;
+    const observer = new IntersectionObserver((entries) => {
+      const entry = entries[0];
+      if (entry) setInView(entry.isIntersecting);
+    });
+    observer.observe(target);
+    return () => observer.disconnect();
+  }, [heroRef, setInView]);
+
   if (tier === "static") return null;
 
-  const isWebgl = tier === "css+webgl";
-
-  // In the webgl tier, capture the live <video> on canplay so HeroGlassWebGL
-  // can build the THREE.VideoTexture from it (design §8 t4). The css-only tier
-  // refracts via the SVG filter and needs no element handle.
   const videoLayer = (
-    <HeroVideoLayer
-      isMobile={gates.isMobile}
-      onVideoReady={isWebgl ? setVideoEl : undefined}
-    />
+    <HeroVideoLayer isMobile={gates.isMobile} onVideoReady={onVideoReady} />
   );
 
   return (
     <div
+      ref={heroRef}
       className="absolute inset-0 z-0 overflow-hidden pointer-events-none"
       aria-hidden="true"
+      // Capped click re-burst (design §4.4). pointer-events are none on this
+      // layer, so the click is captured at the section level via bubbling; the
+      // handler is cheap and idempotent against the latched entrance burst.
+      onClick={motionEnabled ? () => triggerClickBurst() : undefined}
     >
       {tier === "css-only" ? (
         // css-only tier: the SVG feDisplacementMap refracts the video element.
-        // Phase 6 feeds HeroGlassCss `signals` (pointer/scroll/burst) at this
-        // seam; Phase 4 mounts the refraction plumbing at rest.
-        <HeroGlassCss>{videoLayer}</HeroGlassCss>
+        // The rAF bridge reads the physics refs each frame (refs don't
+        // re-render) and drives the live scale + `--mx/--my` CSS vars. `signals`
+        // seeds the rest-state scale before the first frame / when disabled.
+        <HeroGlassCss
+          signals={{ burst }}
+          refraction={{
+            enabled: motionEnabled,
+            pointerRef,
+            scrollRef,
+            burstRef,
+          }}
+        >
+          {videoLayer}
+        </HeroGlassCss>
       ) : (
         videoLayer
       )}
@@ -98,6 +141,9 @@ export const HeroBackdrop = () => {
           <HeroGlassWebGL
             videoEl={videoEl}
             reportWebglFailure={reportWebglFailure}
+            pointerRef={pointerRef}
+            scrollRef={scrollRef}
+            burstRef={burstRef}
           />
         </WebGLChunkBoundary>
       ) : null}
