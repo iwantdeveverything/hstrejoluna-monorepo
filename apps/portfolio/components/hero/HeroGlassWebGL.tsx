@@ -28,15 +28,23 @@ import {
   type CSSProperties,
   type ErrorInfo,
   type ReactNode,
+  type RefObject,
 } from "react";
 
 import { HeroRefractionScene } from "./HeroRefractionScene";
+import type { PointerSignal } from "./hero-uniform-sync";
 
 export interface HeroGlassWebGLProps {
   /** The hero `<video>` — source for the THREE.VideoTexture. */
   videoEl: HTMLVideoElement;
   /** Gate callback: latch a WebGL failure → demote to css-only. */
   reportWebglFailure: () => void;
+  /** Phase 6 pointer signal ref (useHeroPhysics). */
+  pointerRef?: RefObject<PointerSignal | null>;
+  /** Phase 6 scroll progress ref (0..1), frozen off-viewport. */
+  scrollRef?: RefObject<number>;
+  /** Phase 6 burst ramp ref (0..1). */
+  burstRef?: RefObject<number>;
 }
 
 const canvasStyle: CSSProperties = {
@@ -74,6 +82,9 @@ class WebGLErrorBoundary extends Component<
 export const HeroGlassWebGL = ({
   videoEl,
   reportWebglFailure,
+  pointerRef,
+  scrollRef,
+  burstRef,
 }: HeroGlassWebGLProps) => {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const [inViewport, setInViewport] = useState(true);
@@ -105,7 +116,12 @@ export const HeroGlassWebGL = ({
           gl={{ antialias: false, alpha: true, powerPreference: "high-performance" }}
           style={canvasStyle}
         >
-          <HeroRefractionScene videoEl={videoEl} />
+          <HeroRefractionScene
+            videoEl={videoEl}
+            pointerRef={pointerRef}
+            scrollRef={scrollRef}
+            burstRef={burstRef}
+          />
         </Canvas>
       </WebGLErrorBoundary>
     </div>

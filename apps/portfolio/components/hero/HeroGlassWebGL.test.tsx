@@ -121,6 +121,26 @@ describe("HeroGlassWebGL — video texture source", () => {
   });
 });
 
+describe("HeroGlassWebGL — Phase 6 signal refs", () => {
+  it("forwards pointer/scroll/burst refs into HeroRefractionScene", () => {
+    const pointerRef = { current: { mx: 0.5, my: 0.5 } };
+    const scrollRef = { current: 0 };
+    const burstRef = { current: 0 };
+    render(
+      <HeroGlassWebGL
+        videoEl={makeVideo()}
+        reportWebglFailure={vi.fn()}
+        pointerRef={pointerRef}
+        scrollRef={scrollRef}
+        burstRef={burstRef}
+      />,
+    );
+    expect(holder.sceneProps[0]?.pointerRef).toBe(pointerRef);
+    expect(holder.sceneProps[0]?.scrollRef).toBe(scrollRef);
+    expect(holder.sceneProps[0]?.burstRef).toBe(burstRef);
+  });
+});
+
 describe("HeroGlassWebGL — WebGL failure demotion (reportWebglFailure)", () => {
   it("calls reportWebglFailure and renders no canvas on context failure", () => {
     holder.shouldThrow = true;
