@@ -92,11 +92,11 @@ PR boundary: `hero-vlg/05-webgl` → base `hero-vlg/04-css-tier`. Budget risk Hi
 
 ## Phase 6: Physics (PR 6)
 
-- [ ] 6.1 RED: `components/hero/hero-burst-store.test.ts` — once-per-page-load latch, remount no-replay, signal `0→1→idle` ≤1200ms (spec: Entrance burst splash).
-- [ ] 6.2 GREEN: implement `apps/portfolio/components/hero/hero-burst-store.ts`; trigger from `HeroVideoLayer` `canplay`; capped-amplitude click re-burst.
-- [ ] 6.3 RED: extend `HeroGlassCss`/scene tests — pointer updates `uMouse`/CSS vars via `useLiquidPointer` with gate-fed `enabled`; scroll progress → `uScroll`, frozen off-viewport (spec: Cursor-Reactive Distortion, Scroll-driven distortion).
-- [ ] 6.4 GREEN: adopt `useLiquidPointer` (add `enabled` prop in `packages/ui`); wire framer-motion `useScroll` → ref → `useFrame` copy; IntersectionObserver gates updates.
-- [ ] 6.5 Verify: `pnpm --filter portfolio test && pnpm --filter @hstrejoluna/ui test`.
+- [x] 6.1 RED: `components/hero/hero-burst-store.test.ts` — once-per-page-load latch, remount no-replay, signal `0→1→idle` ≤1200ms (spec: Entrance burst splash).
+- [x] 6.2 GREEN: implement `apps/portfolio/components/hero/hero-burst-store.ts`; trigger from `HeroVideoLayer` `canplay`; capped-amplitude click re-burst.
+- [x] 6.3 RED: extend `HeroGlassCss`/scene tests — pointer updates `uMouse`/CSS vars via `useLiquidPointer` with gate-fed `enabled`; scroll progress → `uScroll`, frozen off-viewport (spec: Cursor-Reactive Distortion, Scroll-driven distortion).
+- [x] 6.4 GREEN: adopt `useLiquidPointer` (add `enabled` prop in `packages/ui`); wire framer-motion `useScroll` → ref → `useFrame` copy; IntersectionObserver gates updates.
+- [x] 6.5 Verify: `pnpm --filter portfolio test && pnpm --filter @hstrejoluna/ui test`.
 
 PR boundary: `hero-vlg/06-physics` → base `hero-vlg/05-webgl`.
 
