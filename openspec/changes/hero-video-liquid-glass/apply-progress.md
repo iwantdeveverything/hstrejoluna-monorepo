@@ -217,3 +217,59 @@ Pending orchestrator actions: open PR 3 `hero-vlg/03-video` → `hero-vlg/02-gat
 Phase 5 — WebGL Tier (`hero-vlg/05-webgl`, base `hero-vlg/04-css-tier`): tasks 5.1–5.4 (`HeroRefractionScene` source-level uniform/dispose tests, custom ShaderMaterial sampling `THREE.VideoTexture` with `SRGBColorSpace` per ADR-1, `HeroGlassWebGL` via `next/dynamic ssr:false` + `frameloop="always"` + IntersectionObserver pause per ADR-2 + `reportWebglFailure` demotion, `.size-limit.json` hero chunk entry). Fill the `{/* slice 5 seam */}` left in `HeroBackdrop.tsx` css+webgl branch. Keep GLSL in a dedicated commit (budget risk High — may need `size:exception`).
 
 Pending orchestrator actions: open PR 4 `hero-vlg/04-css-tier` → `hero-vlg/03-video` (~400 changed lines, Low risk per workload forecast).
+
+## Slice 5 — WebGL Tier (`hero-vlg/05-webgl-tier`) — COMPLETE
+
+### Tasks
+
+- [x] 5.1 RED: `components/hero/HeroRefractionScene.test.ts` — source-level + spy-based. (a) every declared uniform (`uMouse/uScroll/uBurst/uVideo/time`) referenced in GLSL with declarations stripped first (proves USE not declaration); (b) `useFrame` bodies paren-balance-extracted, asserted free of `new THREE.`; (c) dispose spies (mocked `three` + `@react-three/fiber`) cover `PlaneGeometry`, `ShaderMaterial`, `VideoTexture`, `gl.dispose()` on unmount + `SRGBColorSpace` set at creation. Ran BEFORE impl: failed (module unresolved).
+- [x] 5.2 GREEN: `components/hero/HeroRefractionScene.tsx` — full-viewport `PlaneGeometry(2,2)` carrying a custom `ShaderMaterial` sampling `uVideo` (`THREE.VideoTexture`, `SRGBColorSpace`, ADR-1). All 5 uniforms consumed in `hero-refraction-shaders.ts` (kept in a dedicated commit, c0ac016). `useFrame` mutates `time` in place (no allocations); `useMemo` for geometry/material/texture; dispose-all in effect cleanup.
+- [x] 5.3 GREEN: `components/hero/HeroGlassWebGL.tsx` — sole `next/dynamic({ssr:false})` chunk (design §7); `frameloop="always"` in viewport → `"demand"` off-screen via IntersectionObserver (ADR-2), observer disconnected on unmount; `WebGLErrorBoundary` → `reportWebglFailure` on context/compile fail. Wired into `HeroBackdrop` css+webgl branch (mounts only after `onVideoReady`).
+- [x] 5.4 `.size-limit.json` gained a `hero-webgl-chunk` entry; the slice-1 glob guard confirms coverage. Verify: `pnpm --filter portfolio test` + `pnpm --filter portfolio size` green.
+
+### TDD Cycle Evidence
+
+| Task | RED | GREEN | REFACTOR |
+|------|-----|-------|----------|
+| 5.1–5.2 (RefractionScene) | uniform-wiring + no-alloc + dispose suite written first; ran → unresolved module | scene + GLSL implemented → suite green; uniforms all consumed, dispose spies all called once | GLSL extracted to `hero-refraction-shaders.ts`; scratch objects hoisted to `useMemo` |
+| 5.3 (GlassWebGL) | `HeroGlassWebGL.test.tsx` + `HeroBackdrop.test.tsx` additions written first (frameloop policy, IO disconnect, failure demotion, dynamic mount-after-canplay) | dynamic chunk + IO frameloop + error boundary + HeroBackdrop wiring → green | css+webgl seam filled; bare-video fallback removed |
+| 5.4 (size budget) | n/a (glob guard from slice 1 already fails on missing coverage) | `hero-webgl-chunk` entry added, `bundle-budget.test.ts` realigned | — |
+
+### Post-review fixes (slice 5, after adversarial review)
+
+A 4-dimension adversarial review (correctness / shader / spec-design / tests) with skeptic verification confirmed 3 findings; all fixed RED→GREEN before push:
+
+1. **(critical) Chunk-load resilience** — `next/dynamic` exposes no `onError`, and `HeroGlassWebGL`'s own `WebGLErrorBoundary` only catches render errors AFTER mount; a failed chunk fetch threw earlier and would crash the hero tree. Added a parent `WebGLChunkBoundary` in `HeroBackdrop` that absorbs the load failure, latches `reportWebglFailure` (demote to css-only), and renders nothing while the css video layer stays painted. Commit f1ff041.
+2. **(major) Shader color-space bug** — `ACCENT_RGB` held #e2725b in sRGB-normalized bytes `(0.886,0.447,0.357)`, but the `VideoTexture` is `SRGBColorSpace` so WebGL decodes the sample to linear before the fragment shader; the sRGB tint was added to linear `video.rgb`, over-brightening the copper edge. Replaced with the sRGB→linear conversion `(0.7605,0.1684,0.1046)`, pinned by a source-level color-space test. Commit ff00183.
+3. **(major) Vacuous test** — `HeroBackdrop` "at most one layer" asserted `length <= 1` (always true by construction). Strengthened to the exact per-tier count (`static`→0, `css-only`/`css+webgl`→1). Commit f1ff041.
+
+### Commits (on `hero-vlg/05-webgl-tier`, base `hero-vlg/04-css-tier`)
+
+| Hash | Message |
+|------|---------|
+| ee4af19 | test(portfolio): pin HeroRefractionScene uniform wiring and dispose contract (1 file, +186) |
+| c0ac016 | feat(portfolio): add hero refraction GLSL sampling the video texture (1 file, +71) |
+| fe9fb8f | feat(portfolio): add HeroRefractionScene full-viewport glass plane (1 file, +97) |
+| d48e54d | test(portfolio): pin HeroGlassWebGL frameloop, dispose and backdrop wiring (2 files, +193/−3) |
+| f809b9b | feat(portfolio): mount HeroGlassWebGL lazy chunk in the css+webgl tier (2 files, +149/−6) |
+| 397c6f8 | feat(portfolio): bound the hero WebGL lazy chunk with a size-limit entry (2 files, +17/−2) |
+| ff00183 | fix(portfolio): correct hero refraction accent tint to linear RGB (2 files, +51/−2) |
+| f1ff041 | fix(portfolio): guard hero WebGL chunk load with a parent error boundary (2 files, +76/−7) |
+
+### Verification (final, post all commits)
+
+- `pnpm --filter portfolio test`: PASS — 64 files / 381 tests, 0 failures (slice-4 was 62 / 358; +6 files/+23 tests: RefractionScene 13, GlassWebGL 6, HeroBackdrop additions, color-space 2, exact-count strengthened in place)
+- `pnpm --filter portfolio lint` (tsc --noEmit): PASS
+- `pnpm --filter portfolio size`: PASS — `client-js-total` 505,392 B; `hero-webgl-chunk` 232,039 B (both under budget)
+
+### Deviations from tasks.md
+
+1. Branch named `hero-vlg/05-webgl-tier` (not `hero-vlg/05-webgl` as in the forecast) — cosmetic suffix difference only.
+2. The dispose contract is verified at UNIT level with spies (jsdom has no WebGL2 / no `gc()`); per design §6 Playwright cannot gc, so the unit spies ARE the dispose verification (see engram pattern hero-vlg/webgl-test-mocking).
+3. `.size-limit.json` re-added the dedicated hero chunk entry (`hero-webgl-chunk`) that slice 1 had removed under the Turbopack-hashed-name cleanup — this is exactly the task 5.4 re-add the slice-1 deviation #3 anticipated.
+
+### Next slice
+
+Phase 6 — Physics (`hero-vlg/06-physics`, base `hero-vlg/05-webgl-tier`): tasks 6.1–6.5 (`hero-burst-store` once-per-load latch, `useLiquidPointer` with `enabled` prop, framer-motion `useScroll` → `uScroll`, IO-gated updates). Fill the Phase-6 signal seams marked in `HeroRefractionScene.tsx` (`uMouse/uScroll/uBurst`) and `HeroGlassCss`/`HeroBackdrop`.
+
+Pending orchestrator actions: open PR 5 `hero-vlg/05-webgl-tier` → base `hero-vlg/04-css-tier` (feature-branch-chain, ~840 changed lines incl. GLSL + R3F; budget High — flag GLSL in dedicated commit, may need `size:exception`).
