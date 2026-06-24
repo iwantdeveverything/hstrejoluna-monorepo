@@ -135,6 +135,44 @@ body::before {
     backdrop-filter: blur(12px) saturate(120%) brightness(0.65);
     -webkit-backdrop-filter: blur(12px) saturate(120%) brightness(0.65);
   }
+
+  /* ── Hero text contrast scrim (spec: liquid-glass-hero "Accessibility" /
+   *    design §1 "stronger backdrop treatment acting as the contrast scrim").
+   *
+   * The h1 is white over the refracted video; at the worst loop frame the
+   * asset's ember/copper glow drifts behind the lower-right glyphs and local
+   * contrast collapses below WCAG AA (measured 2.80:1, need ≥4.5:1). This
+   * scrim darkens the video DIRECTLY behind the text block so the text reads
+   * against a near-void surface regardless of frame.
+   *
+   * It is a pure-CSS background (not an <img>): CSS gradients are excluded from
+   * LCP candidacy, so the h1 text stays the LCP element (e2e 7.1). It lives in
+   * the hero section's own stacking context (section z-[1], above the backdrop
+   * video/glass at z-0) but below the content (z-[2]), is aria-hidden and
+   * pointer-events:none → invisible to AT, never intercepts CTA clicks, zero JS
+   * (keeps HeroContent a Server Component on the SSR LCP path). Frame-independent
+   * by construction, so it holds at every seeked timestamp and survives the real
+   * Blender asset swap. The vertical falloff keeps the lower video filaments
+   * partly visible while the text band (eyebrow → h1 → lead) sits on strong
+   * darkness; the radial bias anchors the darkest region to the left-aligned
+   * text origin. */
+  .hero-text-scrim {
+    background:
+      radial-gradient(
+        135% 110% at 22% 38%,
+        rgba(6, 6, 8, 0.82) 0%,
+        rgba(6, 6, 8, 0.72) 42%,
+        rgba(6, 6, 8, 0.5) 72%,
+        rgba(6, 6, 8, 0.28) 100%
+      ),
+      linear-gradient(
+        to bottom,
+        rgba(6, 6, 8, 0.7) 0%,
+        rgba(6, 6, 8, 0.62) 48%,
+        rgba(6, 6, 8, 0.32) 78%,
+        rgba(6, 6, 8, 0.12) 100%
+      );
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
