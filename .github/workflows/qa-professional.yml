@@ -59,7 +59,7 @@ jobs:
       fail-fast: false
       matrix:
         suite:
-          - "Desktop Chrome + Memory Leak"
+          - "Desktop Chrome"
           - "Mobile Chrome"
           - "WebKit + Reduced Motion"
 
@@ -109,18 +109,14 @@ jobs:
       # Each matrix suite runs a subset of Playwright projects via
       # --project so tests are never skipped because of wrong browser.
       #
-      # Desktop Chrome + Memory Leak: all files via Chrome project,
-      # memory-leak runs through its dedicated project (excluded from main
-      # Desktop Chrome via testIgnore).
+      # Desktop Chrome: all non-reduced-motion files via the Chrome project
       # Mobile Chrome: Pixel 5 emulation
       # WebKit + Reduced Motion: Safari Desktop/Mobile + reduced-motion
       - name: Run E2E — ${{ matrix.suite }}
         run: |
           case "${{ matrix.suite }}" in
-            "Desktop Chrome + Memory Leak")
-              pnpm playwright test \
-                --project="Desktop Chrome" \
-                --project="Desktop Chrome Memory Leak"
+            "Desktop Chrome")
+              pnpm playwright test --project="Desktop Chrome"
               ;;
             "Mobile Chrome")
               pnpm playwright test --project="Mobile Chrome"
