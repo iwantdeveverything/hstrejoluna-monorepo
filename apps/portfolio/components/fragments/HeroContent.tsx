@@ -40,6 +40,19 @@ export const HeroContent = ({
 }: HeroContentProps) => {
   return (
     <section id="hero" aria-labelledby="hero-title" className="relative z-[1] pointer-events-none overflow-hidden">
+      {/* Text contrast scrim (spec: liquid-glass-hero "Accessibility" — h1/lead/
+          eyebrow/CTAs SHALL maintain ≥4.5:1 against the video via glass scrim,
+          NOT copy changes; design §1 "stronger backdrop treatment acting as the
+          contrast scrim"). Pure-CSS, frame-independent, zero JS — keeps this a
+          Server Component on the SSR LCP path. It sits inside the section's
+          own stacking context (section is z-[1], above the backdrop video/glass
+          at z-0) yet BELOW the content (z-[2]), so it darkens the video behind
+          the glyphs without covering the CTAs' pointer-events. aria-hidden +
+          pointer-events-none → invisible to AT and never wins LCP. */}
+      <div
+        aria-hidden="true"
+        className="hero-text-scrim absolute inset-0 z-[0] pointer-events-none"
+      />
       <div className="relative z-[2] pointer-events-none flex flex-col items-start w-full min-w-0 max-w-7xl mx-auto px-4 sm:px-6 md:px-24 pt-24 md:pt-32 pb-16 md:pb-24">
         <p className="font-mono text-[10px] md:text-xs tracking-[0.5em] text-ember mb-6 uppercase">
           {eyebrow}

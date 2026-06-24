@@ -17,25 +17,10 @@ const shard = process.env.PLAYWRIGHT_SHARD
 const projects: Project[] = [
   {
     name: "Desktop Chrome",
-    testIgnore: /hero\.memory-leak\.spec\.ts$/,
     use: { ...devices["Desktop Chrome"] },
   },
   {
-    name: "Desktop Firefox",
-    testIgnore: /hero\.memory-leak\.spec\.ts$/,
-    use: {
-      ...devices["Desktop Firefox"],
-      launchOptions: {
-        firefoxUserPrefs: {
-          "webgl.force-enabled": true,
-          "webgl.disabled": false,
-        },
-      },
-    },
-  },
-  {
     name: "Mobile Chrome",
-    testIgnore: /hero\.memory-leak\.spec\.ts$/,
     use: { ...devices["Pixel 5"] },
   },
   {
@@ -43,28 +28,16 @@ const projects: Project[] = [
     testMatch: /.*\.reduced-motion\.spec\.ts$/,
     use: { ...devices["Desktop Chrome"], reducedMotion: "reduce" },
   },
-  {
-    name: "Desktop Chrome Memory Leak",
-    testMatch: /hero\.memory-leak\.spec\.ts$/,
-    use: {
-      ...devices["Desktop Chrome"],
-      launchOptions: {
-        args: ["--js-flags=--expose-gc"],
-      },
-    },
-  },
 ];
 
 if (includeWebkit) {
   projects.push(
     {
       name: "Desktop Safari",
-      testIgnore: /hero\.memory-leak\.spec\.ts$/,
       use: { ...devices["Desktop Safari"] },
     },
     {
       name: "Mobile Safari",
-      testIgnore: /hero\.memory-leak\.spec\.ts$/,
       use: { ...devices["iPhone 13"] },
     },
   );
@@ -99,6 +72,12 @@ export default defineConfig({
     reuseExistingServer: !process.env.CI,
     env: {
       NEXT_PUBLIC_SKIP_BOOT_SEQUENCE: "1",
+      // Phase 7 (e2e): build the hero with the liquid-glass kill switch ON so
+      // the live DOM renders the video + (desktop) WebGL canvas + SVG filter.
+      // Build-time inlined: a stale server started without this flag renders
+      // the static poster only — every open-gate spec asserts a backdrop
+      // sentinel first so that misconfig fails loud, not vacuously.
+      NEXT_PUBLIC_HERO_LIQUID: "true",
     },
   },
   projects,

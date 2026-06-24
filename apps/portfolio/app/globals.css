@@ -44,6 +44,25 @@
   --color-void: #131313;
   --color-ember: #ffb4a5;
 
+  /* ── Hero "Molten Ink Under Glass" palette (design §1, ADR-4) ──────────
+   * --color-accent (molten copper): deeper ember sibling for gradient stops
+   *   and the glass edge glow facing the video's bright filaments. The old
+   *   `from-accent/8` blob consumer was removed in slice 3; this token is
+   *   defined ahead of its glass-tier consumers (css/webgl, slices 4-5) so
+   *   `var(--color-accent)` resolves instead of collapsing to nothing.
+   * --color-glitch-cyan (cold counterpoint): the ONLY cold accent against an
+   *   all-warm palette, reserved for focus rings + the burst peak flash so
+   *   focus states stay unmistakable (a11y: non-color-only + high contrast).
+   *
+   * Grain-retention rationale (design §1 / ADR-4): the body::before grain at
+   * z-50 is deliberately RETAINED above the video because dark, heavily
+   * compressed AV1/H.264 content bands in near-black regions; the 5% soft-light
+   * grain dithers that banding and unifies video + UI into one "filmed"
+   * surface. These warm/cold tokens tint the glass edges that sit beneath
+   * that grain pass, so they are chosen to read THROUGH the dither. */
+  --color-accent: #e2725b;
+  --color-glitch-cyan: #6ee7ff;
+
   --font-sans: var(--font-sans), "system-ui", "sans-serif";
   --font-display: var(--font-display), "system-ui", "sans-serif";
   --font-mono: var(--font-mono), "monospace";
@@ -107,13 +126,6 @@ body::before {
     --my: 0.5;
   }
 
-  /* ── Hero liquid glass: blob layers ────────────────────────────── */
-  .hero-blob {
-    pointer-events: none;
-    will-change: transform, opacity;
-    transform-origin: center center;
-  }
-
   /* ── Hero liquid glass: tinted backdrop for text contrast ──────── */
   .hero-card-tint {
     position: absolute;
@@ -123,35 +135,49 @@ body::before {
     backdrop-filter: blur(12px) saturate(120%) brightness(0.65);
     -webkit-backdrop-filter: blur(12px) saturate(120%) brightness(0.65);
   }
-}
 
-/* Blob-specific drift animations — only active when user has NO reduced-motion
-   preference.  Using (prefers-reduced-motion: no-preference) avoids cascade/
-   specificity fights with the @media (prefers-reduced-motion: reduce) block. */
-@media (prefers-reduced-motion: no-preference) {
-  .hero-blob.hero-blob-drift-1 {
-    animation: hero-blob-drift-1 8s ease-in-out infinite alternate;
-  }
-  .hero-blob.hero-blob-drift-2 {
-    animation: hero-blob-drift-2 10s ease-in-out infinite alternate;
-  }
-  .hero-blob.hero-blob-drift-3 {
-    animation: hero-blob-drift-3 12s ease-in-out infinite alternate;
+  /* ── Hero text contrast scrim (spec: liquid-glass-hero "Accessibility" /
+   *    design §1 "stronger backdrop treatment acting as the contrast scrim").
+   *
+   * The h1 is white over the refracted video; at the worst loop frame the
+   * asset's ember/copper glow drifts behind the lower-right glyphs and local
+   * contrast collapses below WCAG AA (measured 2.80:1, need ≥4.5:1). This
+   * scrim darkens the video DIRECTLY behind the text block so the text reads
+   * against a near-void surface regardless of frame.
+   *
+   * It is a pure-CSS background (not an <img>): CSS gradients are excluded from
+   * LCP candidacy, so the h1 text stays the LCP element (e2e 7.1). It lives in
+   * the hero section's own stacking context (section z-[1], above the backdrop
+   * video/glass at z-0) but below the content (z-[2]), is aria-hidden and
+   * pointer-events:none → invisible to AT, never intercepts CTA clicks, zero JS
+   * (keeps HeroContent a Server Component on the SSR LCP path). Frame-independent
+   * by construction, so it holds at every seeked timestamp and survives the real
+   * Blender asset swap. The vertical falloff keeps the lower video filaments
+   * partly visible while the text band (eyebrow → h1 → lead) sits on strong
+   * darkness; the radial bias anchors the darkest region to the left-aligned
+   * text origin. */
+  .hero-text-scrim {
+    background:
+      radial-gradient(
+        135% 110% at 22% 38%,
+        rgba(6, 6, 8, 0.82) 0%,
+        rgba(6, 6, 8, 0.72) 42%,
+        rgba(6, 6, 8, 0.5) 72%,
+        rgba(6, 6, 8, 0.28) 100%
+      ),
+      linear-gradient(
+        to bottom,
+        rgba(6, 6, 8, 0.7) 0%,
+        rgba(6, 6, 8, 0.62) 48%,
+        rgba(6, 6, 8, 0.32) 78%,
+        rgba(6, 6, 8, 0.12) 100%
+      );
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
-  }
-
-  /* Freeze hero blob animations — spec § "reduced-motion freezes the CSS layer" */
-  .hero-blob,
-  .hero-blob.hero-blob-drift-1,
-  .hero-blob.hero-blob-drift-2,
-  .hero-blob.hero-blob-drift-3 {
-    animation: none !important;
-    animation-play-state: paused !important;
   }
 
   /* Skip hero entrance fade — instant visible, no motion */
@@ -212,55 +238,6 @@ body::before {
   }
   100% {
     clip: rect(30px, 9999px, 10px, 0);
-  }
-}
-
-/* ── Hero liquid glass: blob drift keyframes ───────────────────────
- * Three elliptical translations at different speeds / directions
- * to create an organic lava-lamp floating effect.
- */
-@keyframes hero-blob-drift-1 {
-  0% {
-    transform: translate(0, 0) rotate(0deg) scale(1);
-  }
-  25% {
-    transform: translate(4%, -3%) rotate(2deg) scale(1.05);
-  }
-  50% {
-    transform: translate(-2%, 5%) rotate(-1deg) scale(0.96);
-  }
-  75% {
-    transform: translate(-5%, -2%) rotate(3deg) scale(1.03);
-  }
-  100% {
-    transform: translate(0, 0) rotate(0deg) scale(1);
-  }
-}
-
-@keyframes hero-blob-drift-2 {
-  0% {
-    transform: translate(0, 0) rotate(0deg) scale(1);
-  }
-  33% {
-    transform: translate(-6%, 4%) rotate(-3deg) scale(0.94);
-  }
-  66% {
-    transform: translate(3%, -5%) rotate(2deg) scale(1.06);
-  }
-  100% {
-    transform: translate(0, 0) rotate(0deg) scale(1);
-  }
-}
-
-@keyframes hero-blob-drift-3 {
-  0% {
-    transform: translate(0, 0) rotate(0deg) scale(1);
-  }
-  50% {
-    transform: translate(-4%, -6%) rotate(-4deg) scale(1.08);
-  }
-  100% {
-    transform: translate(0, 0) rotate(0deg) scale(1);
   }
 }
 

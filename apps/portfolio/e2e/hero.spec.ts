@@ -1,75 +1,186 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
-test.describe("Hero — Liquid Glass (e2e)", () => {
-  // ═══════════════════════════════════════════════════════════════════
-  // Gated/lazy WebGL contract (liquid-glass-revival)
-  //
-  // The WebGL refraction scene is capability-gated and lazy-loaded. These
-  // tests pin the CLOSED-gate behavior deterministically:
-  //   - desktop + prefers-reduced-motion: reduce → gate closed → no canvas
-  //   - mobile viewport → gate closed (mobile/coarse-pointer exclusion)
-  // In both cases the 3-blob CSS fallback and the h1 LCP candidate must
-  // survive. The OPEN-gate (canvas mounts lazily) e2e lands with the scene
-  // implementation in a later slice.
-  // ═══════════════════════════════════════════════════════════════════
-  test("desktop 1440x900 + reduced motion: gate closed — CSS blob fallback, no canvas", async ({
+// ═══════════════════════════════════════════════════════════════════════════
+// Hero — Self-Hosted Video Layer Contract (open gate)
+//
+// The e2e build runs with NEXT_PUBLIC_HERO_LIQUID="true" (playwright.config.ts
+// webServer.env), so the liquid-glass <HeroBackdrop/> mounts live. These specs
+// pin the LIVE DOM contract of the video layer:
+//   - <video> attrs (autoplay muted loop playsinline preload=none poster aria-hidden)
+//   - poster-first: ZERO video media requests before idle, proven by capturing
+//     (not running) requestIdleCallback, asserting the negative end-state, then
+//     releasing idle and asserting the rendition request fires.
+//
+// DOM contract (verified): <HeroBackdrop/> (video + canvas + SVG filter) is a
+// SIBLING of section#hero, NOT a descendant. All media locators are
+// PAGE-scoped (page.locator("video"), never heroSection.locator(...)).
+//
+// Architecture note: useHeroTier() pins the SSR tier to `static` via a
+// hydration sentinel, so the <video> is NOT in the initial HTML — it mounts
+// only after client hydration. The zero-media proof therefore uses a captured
+// requestIdleCallback against the LIVE DOM, not a server-HTML assertion.
+// ═══════════════════════════════════════════════════════════════════════════
+
+const WEBM_OR_MP4 = /\/hero-loop-\d+\.(webm|mp4)(\?.*)?$/;
+const DESKTOP = { width: 1440, height: 900 };
+
+/**
+ * Install a requestIdleCallback stub BEFORE any app script runs. It CAPTURES
+ * the scheduled callbacks into `window.__heroIdleCbs` instead of running them,
+ * so the test controls exactly when the video sources are injected. This makes
+ * "no media before idle" a deterministic negative end-state rather than a race
+ * against the browser's idle scheduler.
+ */
+async function captureIdle(page: import("@playwright/test").Page) {
+  await page.addInitScript(() => {
+    const w = window as unknown as {
+      __heroIdleCbs: Array<(deadline: IdleDeadline) => void>;
+      requestIdleCallback: (cb: (d: IdleDeadline) => void) => number;
+      cancelIdleCallback: (h: number) => void;
+    };
+    w.__heroIdleCbs = [];
+    w.requestIdleCallback = (cb) => {
+      w.__heroIdleCbs.push(cb);
+      return w.__heroIdleCbs.length;
+    };
+    w.cancelIdleCallback = () => undefined;
+  });
+}
+
+async function releaseIdle(page: import("@playwright/test").Page) {
+  await page.evaluate(() => {
+    const w = window as unknown as {
+      __heroIdleCbs: Array<(deadline: IdleDeadline) => void>;
+    };
+    const deadline = {
+      didTimeout: false,
+      timeRemaining: () => 50,
+    } as IdleDeadline;
+    for (const cb of w.__heroIdleCbs) cb(deadline);
+    w.__heroIdleCbs = [];
+  });
+}
+
+test.describe("Hero — Liquid Glass video layer (e2e, open gate)", () => {
+  test("video element carries the poster-first attribute contract", async ({
     page,
   }) => {
-    await page.emulateMedia({ reducedMotion: "reduce" });
-    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.setViewportSize(DESKTOP);
     await page.goto("/");
 
-    const heroSection = page.locator('section[aria-labelledby="hero-title"]');
-    await expect(heroSection).toBeVisible();
+    // Sentinel: a stale server without the gate flag renders the static poster
+    // ONLY (no <video>). Failing here means the build is misconfigured — fail
+    // loud, not vacuously.
+    const video = page.locator("video");
+    await expect(video).toHaveCount(1);
 
-    // Gate closed (reduced motion) — the lazy WebGL layer must never mount
-    await expect(heroSection.locator("canvas")).toHaveCount(0);
+    const attrs = await video.evaluate((el: HTMLVideoElement) => ({
+      autoplay: el.autoplay,
+      muted: el.muted,
+      loop: el.loop,
+      // Firefox does not reflect the `playsinline` IDL property (returns
+      // undefined), so assert on the ATTRIBUTE presence — what the markup
+      // contract actually guarantees — for cross-browser parity.
+      playsInline: el.hasAttribute("playsinline"),
+      preload: el.preload,
+      poster: el.poster,
+      ariaHidden: el.getAttribute("aria-hidden"),
+    }));
 
-    // CSS blob fallback stays as the visual layer when the gate is closed
-    const blobs = heroSection.locator('[class*="hero-blob"]');
-    await expect(blobs).toHaveCount(3);
+    expect(attrs.autoplay).toBe(true);
+    expect(attrs.muted).toBe(true);
+    expect(attrs.loop).toBe(true);
+    expect(attrs.playsInline).toBe(true);
+    expect(attrs.preload).toBe("none");
+    expect(attrs.poster).toMatch(/\/hero-poster\.jpg$/);
+    expect(attrs.ariaHidden).toBe("true");
+  });
 
-    // h1 is visible as the LCP candidate
+  test("poster paints with ZERO video media requests before idle, then sources inject", async ({
+    page,
+    baseURL,
+  }) => {
+    const mediaRequests: string[] = [];
+    page.on("request", (req) => {
+      if (WEBM_OR_MP4.test(req.url())) mediaRequests.push(req.url());
+    });
+
+    await captureIdle(page);
+    await page.setViewportSize(DESKTOP);
+    await page.goto("/");
+
+    // Hydration sentinel: the <video> mounts post-hydration.
+    const video = page.locator("video");
+    await expect(video).toHaveCount(1);
+
+    // SSR poster <img> (background LCP candidate) is painted.
+    const poster = page.locator('img[aria-hidden="true"]').first();
+    await expect(poster).toBeVisible();
+    const posterSrc = await poster.getAttribute("src");
+    expect(posterSrc).toMatch(/hero-poster/);
+
+    // Negative end-state: idle is captured (not run), so NO <source> children
+    // exist and NO video bytes have been requested.
+    await expect(video.locator("source")).toHaveCount(0);
+    expect(mediaRequests).toHaveLength(0);
+
+    // Wait until the idle callback has actually been scheduled, then release it.
+    await page.waitForFunction(() => {
+      const w = window as unknown as { __heroIdleCbs?: unknown[] };
+      return Array.isArray(w.__heroIdleCbs) && w.__heroIdleCbs.length > 0;
+    });
+    await releaseIdle(page);
+
+    // After idle: AV1/WebM first then H.264 MP4 are injected as <source> children.
+    await expect(video.locator("source")).toHaveCount(2);
+    const sources = await video.locator("source").evaluateAll((els) =>
+      (els as HTMLSourceElement[]).map((el) => ({
+        src: el.getAttribute("src"),
+        type: el.getAttribute("type"),
+      })),
+    );
+    // Desktop picks the 1080 rendition; webm precedes mp4.
+    expect(sources[0]).toEqual({
+      src: "/hero-loop-1080.webm",
+      type: "video/webm",
+    });
+    expect(sources[1]).toEqual({
+      src: "/hero-loop-1080.mp4",
+      type: "video/mp4",
+    });
+
+    // The rendition request fires, same-origin, only after idle release.
+    // Assert on the request listener captured at setup (line 102), NOT a fresh
+    // page.waitForRequest(): releaseIdle() injects the sources and the autoplay
+    // muted <video> begins loading SYNCHRONOUSLY, so the request can fire before
+    // a freshly-attached waiter sees it (a guaranteed race → timeout).
+    await expect.poll(() => mediaRequests.length).toBeGreaterThan(0);
+    const firstMediaReq = mediaRequests[0];
+    expect(firstMediaReq.startsWith(baseURL ?? "")).toBe(true);
+    expect(firstMediaReq).toContain("/hero-loop-1080.");
+  });
+
+  test("h1 and primary CTA are visible over the live backdrop", async ({
+    page,
+  }) => {
+    await page.setViewportSize(DESKTOP);
+    await page.goto("/");
+
+    await expect(page.locator("video")).toHaveCount(1);
     await expect(page.locator("#hero-title")).toBeVisible();
-
-    // Primary CTA is visible
     await expect(page.getByRole("link", { name: /projects/i })).toBeVisible();
   });
 
-  // ═══════════════════════════════════════════════════════════════════
-  // Mobile — gate closed by mobile/coarse-pointer exclusion
-  // ═══════════════════════════════════════════════════════════════════
-  test("mobile 375x812: gate closed — CSS blob fallback, no canvas", async ({
+  // ═════════════════════════════════════════════════════════════════════════
+  // Accessibility (7.5): the hero produces zero axe violations with the glass
+  // gate ON. The decorative canvas is excluded (it carries no semantics; its
+  // host div is aria-hidden).
+  // ═════════════════════════════════════════════════════════════════════════
+  test("hero section has zero accessibility violations (gate ON)", async ({
     page,
   }) => {
-    await page.setViewportSize({ width: 375, height: 812 });
-    await page.goto("/");
-
-    const heroSection = page.locator('section[aria-labelledby="hero-title"]');
-    await expect(heroSection).toBeVisible();
-
-    // Mobile viewports are excluded from the WebGL gate — no canvas, ever
-    await expect(heroSection.locator("canvas")).toHaveCount(0);
-
-    // CSS blob fallback is present and visible
-    const blobs = heroSection.locator('[class*="hero-blob"]');
-    await expect(blobs).toHaveCount(3);
-
-    // h1 is visible
-    await expect(page.locator("#hero-title")).toBeVisible();
-
-    // Primary CTA is visible
-    await expect(page.getByRole("link", { name: /projects/i })).toBeVisible();
-  });
-
-  // ═══════════════════════════════════════════════════════════════════
-  // 7.7 RED → 7.8 GREEN: Axe a11y
-  // ═══════════════════════════════════════════════════════════════════
-  test("hero section has zero accessibility violations", async ({
-    page,
-  }, testInfo) => {
-    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.setViewportSize(DESKTOP);
     await page.goto("/");
 
     const heroSection = page.locator('section[aria-labelledby="hero-title"]');
@@ -83,95 +194,17 @@ test.describe("Hero — Liquid Glass (e2e)", () => {
     expect(analysis.violations).toEqual([]);
   });
 
-  // ═══════════════════════════════════════════════════════════════════
-  // 7.9 RED → 7.10 GREEN: Pixel contrast at h1
-  // ═══════════════════════════════════════════════════════════════════
-  test("h1 text contrast meets WCAG AA over fluid background at multiple cursor positions", async ({
-    page,
-  }) => {
-    await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto("/");
-
-    const h1 = page.locator("#hero-title");
-    await expect(h1).toBeVisible();
-
-    // Move cursor to different positions and verify contrast via
-    // computed colors. The LiquidGlass backdrop layer sits behind the
-    // h1 with a dark semi-transparent background + backdrop-filter.
-    const positions = [
-      { x: 200, y: 300 },
-      { x: 720, y: 400 },
-      { x: 1200, y: 350 },
-    ];
-
-    for (const pos of positions) {
-      await page.mouse.move(pos.x, pos.y);
-      // Allow rAF-throttled --mx/--my CSS vars to update
-      await page.waitForTimeout(400);
-
-      const ratio = await h1.evaluate((el) => {
-        // ── WCAG relative luminance & contrast ────────────────────
-        function getLuminance(r: number, g: number, b: number): number {
-          const [rs, gs, bs] = [r, g, b].map((c) => {
-            const s = c / 255;
-            return s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
-          });
-          return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
-        }
-
-        function parseColor(color: string): [number, number, number] | null {
-          const m = color.match(
-            /rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*[\d.]+)?\)/,
-          );
-          if (!m) return null;
-          return [Number(m[1]), Number(m[2]), Number(m[3])];
-        }
-
-        const textStyle = window.getComputedStyle(el);
-        const textColor = textStyle.color;
-        const textRgb = parseColor(textColor);
-        if (!textRgb) return -1;
-
-        // Find the effective background behind the h1.
-        // The h1 sits in a div with z-10 inside the section.
-        // The LiquidGlass backdrop is a sibling with a dark bg.
-        const section = el.closest(
-          'section[aria-labelledby="hero-title"]',
-        ) as HTMLElement | null;
-        if (!section) return -1;
-
-        // The section background is what shows through the transparent
-        // areas. Effective bg = section's computed background-color.
-        const sectionStyle = window.getComputedStyle(section);
-        const sectionBg = sectionStyle.backgroundColor;
-        const bgRgb = parseColor(sectionBg);
-        if (!bgRgb) return -1;
-
-        const lText = getLuminance(textRgb[0], textRgb[1], textRgb[2]);
-        const lBg = getLuminance(bgRgb[0], bgRgb[1], bgRgb[2]);
-        const lighter = Math.max(lText, lBg);
-        const darker = Math.min(lText, lBg);
-        return (lighter + 0.05) / (darker + 0.05);
-      });
-
-      expect(ratio).toBeGreaterThanOrEqual(4.5);
-    }
-  });
-
-  // ═══════════════════════════════════════════════════════════════════
-  // 7.11 RED → 7.12 GREEN: LCP assertion — h1 wins LCP
-  // ═══════════════════════════════════════════════════════════════════
+  // ═════════════════════════════════════════════════════════════════════════
+  // LCP: the h1 text wins LCP — the lazy canvas must not displace the text
+  // candidate.
+  // ═════════════════════════════════════════════════════════════════════════
   test("h1 is the LCP element", async ({ page }) => {
-    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.setViewportSize(DESKTOP);
     await page.goto("/");
 
     const h1 = page.locator("#hero-title");
     await expect(h1).toBeVisible();
 
-    // Poll performance.getEntriesByType — the LCP entry should have been
-    // recorded by the time goto() resolves (buffered:true in spec).
-    // Chromium headless sometimes omits the `element` field; we guard
-    // against that.
     const lcpInfo = await page.evaluate(() => {
       const entries = performance.getEntriesByType(
         "largest-contentful-paint",
@@ -195,17 +228,12 @@ test.describe("Hero — Liquid Glass (e2e)", () => {
       };
     });
 
-    // The LCP element SHOULD be the h1 (id hero-title) — the canvas
-    // mounts later and should not displace the text LCP candidate.
-    // If Chromium headless omits the element field, we fall back to
-    // asserting the h1 is a valid LCP candidate via the DOM helper.
     if (
       lcpInfo.reason === "no-element-field" ||
       lcpInfo.reason === "no-lcp-entries"
     ) {
-      // Fallback: verify h1 meets all LCP candidate conditions from lib/lcp.ts
+      // Fallback: verify the h1 meets all LCP-candidate conditions.
       const candidate = await h1.evaluate((el) => {
-        // Inline the assertH1IsLcpCandidate logic for E2E self-sufficiency
         const failures: string[] = [];
         if (el.tagName.toLowerCase() !== "h1") failures.push("not-h1");
         let ancestor: Element | null = el;

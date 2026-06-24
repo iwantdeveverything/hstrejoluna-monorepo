@@ -1,15 +1,23 @@
 import { expect, test } from "@playwright/test";
 
+// ═══════════════════════════════════════════════════════════════════════════
+// Hero — Motion & Data Preference Fallback (reduced motion → static tier)
+//
+// Under prefers-reduced-motion: reduce, useHeroTier() resolves the `static`
+// tier → <HeroBackdrop/> returns null → there is NO <video> element at all
+// (not "video with no sources"), NO canvas, and ZERO video media requests can
+// fire because nothing schedules them. The SSR poster <img> stays as the
+// background. All locators are PAGE-scoped (the backdrop is a section sibling).
+// ═══════════════════════════════════════════════════════════════════════════
+
+const WEBM_OR_MP4 = /\/hero-loop-\d+\.(webm|mp4)(\?.*)?$/;
+
 test.describe("Hero — Reduced Motion (e2e)", () => {
-  // ═══════════════════════════════════════════════════════════════════
-  // 7.5 RED → 7.6 GREEN: Reduced motion — no canvas, blobs static
-  // ═══════════════════════════════════════════════════════════════════
-  test("reduced motion: no canvas, no pointermove, blobs static", async ({
+  test("reduced motion: static tier — no video, no canvas, zero media requests", async ({
     page,
   }, testInfo) => {
-    // This spec is designed for the "Desktop Chrome Reduced Motion"
-    // project which sets reducedMotion: "reduce".  Skip in regular
-    // projects that also pick up this file (they have no testMatch).
+    // Runs under the "Desktop Chrome Reduced Motion" project (reducedMotion:
+    // "reduce"). Skip in other projects that also glob this file.
     const isReducedMotionProject =
       testInfo.project.name.includes("Reduced Motion");
     test.skip(
@@ -17,11 +25,12 @@ test.describe("Hero — Reduced Motion (e2e)", () => {
       "Only valid under reduced-motion emulation",
     );
 
-    // ── Headless Chromium limitation ─────────────────────────────────
-    // Playwright's reducedMotion: "reduce" affects CSS @media queries
-    // but NOT window.matchMedia() in headless Chromium.  To test the
-    // JS capability gate we inject an override BEFORE navigating so
-    // the hooks pick up prefers-reduced-motion: reduce at the JS level.
+    // ── Headless Chromium limitation ─────────────────────────────────────────
+    // Playwright's reducedMotion: "reduce" drives CSS @media but NOT
+    // window.matchMedia() in headless Chromium. useHeroTier → useLiquidGlassGates
+    // reads matchMedia at the JS level to decide `static`, so we override
+    // matchMedia BEFORE navigation to make the gate see reduce. Without this an
+    // upgraded tier may mount a <video> and the "0 video" assertion fails.
     await page.addInitScript(() => {
       const originalMatchMedia = window.matchMedia.bind(window);
       window.matchMedia = (query: string) => {
@@ -41,39 +50,32 @@ test.describe("Hero — Reduced Motion (e2e)", () => {
       };
     });
 
+    const mediaRequests: string[] = [];
+    page.on("request", (req) => {
+      if (WEBM_OR_MP4.test(req.url())) mediaRequests.push(req.url());
+    });
+
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("/");
 
     const heroSection = page.locator('section[aria-labelledby="hero-title"]');
     await expect(heroSection).toBeVisible();
 
-    // Wait for dynamic imports to settle
+    // Allow hydration + any deferred idle work to settle. If the gate were
+    // wrong, this window is enough for a video to mount and request bytes.
     await page.waitForTimeout(2000);
 
-    // ══ Canvas — must NOT mount under reduced-motion ═════════════════
-    await expect(heroSection.locator("canvas")).toHaveCount(0);
+    // Static tier: the backdrop island renders null.
+    await expect(page.locator("video")).toHaveCount(0);
+    await expect(page.locator("canvas")).toHaveCount(0);
+    expect(mediaRequests).toHaveLength(0);
 
-    // ══ Blobs — verify CSS blobs render (pure CSS, zero JS) ══════════
-    // The production CSS wraps blob animations in
-    // @media (prefers-reduced-motion: no-preference) so they are disabled
-    // when the user prefers reduced motion.  However, Playwright's
-    // reducedMotion: "reduce" does NOT reliably trigger CSS @media
-    // queries in headless Chrome (it only affects window.matchMedia).
-    // We inject the override style manually to validate the freeze.
-    await page.addStyleTag({
-      content: ".hero-blob { animation: none !important; }",
-    });
-    const blobs = heroSection.locator('[class*="hero-blob"]');
-    await expect(blobs).toHaveCount(3);
-    const animationName = await blobs
-      .first()
-      .evaluate((el) => window.getComputedStyle(el).animationName);
-    expect(
-      animationName === "" || animationName === "none",
-      `Expected empty or "none" animation-name, got "${animationName}"`,
-    ).toBe(true);
+    // The SSR poster <img> remains the background.
+    const poster = page.locator('img[aria-hidden="true"]').first();
+    await expect(poster).toBeVisible();
+    expect(await poster.getAttribute("src")).toMatch(/hero-poster/);
 
-    // ══ Semantic shell — always present ═══════════════════════════════
+    // Semantic shell is always present.
     await expect(page.locator("#hero-title")).toBeVisible();
     await expect(page.getByRole("link", { name: /projects/i })).toBeVisible();
   });

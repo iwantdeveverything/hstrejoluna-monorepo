@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect } from "react";
-import { useReducedMotion } from "@hstrejoluna/ui";
+import {
+  useLiquidGlassGates,
+} from "@hstrejoluna/ui";
 
 /**
  * useKeyboardNav Hook
@@ -9,7 +11,7 @@ import { useReducedMotion } from "@hstrejoluna/ui";
  * Respects 'prefers-reduced-motion'.
  */
 export function useKeyboardNav(containerRef: React.RefObject<HTMLElement | null>) {
-  const isReducedMotion = useReducedMotion();
+  const { reduceMotion: isReducedMotion } = useLiquidGlassGates();
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {

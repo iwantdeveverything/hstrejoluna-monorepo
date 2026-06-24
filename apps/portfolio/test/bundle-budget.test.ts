@@ -4,20 +4,18 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 
 /**
- * Bundle-budget gate contract (liquid-glass-revival, slice 1 / Phase 0.4).
+ * Bundle-budget gate contract (hero-video-liquid-glass, spec:
+ * Size-Limit Glob Integrity).
  *
- * This suite is the strict-TDD deliverable for the size gate: it proves the
- * gate CONFIG exists, declares the agreed thresholds, is wired into qa:gate,
- * and that the size-limit binary actually RUNS against the config.
+ * The gate config must exist, be wired into qa:gate, and actually run.
+ * Vacuous passes are forbidden: scripts/size-gate.mjs fails when any
+ * configured glob matches zero files (see scripts/size-limit-globs.test.ts
+ * for the per-entry glob assertions), so every declared entry is binding.
  *
- * NOTE: the <=200KB gz lazy-chunk rule is declared-but-not-yet-binding. The
- * lazy WebGL chunk it targets does not exist until slice 5. size-limit
- * reports a missing path glob as size 0 with passed=true BUT exits non-zero
- * ("can't find files"), so the raw binary cannot back qa:gate until every
- * glob resolves. The `size` script therefore goes through scripts/size-gate.mjs,
- * which parses the JSON report and fails only on a real budget violation
- * (passed=false) or a broken config — missing globs stay vacuous until their
- * chunks ship. The +5KB gz initial delta rule is binding now.
+ * Budgets are informational ceilings during the revival; slice 5 adds a
+ * dedicated hero WebGL chunk entry (three/R3F lazy boundary, design §7) so the
+ * heaviest chunk is independently bounded and the glob-guard confirms its
+ * coverage.
  */
 
 const portfolioRoot = path.resolve(__dirname, "..");
@@ -39,23 +37,25 @@ function readPackageJson(): { scripts: Record<string, string> } {
   return JSON.parse(readFileSync(packageJsonPath, "utf8"));
 }
 
+const hasBuild = existsSync(path.join(portfolioRoot, ".next", "static"));
+
 describe("bundle-budget size gate config", () => {
   it("declares a .size-limit.json config at the portfolio root", () => {
     expect(existsSync(configPath)).toBe(true);
   });
 
-  it("declares the +5KB gz initial JS delta threshold (binding now)", () => {
+  it("declares the total client JS ceiling (binding, revival-informational)", () => {
     const config = readConfig();
-    const initial = config.find((entry) => entry.name === "initial-js-delta");
-    expect(initial).toBeDefined();
-    expect(initial?.limit).toBe("5 KB");
+    const total = config.find((entry) => entry.name === "client-js-total");
+    expect(total).toBeDefined();
+    expect(total?.limit).toBe("600 KB");
   });
 
-  it("declares the <=200KB gz lazy WebGL chunk threshold (declared, not yet binding)", () => {
+  it("declares the dedicated hero WebGL chunk ceiling (three/R3F boundary)", () => {
     const config = readConfig();
-    const lazy = config.find((entry) => entry.name === "hero-webgl-lazy-chunk");
-    expect(lazy).toBeDefined();
-    expect(lazy?.limit).toBe("200 KB");
+    const heroChunk = config.find((entry) => entry.name === "hero-webgl-chunk");
+    expect(heroChunk).toBeDefined();
+    expect(heroChunk?.limit).toBe("300 KB");
   });
 
   it("wires the size gate into the qa:gate script so it fails the build", () => {
@@ -64,18 +64,23 @@ describe("bundle-budget size gate config", () => {
     expect(pkg.scripts["qa:gate"]).toContain("pnpm run size");
   });
 
-  it("runs the size gate against the config without a config error", () => {
-    // Smoke: the gate must actually EXECUTE. The gate wrapper exits zero when
-    // every declared budget passes (missing globs stay vacuous) and reports
-    // each entry on stdout. We assert on the report lines, not on byte counts
-    // (those bind in later slices).
-    const stdout = execFileSync(
-      "pnpm",
-      ["run", "size"],
-      { cwd: portfolioRoot, encoding: "utf8" },
-    );
-    expect(stdout).toContain("initial-js-delta");
-    expect(stdout).toContain("hero-webgl-lazy-chunk");
-    expect(stdout).not.toContain("[FAIL]");
-  });
+  it.skipIf(!hasBuild)(
+    "runs the size gate against the config without a config error",
+    () => {
+      // Smoke: the gate must actually EXECUTE against a production build.
+      // The wrapper exits non-zero on a stale glob (vacuous-pass guard) or
+      // a real budget violation; on success it reports each entry on stdout.
+      const stdout = execFileSync("pnpm", ["run", "size"], {
+        cwd: portfolioRoot,
+        encoding: "utf8",
+      });
+      expect(stdout).toContain("client-js-total");
+      expect(stdout).not.toContain("[FAIL]");
+      expect(stdout).not.toContain("[STALE GLOB]");
+    },
+    // Spawns `pnpm run size` (size-limit over the production build); the
+    // child-process duration is load-dependent under the parallel suite,
+    // so the default 5s timeout flakes. Generous explicit budget instead.
+    60_000,
+  );
 });

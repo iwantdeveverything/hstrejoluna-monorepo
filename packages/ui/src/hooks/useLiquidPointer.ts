@@ -18,6 +18,13 @@ export interface UseLiquidPointerOptions {
   targetRef?: RefObject<HTMLElement | null>;
   /** Element to receive `--mx/--my/--vx/--vy` CSS custom properties. Falls back to `targetRef` then `document.documentElement`. */
   cssTargetRef?: RefObject<HTMLElement | null>;
+  /**
+   * Master enable switch, fed from the hero capability gate (motion prefs are
+   * centralized in the gate, design §3). When `false`, no `pointermove`
+   * listener is attached and flipping it to `false` detaches an existing one.
+   * Defaults to `true`.
+   */
+  enabled?: boolean;
 }
 
 export interface UseLiquidPointerResult {
@@ -49,8 +56,10 @@ export function useLiquidPointer(
   const pointerRef = useRef<LiquidPointerState>({ ...INITIAL });
   const optsRef = useRef(options);
   optsRef.current = options;
+  const enabled = options.enabled ?? true;
 
   useEffect(() => {
+    if (!enabled) return;
     if (!isBrowser()) return;
     if (prefersReducedMotion()) return;
 
@@ -126,7 +135,7 @@ export function useLiquidPointer(
       window.removeEventListener("pointermove", onPointerMove);
       if (rafId !== 0) window.cancelAnimationFrame(rafId);
     };
-  }, []);
+  }, [enabled]);
 
   return { pointerRef };
 }

@@ -62,5 +62,5 @@
 
 /* Reduced motion is enforced inside the JS animation bridge (REQ-6 S6.4)
  * — the resting `<feDisplacementMap scale>` value is set on the filter
- * node by `filter-defs.tsx` and never mutated when useReducedMotion is on.
+ * node by `filter-defs.tsx` and never mutated when the reduceMotion gate is on.
  */

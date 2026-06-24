@@ -1,6 +1,6 @@
 "use client";
 
-import { useReducedMotion } from "@hstrejoluna/ui";
+import { useLiquidGlassGates } from "../liquid-glass/use-liquid-glass-gates";
 
 interface GlitchTextProps {
   text: string;
@@ -20,7 +20,7 @@ export const GlitchText = ({
   as: Component = "span",
   active = false,
 }: GlitchTextProps) => {
-  const isReducedMotion = useReducedMotion();
+  const { reduceMotion: isReducedMotion } = useLiquidGlassGates();
   const glitchClass =
     "absolute top-0 left-0 w-full h-full opacity-0 pointer-events-none transition-opacity duration-100";
 

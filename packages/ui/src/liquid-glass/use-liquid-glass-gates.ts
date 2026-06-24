@@ -27,6 +27,12 @@ export interface LiquidGlassGates {
   reduceMotion: boolean;
   /** `@media (prefers-reduced-data: reduce)`. */
   reduceData: boolean;
+  /**
+   * `navigator.connection.saveData` (Network Information API). Practical
+   * data-saver gate — `prefers-reduced-data` UA support is poor, so both
+   * are exposed and checked independently (design §10).
+   */
+  saveData: boolean;
   /** Viewport floor — TRUE when narrower than 480px. */
   isMobile: boolean;
 }
@@ -35,6 +41,7 @@ export const LIQUID_GLASS_SSR_DEFAULTS: LiquidGlassGates = Object.freeze({
   reduceTransparency: false,
   reduceMotion: false,
   reduceData: false,
+  saveData: false,
   isMobile: false,
 });
 
@@ -48,6 +55,20 @@ const QUERIES = {
 
 
 
+interface NetworkConnection {
+  saveData?: boolean;
+  addEventListener?: (type: string, listener: () => void) => void;
+  removeEventListener?: (type: string, listener: () => void) => void;
+}
+
+const getConnection = (): NetworkConnection | undefined =>
+  (navigator as Navigator & { connection?: NetworkConnection }).connection;
+
+const readSaveData = (): boolean => {
+  if (!isBrowser()) return false;
+  return Boolean(getConnection()?.saveData);
+};
+
 const readSnapshot = (): LiquidGlassGates => {
   if (!isBrowser() || typeof window.matchMedia !== "function") return LIQUID_GLASS_SSR_DEFAULTS;
   const reduceTransparency = window.matchMedia(QUERIES.reduceTransparency)
@@ -59,6 +80,7 @@ const readSnapshot = (): LiquidGlassGates => {
     reduceTransparency,
     reduceMotion,
     reduceData,
+    saveData: readSaveData(),
     isMobile: !desktop,
   };
 };
@@ -94,10 +116,13 @@ const subscribe = (notify: () => void): (() => void) => {
   for (const list of lists) {
     addMediaListener(list, handler);
   }
+  const connection = getConnection();
+  connection?.addEventListener?.("change", handler);
   return () => {
     for (const list of lists) {
       removeMediaListener(list, handler);
     }
+    connection?.removeEventListener?.("change", handler);
   };
 };
 
@@ -112,7 +137,7 @@ let cachedFingerprint = "";
 
 const getCachedSnapshot = (): LiquidGlassGates => {
   const next = readSnapshot();
-  const fingerprint = `${next.reduceTransparency}|${next.reduceMotion}|${next.reduceData}|${next.isMobile}`;
+  const fingerprint = `${next.reduceTransparency}|${next.reduceMotion}|${next.reduceData}|${next.saveData}|${next.isMobile}`;
   if (cachedSnapshot && fingerprint === cachedFingerprint) {
     return cachedSnapshot;
   }

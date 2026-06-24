@@ -122,4 +122,45 @@ describe("useLiquidPointer", () => {
     );
     expect(attached).toBe(false);
   });
+
+  it("skips listener attachment when enabled is false (gate-fed motion prefs)", () => {
+    installMatchMedia(false);
+    const addSpy = vi.spyOn(window, "addEventListener");
+
+    renderHook(() => useLiquidPointer({ enabled: false }));
+
+    const attached = addSpy.mock.calls.some(
+      ([type]) => type === "pointermove",
+    );
+    expect(attached).toBe(false);
+  });
+
+  it("attaches the listener when enabled is true (default)", () => {
+    installMatchMedia(false);
+    const addSpy = vi.spyOn(window, "addEventListener");
+
+    renderHook(() => useLiquidPointer({ enabled: true }));
+
+    const attached = addSpy.mock.calls.some(
+      ([type]) => type === "pointermove",
+    );
+    expect(attached).toBe(true);
+  });
+
+  it("detaches the listener when enabled flips from true to false", () => {
+    installMatchMedia(false);
+    const removeSpy = vi.spyOn(window, "removeEventListener");
+
+    const { rerender } = renderHook(
+      ({ enabled }: { enabled: boolean }) => useLiquidPointer({ enabled }),
+      { initialProps: { enabled: true } },
+    );
+
+    rerender({ enabled: false });
+
+    const removed = removeSpy.mock.calls.some(
+      ([type]) => type === "pointermove",
+    );
+    expect(removed).toBe(true);
+  });
 });
