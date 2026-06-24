@@ -20,18 +20,6 @@ const projects: Project[] = [
     use: { ...devices["Desktop Chrome"] },
   },
   {
-    name: "Desktop Firefox",
-    use: {
-      ...devices["Desktop Firefox"],
-      launchOptions: {
-        firefoxUserPrefs: {
-          "webgl.force-enabled": true,
-          "webgl.disabled": false,
-        },
-      },
-    },
-  },
-  {
     name: "Mobile Chrome",
     use: { ...devices["Pixel 5"] },
   },

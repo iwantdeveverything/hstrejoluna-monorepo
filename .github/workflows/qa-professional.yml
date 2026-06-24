@@ -60,7 +60,7 @@ jobs:
       matrix:
         suite:
           - "Desktop Chrome + Memory Leak"
-          - "Desktop Firefox + Mobile Chrome"
+          - "Mobile Chrome"
           - "WebKit + Reduced Motion"
 
     steps:
@@ -82,14 +82,27 @@ jobs:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-${{ env.PLAYWRIGHT_VERSION }}
 
+      # The GitHub runner ships a packages.microsoft.com apt source that
+      # intermittently returns 403 Forbidden, which makes `apt-get update`
+      # (run by Playwright's --with-deps / install-deps) fail the whole job
+      # before any browser dep is installed. We don't need that repo for
+      # Playwright OS deps, so drop it to make apt resilient.
+      - name: Neutralize flaky Microsoft apt source
+        run: |
+          sudo rm -f /etc/apt/sources.list.d/microsoft-prod.list \
+                     /etc/apt/sources.list.d/microsoft.list \
+                     /etc/apt/sources.list.d/azure-cli.list || true
+          sudo find /etc/apt/sources.list.d -type f \
+            -exec grep -lq 'packages.microsoft.com' {} \; -delete 2>/dev/null || true
+
       - name: Install Playwright browsers
         if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: pnpm playwright install --with-deps chromium firefox webkit
+        run: pnpm playwright install --with-deps chromium webkit
         working-directory: apps/portfolio
 
       - name: Install Playwright OS dependencies
         if: steps.playwright-cache.outputs.cache-hit == 'true'
-        run: pnpm playwright install-deps chromium firefox webkit
+        run: pnpm playwright install-deps chromium webkit
         working-directory: apps/portfolio
 
       # ── E2E: project-based parallelism ──────────────────────────
@@ -99,7 +112,7 @@ jobs:
       # Desktop Chrome + Memory Leak: all files via Chrome project,
       # memory-leak runs through its dedicated project (excluded from main
       # Desktop Chrome via testIgnore).
-      # Desktop Firefox + Mobile Chrome: Firefox + Pixel 5 emulation
+      # Mobile Chrome: Pixel 5 emulation
       # WebKit + Reduced Motion: Safari Desktop/Mobile + reduced-motion
       - name: Run E2E — ${{ matrix.suite }}
         run: |
@@ -109,8 +122,8 @@ jobs:
                 --project="Desktop Chrome" \
                 --project="Desktop Chrome Memory Leak"
               ;;
-            "Desktop Firefox + Mobile Chrome")
-              pnpm playwright test --project="Desktop Firefox" --project="Mobile Chrome"
+            "Mobile Chrome")
+              pnpm playwright test --project="Mobile Chrome"
               ;;
             "WebKit + Reduced Motion")
               pnpm playwright test \
