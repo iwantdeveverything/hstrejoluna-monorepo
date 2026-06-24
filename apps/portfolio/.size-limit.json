@@ -7,7 +7,7 @@
   },
   {
     "name": "hero-webgl-chunk",
-    "path": ".next/static/chunks/1www*.js",
+    "path": ".next/static/chunks/0my31*.js",
     "limit": "300 KB",
     "gzip": true
   }
