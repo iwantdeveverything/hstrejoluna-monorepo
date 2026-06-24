@@ -160,6 +160,10 @@ jobs:
           invalid=0
 
           while IFS=$'\t' read -r sha first_line; do
+            # Skip GitHub-generated merge commits (not controllable by contributors)
+            if [[ "${first_line}" =~ ^Merge\ (pull\ request|branch) ]]; then
+              continue
+            fi
             if ! [[ "${first_line}" =~ ${regex} ]]; then
               echo "Invalid conventional commit: ${sha:0:7} -> ${first_line}"
               invalid=1

@@ -20,7 +20,7 @@ test("routing away from the live WebGL hero logs no console errors", async ({
   // noise unrelated to hero teardown, so it is filtered out — we assert only on
   // errors originating from the app's own unmount/dispose path.
   const isAppError = (text: string) =>
-    !/Content-Security-Policy|googletagmanager\.com|connect\.facebook\.net|fbevents/.test(
+    !/Content[- ]Security[- ]Policy|googletagmanager\.com|connect\.facebook\.net|fbevents/.test(
       text,
     );
 
