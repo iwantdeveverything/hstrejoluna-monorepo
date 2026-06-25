@@ -1,10 +1,13 @@
 "use client";
 
 import { useMemo } from "react";
-import {
-  TemperedGlassNav,
-  useLiquidGlassGates,
-} from "@hstrejoluna/ui";
+import dynamic from "next/dynamic";
+import { useLiquidGlassGates } from "@hstrejoluna/ui";
+
+const TemperedGlassNav = dynamic(
+  () => import("@hstrejoluna/ui").then((mod) => mod.TemperedGlassNav),
+  { ssr: false }
+);
 import { normalizeSocialLinks, scrollToSection } from "@/lib/navigation";
 import { navSectionIds } from "@/lib/sections";
 import type { NavSectionId, StreamSectionId } from "@/lib/sections";
@@ -69,7 +72,7 @@ export const CommandNav = ({
     () =>
       navSectionIds.map((id) => {
         const label = tNav(id);
-        return { id, label, shortLabel: label };
+        return { id, label, shortLabel: label, href: `#${id}` };
       }),
     [tNav],
   );

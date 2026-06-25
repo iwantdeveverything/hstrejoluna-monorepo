@@ -226,35 +226,21 @@ test.describe("Project Grid — SEO & Semantic HTML", () => {
     await page.waitForTimeout(100);
 
     // Tab more times to reach articles in the projects section
-    // We'll tab up to 20 times to find an article link
+    // We'll tab up to 50 times to find an article link
     let articleFocused = false;
-    for (let i = 0; i < 20; i++) {
-      const focused = page.locator(":focus");
-      const tagName = await focused.evaluate((el) => el.tagName);
-      const parentArticle = await focused.locator("..").first();
+    for (let i = 0; i < 50; i++) {
+      articleFocused = await page.evaluate(() => {
+        const active = document.activeElement;
+        if (!active || active.tagName !== "A") return false;
+        return (active as HTMLAnchorElement).href.includes("/projects/");
+      });
 
-      // Check if focus is inside an article (directly or parent)
-      const isInProjectSection =
-        (await focused.locator("#projects").count()) > 0 ||
-        (await page
-          .locator(":focus")
-          .locator("..")
-          .locator("#projects")
-          .count()) > 0;
-
-      // Check if the focused element is a project card link
-      const isProjectLink = await focused.evaluate(
-        (el) =>
-          el.tagName === "A" &&
-          (el as HTMLAnchorElement).href.includes("/projects/"),
-      );
-      if (isProjectLink) {
-        articleFocused = true;
+      if (articleFocused) {
         break;
       }
 
       await page.keyboard.press("Tab");
-      await page.waitForTimeout(50);
+      await page.waitForTimeout(20);
     }
 
     // At least one article link should be reachable via keyboard

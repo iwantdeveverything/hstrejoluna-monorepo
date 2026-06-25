@@ -93,6 +93,7 @@ export const TemperedGlassNav = ({
     <header
       data-testid="tempered-nav"
       data-hidden={shouldHide ? "true" : "false"}
+      inert={shouldHide ? true : undefined}
       className={cn(
         "tempered-nav-root fixed bottom-4 left-4 right-4 md:bottom-8 md:left-1/2 md:right-auto md:-translate-x-1/2 z-50",
         shouldHide ? "pointer-events-none" : "",
