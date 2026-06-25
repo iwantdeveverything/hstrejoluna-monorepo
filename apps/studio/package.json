@@ -9,10 +9,10 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
   },
   "dependencies": {
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
     "sanity": "latest",
-    "styled-components": "^6.1.15",
-    "react": "latest",
-    "react-dom": "latest"
+    "styled-components": "^6.1.15"
   },
   "devDependencies": {
     "@sanity/eslint-config-studio": "latest",

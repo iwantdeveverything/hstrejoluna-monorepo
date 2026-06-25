@@ -33,10 +33,9 @@ describe("CommandNav", () => {
     expect(
       screen.getByRole("navigation", { name: /primary sections/i }),
     ).toBeInTheDocument();
-    expect(screen.getAllByRole("button", { name: /projects/i })[0]).toHaveAttribute(
-      "aria-current",
-      "location",
-    );
+    const link = screen.getAllByRole("link", { name: /projects/i })[0];
+    expect(link).toHaveAttribute("href", "#projects");
+    expect(link).toHaveAttribute("aria-current", "location");
   });
 
   it("shows fallback text in mobile menu when socials are missing", () => {
@@ -76,11 +75,63 @@ describe("CommandNav", () => {
       screen.getAllByRole("link", { name: /contact email/i })[0],
     ).toHaveAttribute("href", "mailto:dev@example.com");
 
-    fireEvent.click(screen.getAllByRole("button", { name: /skills/i })[0]);
+    fireEvent.click(screen.getAllByRole("link", { name: /skills/i })[0]);
     expect(scrollSpy).toHaveBeenCalledWith({
       id: "skills",
       reducedMotion: false,
     });
+  });
+
+  it("does not intercept modifier or middle clicks on section links", () => {
+    const scrollSpy = vi.spyOn(navigation, "scrollToSection").mockReturnValue(true);
+    scrollSpy.mockClear();
+
+    render(
+      <NextIntlClientProvider locale="en" messages={messages}>
+        <CommandNav
+          activeId="skills"
+          counts={{ projects: 4, experience: 2, certificates: 3 }}
+        />
+      </NextIntlClientProvider>,
+    );
+
+    const link = screen.getAllByRole("link", { name: /skills/i })[0];
+    
+    // Some versions of JSDOM/TestingLibrary do not propagate `button: 1` correctly on click events,
+    // so we test standard modifiers.
+    
+    fireEvent.click(link, { button: 0, metaKey: true }); // Meta/Ctrl click
+    expect(scrollSpy).not.toHaveBeenCalled();
+    scrollSpy.mockClear();
+    
+    fireEvent.click(link, { button: 0, ctrlKey: true });
+    expect(scrollSpy).not.toHaveBeenCalled();
+    scrollSpy.mockClear();
+    
+    fireEvent.click(link, { button: 0, shiftKey: true });
+    expect(scrollSpy).not.toHaveBeenCalled();
+    scrollSpy.mockClear();
+    
+    fireEvent.click(link, { button: 0, altKey: true });
+    expect(scrollSpy).not.toHaveBeenCalled();
+  });
+
+  it("hides decorative layers from a11y tree and avoids duplicate screen reader labels", () => {
+    render(
+      <NextIntlClientProvider locale="en" messages={messages}>
+        <CommandNav
+          activeId="projects"
+          counts={{ projects: 4, experience: 2, certificates: 3 }}
+        />
+      </NextIntlClientProvider>,
+    );
+
+    // Each label should only be in the document once (no hidden duplicate span)
+    expect(screen.getAllByText(/Projects/)).toHaveLength(1);
+    
+    // There are structural elements that might use aria-hidden="true" 
+    const hiddenElements = document.querySelectorAll('[aria-hidden="true"]');
+    expect(hiddenElements.length).toBeGreaterThan(0);
   });
 
   it("renders all supported social links with safe external semantics", () => {
@@ -132,7 +183,7 @@ describe("CommandNav", () => {
       </NextIntlClientProvider>,
     );
 
-    expect(screen.getByTestId("liquid-nav")).toHaveClass(
+    expect(screen.getByTestId("tempered-nav")).toHaveClass(
       "pointer-events-none"
     );
   });

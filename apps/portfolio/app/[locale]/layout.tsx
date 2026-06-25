@@ -79,25 +79,6 @@ export default async function LocaleLayout({
           >
             Skip to main content
           </a>
-          <header className="sr-only" aria-label="Site branding">
-            <p>Dark Kinetic — Portfolio by Héctor Trejo Luna</p>
-            <nav aria-label="Primary navigation">
-              <ul>
-                <li>
-                  <a href="#main-content">Home</a>
-                </li>
-                <li>
-                  <a href={`/${locale}/privacy`}>Privacy</a>
-                </li>
-                <li>
-                  <a href={`/${locale}/cookies`}>Cookies</a>
-                </li>
-                <li>
-                  <a href={`/${locale}/legal`}>Legal</a>
-                </li>
-              </ul>
-            </nav>
-          </header>
           <div className="relative min-h-screen flex flex-col">
             <main id="main-content" className="flex-grow">
               {children}

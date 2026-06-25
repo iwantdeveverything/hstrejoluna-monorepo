@@ -15,7 +15,6 @@ interface AuditRule {
 
 const migratedFiles = [
   "apps/portfolio/components/fragments/Footer.tsx",
-  "packages/ui/src/components/GlassNav.tsx",
   "packages/ui/src/components/CommandSurface.tsx",
   "apps/portfolio/components/fragments/CookieBanner.tsx",
   "apps/portfolio/components/fragments/ProjectsOverview.tsx",
