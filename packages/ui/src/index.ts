@@ -1,4 +1,5 @@
 export * from "./components/LiquidNav";
+export * from "./components/TemperedGlassNav";
 export {
   CommandSurface,
   type CommandSurfaceCounts,

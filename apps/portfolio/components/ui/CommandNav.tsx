@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import {
-  LiquidNav,
+  TemperedGlassNav,
   useLiquidGlassGates,
 } from "@hstrejoluna/ui";
 import { normalizeSocialLinks, scrollToSection } from "@/lib/navigation";
@@ -95,7 +95,7 @@ export const CommandNav = ({
   });
 
   return (
-    <LiquidNav
+    <TemperedGlassNav
       activeId={activeId}
       sections={sections}
       socials={socialLinks}
@@ -109,6 +109,6 @@ export const CommandNav = ({
       }}
     >
       <LocaleSwitcher />
-    </LiquidNav>
+    </TemperedGlassNav>
   );
 };
