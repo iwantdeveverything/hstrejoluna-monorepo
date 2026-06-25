@@ -19,7 +19,7 @@ vi.mock("@hstrejoluna/ui", async (importOriginal) => {
 });
 
 describe("CommandNav", () => {
-  it("renders semantic navigation and marks active section with aria-current", () => {
+  it("renders semantic navigation and marks active section with aria-current", async () => {
     render(
       <NextIntlClientProvider locale="en" messages={messages}>
         <CommandNav
@@ -31,14 +31,14 @@ describe("CommandNav", () => {
     );
 
     expect(
-      screen.getByRole("navigation", { name: /primary sections/i }),
+      await screen.findByRole("navigation", { name: /primary sections/i }),
     ).toBeInTheDocument();
-    const link = screen.getAllByRole("link", { name: /projects/i })[0];
+    const link = (await screen.findAllByRole("link", { name: /projects/i }))[0];
     expect(link).toHaveAttribute("href", "#projects");
     expect(link).toHaveAttribute("aria-current", "location");
   });
 
-  it("shows fallback text in mobile menu when socials are missing", () => {
+  it("shows fallback text in mobile menu when socials are missing", async () => {
     render(
       <NextIntlClientProvider locale="en" messages={messages}>
         <CommandNav
@@ -48,11 +48,11 @@ describe("CommandNav", () => {
       </NextIntlClientProvider>,
     );
 
-    fireEvent.click(screen.getAllByRole("button", { name: messages.brand.menu })[0]);
+    fireEvent.click((await screen.findAllByRole("button", { name: messages.brand.menu }))[0]);
     expect(screen.queryByText(/Socials/i)).not.toBeInTheDocument();
   });
 
-  it("normalizes plaintext email social links and uses smooth section navigation", () => {
+  it("normalizes plaintext email social links and uses smooth section navigation", async () => {
     const scrollSpy = vi.spyOn(navigation, "scrollToSection").mockReturnValue(true);
 
     render(
@@ -72,17 +72,17 @@ describe("CommandNav", () => {
     );
 
     expect(
-      screen.getAllByRole("link", { name: /contact email/i })[0],
+      (await screen.findAllByRole("link", { name: /contact email/i }))[0],
     ).toHaveAttribute("href", "mailto:dev@example.com");
 
-    fireEvent.click(screen.getAllByRole("link", { name: /skills/i })[0]);
+    fireEvent.click((await screen.findAllByRole("link", { name: /skills/i }))[0]);
     expect(scrollSpy).toHaveBeenCalledWith({
       id: "skills",
       reducedMotion: false,
     });
   });
 
-  it("does not intercept modifier or middle clicks on section links", () => {
+  it("does not intercept modifier or middle clicks on section links", async () => {
     const scrollSpy = vi.spyOn(navigation, "scrollToSection").mockReturnValue(true);
     scrollSpy.mockClear();
 
@@ -95,7 +95,7 @@ describe("CommandNav", () => {
       </NextIntlClientProvider>,
     );
 
-    const link = screen.getAllByRole("link", { name: /skills/i })[0];
+    const link = (await screen.findAllByRole("link", { name: /skills/i }))[0];
     
     // Some versions of JSDOM/TestingLibrary do not propagate `button: 1` correctly on click events,
     // so we test standard modifiers.
@@ -116,7 +116,7 @@ describe("CommandNav", () => {
     expect(scrollSpy).not.toHaveBeenCalled();
   });
 
-  it("hides decorative layers from a11y tree and avoids duplicate screen reader labels", () => {
+  it("hides decorative layers from a11y tree and avoids duplicate screen reader labels", async () => {
     render(
       <NextIntlClientProvider locale="en" messages={messages}>
         <CommandNav
@@ -127,14 +127,14 @@ describe("CommandNav", () => {
     );
 
     // Each label should only be in the document once (no hidden duplicate span)
-    expect(screen.getAllByText(/Projects/)).toHaveLength(1);
+    expect(await screen.findAllByText(/Projects/)).toHaveLength(1);
     
     // There are structural elements that might use aria-hidden="true" 
     const hiddenElements = document.querySelectorAll('[aria-hidden="true"]');
     expect(hiddenElements.length).toBeGreaterThan(0);
   });
 
-  it("renders all supported social links with safe external semantics", () => {
+  it("renders all supported social links with safe external semantics", async () => {
     render(
       <NextIntlClientProvider locale="en" messages={messages}>
         <CommandNav
@@ -157,9 +157,9 @@ describe("CommandNav", () => {
       </NextIntlClientProvider>,
     );
 
-    const githubLink = screen.getAllByRole("link", { name: /github/i })[0];
-    const linkedinLink = screen.getAllByRole("link", { name: /linkedin/i })[0];
-    const emailLink = screen.getAllByRole("link", { name: /email/i })[0];
+    const githubLink = (await screen.findAllByRole("link", { name: /github/i }))[0];
+    const linkedinLink = (await screen.findAllByRole("link", { name: /linkedin/i }))[0];
+    const emailLink = (await screen.findAllByRole("link", { name: /email/i }))[0];
 
     expect(githubLink).toHaveAttribute("href", "https://github.com/example");
     expect(githubLink).toHaveAttribute("rel", "noopener noreferrer external");
@@ -172,7 +172,7 @@ describe("CommandNav", () => {
     expect(emailLink).not.toHaveAttribute("rel");
   });
 
-  it("hides the command nav when hideOnScroll is enabled", () => {
+  it("hides the command nav when hideOnScroll is enabled", async () => {
     render(
       <NextIntlClientProvider locale="en" messages={messages}>
         <CommandNav
@@ -183,7 +183,7 @@ describe("CommandNav", () => {
       </NextIntlClientProvider>,
     );
 
-    expect(screen.getByTestId("tempered-nav")).toHaveClass(
+    expect(await screen.findByTestId("tempered-nav")).toHaveClass(
       "pointer-events-none"
     );
   });
