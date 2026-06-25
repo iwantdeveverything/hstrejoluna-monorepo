@@ -9,7 +9,7 @@ test.describe('CommandNav Behavior', () => {
     await page.goto('/en');
 
     // Wait for the nav root to be visible
-    const navRoot = page.locator('.liquid-nav-root');
+    const navRoot = page.locator('.tempered-nav-root');
     await expect(navRoot).toBeVisible();
 
     // Check if it's horizontally centered

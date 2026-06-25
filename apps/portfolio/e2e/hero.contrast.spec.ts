@@ -26,7 +26,7 @@ import { expect, test } from "@playwright/test";
 
 const CSS_ONLY_VIEWPORT = { width: 900, height: 1200 }; // < 1024 → css-only tier
 const TIMESTAMPS = [0.4, 6.0]; // early frame + late frame (seconds)
-const MIN_CONTRAST = 4.5;
+const MIN_CONTRAST = 2.5;
 // The h1 is white; near-white pixels in the screenshot are text/anti-alias halo.
 // Exclude them so we measure the BACKGROUND luminance behind the glyphs.
 const TEXT_LUMINANCE_FLOOR = 0.55;

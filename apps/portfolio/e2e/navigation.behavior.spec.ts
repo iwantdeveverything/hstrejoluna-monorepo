@@ -36,7 +36,8 @@ test.describe("portfolio navigation behavior", () => {
       .poll(
         () =>
           page
-            .getByRole("button", { name: /^projects$/i })
+            .getByTestId("tempered-nav")
+            .getByRole("link", { name: /^projects$/i })
             .first()
             .getAttribute("aria-current"),
         { timeout: 15_000, intervals: [250, 500, 1000] },
@@ -60,22 +61,22 @@ test.describe("portfolio navigation behavior", () => {
 
     await page.goto("/");
 
-    const liquidNav = page.getByTestId("liquid-nav");
-    const certificatesNavLink = page
-      .getByRole("button", { name: /^certificates$/i })
+    const temperedNav = page.getByTestId("tempered-nav");
+    const certificatesNavLink = temperedNav
+      .getByRole("link", { name: /^certificates$/i })
       .first();
     await expect(certificatesNavLink).toBeVisible();
 
-    // LiquidNav uses a pure-CSS keyframe entrance animation (translateY 100→0).
+    // TemperedNav uses a pure-CSS keyframe entrance animation (translateY 100→0).
     // Even after the animation completes, click() can race the layout pass on
     // a fixed-position element; dispatching the click in the page's JS context
     // sidesteps Playwright's actionability viewport check.
     await page.evaluate(() => {
-      const nav = document.querySelector('[data-testid="liquid-nav"]');
-      const buttons = nav?.querySelectorAll("button") ?? [];
-      for (const btn of buttons) {
-        if (btn.textContent?.toLowerCase().includes("certificates")) {
-          btn.click();
+      const nav = document.querySelector('[data-testid="tempered-nav"]');
+      const links = nav?.querySelectorAll("a") ?? [];
+      for (const link of Array.from(links)) {
+        if (link.textContent?.toLowerCase().includes("certificates")) {
+          link.click();
           break;
         }
       }
@@ -91,7 +92,8 @@ test.describe("portfolio navigation behavior", () => {
       .poll(
         () =>
           page
-            .getByRole("button", { name: /^certificates$/i })
+            .getByTestId("tempered-nav")
+            .getByRole("link", { name: /^certificates$/i })
             .first()
             .getAttribute("aria-current"),
         { timeout: 10_000 },
@@ -99,7 +101,7 @@ test.describe("portfolio navigation behavior", () => {
       .toBe("location");
 
     // Ensure the navigation stays visible (auto-hide is disabled)
-    await expect(liquidNav).not.toHaveClass(/pointer-events-none/);
+    await expect(temperedNav).not.toHaveClass(/pointer-events-none/);
   });
 
   test("mobile menu opens and navigates to target section", async ({
@@ -113,7 +115,7 @@ test.describe("portfolio navigation behavior", () => {
       name: /^menu$/i,
     });
     await expect(openMenuButton).toBeVisible();
-    // Dispatch click in JS context — LiquidNav spring entrance animation
+    // Dispatch click in JS context — TemperedNav spring entrance animation
     // places the button offscreen via CSS transform. force:true bypasses
     // actionability checks but NOT viewport/scroll-into-view on fixed elements
     await openMenuButton.evaluate((el) => (el as HTMLButtonElement).click());
@@ -123,7 +125,7 @@ test.describe("portfolio navigation behavior", () => {
     });
     await expect(mobileNavigation).toBeVisible();
     await mobileNavigation
-      .getByRole("button", { name: /certificates/i })
+      .getByRole("link", { name: /certificates/i })
       .click();
 
     await expect(mobileNavigation).toHaveCount(0);
@@ -135,13 +137,13 @@ test.describe("portfolio navigation behavior", () => {
   }) => {
     await page.goto("/");
 
-    const liquidNav = page.getByTestId("liquid-nav");
-    await expect(liquidNav).toBeVisible();
+    const temperedNav = page.getByTestId("tempered-nav");
+    await expect(temperedNav).toBeVisible();
 
     await expect
       .poll(
         async () => {
-          const box = await liquidNav.boundingBox();
+          const box = await temperedNav.boundingBox();
           const viewport = page.viewportSize();
           if (!box || !viewport) return false;
           return box.y + box.height > 0 && box.y < viewport.height;
@@ -154,13 +156,13 @@ test.describe("portfolio navigation behavior", () => {
   test("CommandNav also settles inside viewport on /es", async ({ page }) => {
     await page.goto("/es");
 
-    const liquidNav = page.getByTestId("liquid-nav");
-    await expect(liquidNav).toBeVisible();
+    const temperedNav = page.getByTestId("tempered-nav");
+    await expect(temperedNav).toBeVisible();
 
     await expect
       .poll(
         async () => {
-          const box = await liquidNav.boundingBox();
+          const box = await temperedNav.boundingBox();
           const viewport = page.viewportSize();
           if (!box || !viewport) return false;
           return box.y + box.height > 0 && box.y < viewport.height;

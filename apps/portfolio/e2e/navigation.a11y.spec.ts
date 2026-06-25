@@ -30,18 +30,18 @@ test.describe("portfolio accessibility", () => {
 
     await page.goto("/");
 
-    // LiquidNav buttons should be present.
+    // TemperedNav links should be present.
     await expect(
-      page.getByRole("button", { name: /^projects$/i }).first(),
+      page.getByRole("link", { name: /^projects$/i }).first(),
     ).toBeVisible();
     await expect(
-      page.getByRole("button", { name: /^experience$/i }).first(),
+      page.getByRole("link", { name: /^experience$/i }).first(),
     ).toBeVisible();
     await expect(
-      page.getByRole("button", { name: /^skills$/i }).first(),
+      page.getByRole("link", { name: /^skills$/i }).first(),
     ).toBeVisible();
     await expect(
-      page.getByRole("button", { name: /^certificates$/i }).first(),
+      page.getByRole("link", { name: /^certificates$/i }).first(),
     ).toBeVisible();
 
     const focusedNavLabels: string[] = [];
@@ -56,7 +56,7 @@ test.describe("portfolio accessibility", () => {
           return null;
         }
 
-        const commandNav = document.querySelector('[data-testid="liquid-nav"]');
+        const commandNav = document.querySelector('[data-testid="tempered-nav"]');
         if (!commandNav || !commandNav.contains(activeElement)) {
           return null;
         }

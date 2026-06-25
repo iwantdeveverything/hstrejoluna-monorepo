@@ -77,6 +77,6 @@ test.describe("Hero — Reduced Motion (e2e)", () => {
 
     // Semantic shell is always present.
     await expect(page.locator("#hero-title")).toBeVisible();
-    await expect(page.getByRole("link", { name: /projects/i })).toBeVisible();
+    await expect(heroSection.getByRole("link", { name: /projects/i })).toBeVisible();
   });
 });
