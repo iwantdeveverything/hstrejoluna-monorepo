@@ -65,7 +65,6 @@ vi.mock("./ui/SectionDock", () => ({
 // Note: CommandNav is NOT mocked here — we want to verify it's loaded dynamically
 
 vi.mock("@/lib/sections", () => ({
-  navSections: [],
   navSectionIds: [],
   streamSectionIds: [],
 }));

@@ -159,7 +159,9 @@ describe("LocaleLayout — Locale-Aware Rendering", () => {
     expect(screen.getByTestId("cookie-banner")).toBeInTheDocument();
   });
 
-  it("includes a semantic header landmark for site branding", async () => {
+  it("does not render a duplicate sr-only branding header landmark", async () => {
+    // Single landmark: the duplicate sr-only "Site branding" header was removed
+    // so the only banner/nav landmark comes from the nav rendered in page content.
     const params = Promise.resolve({ locale: "en" });
     const Layout = await LocaleLayout({
       children: <p>Content</p>,
@@ -167,9 +169,8 @@ describe("LocaleLayout — Locale-Aware Rendering", () => {
     });
 
     render(Layout as React.ReactElement);
-    const header = screen.getByRole("banner");
-    expect(header).toHaveAttribute("aria-label", "Site branding");
-    expect(header).toHaveTextContent("Dark Kinetic");
+    expect(screen.queryByRole("banner")).not.toBeInTheDocument();
+    expect(screen.queryByText("Dark Kinetic")).not.toBeInTheDocument();
   });
 
   it("mounts <LiquidGlassFilters /> exactly once (REQ-2 S2.1, S2.3)", async () => {

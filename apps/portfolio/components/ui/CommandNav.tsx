@@ -6,7 +6,7 @@ import {
   useLiquidGlassGates,
 } from "@hstrejoluna/ui";
 import { normalizeSocialLinks, scrollToSection } from "@/lib/navigation";
-import { navSectionIds, navSections } from "@/lib/sections";
+import { navSectionIds } from "@/lib/sections";
 import type { NavSectionId, StreamSectionId } from "@/lib/sections";
 import type { ProfileSocialLink } from "@/types/sanity";
 import { useTranslations } from "next-intl";
@@ -65,6 +65,15 @@ export const CommandNav = ({
   const { reduceMotion: isReducedMotion } = useLiquidGlassGates();
   const socialLinks = useMemo(() => normalizeSocialLinks(socials), [socials]);
 
+  const sections = useMemo(
+    () =>
+      navSectionIds.map((id) => {
+        const label = tNav(id);
+        return { id, label, shortLabel: label };
+      }),
+    [tNav],
+  );
+
   const handleSectionNavigation = (sectionId: string) => {
     if (!navSectionIds.includes(sectionId as NavSectionId)) {
       return;
@@ -88,7 +97,7 @@ export const CommandNav = ({
   return (
     <LiquidNav
       activeId={activeId}
-      sections={navSections}
+      sections={sections}
       socials={socialLinks}
       hideOnScroll={hideOnScroll}
       onSectionNavigate={handleSectionNavigation}
