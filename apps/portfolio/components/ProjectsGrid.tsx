@@ -40,7 +40,7 @@ export async function ProjectsGrid({ projects, locale }: ProjectsGridProps) {
                 href={`/projects/${project.slug!.current}`}
                 className="no-underline group block h-full"
               >
-                <article className="relative flex flex-col h-full bg-surface_container_lowest rounded-xl overflow-hidden border border-surface_container_highest transition-shadow duration-300 motion-safe:hover:shadow-lg motion-safe:hover:shadow-primary/10 focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2 focus-within:ring-offset-surface_container_lowest">
+                <article className="relative flex flex-col h-full bg-surface_container_lowest/60 backdrop-blur-md rounded-xl overflow-hidden border border-surface_container_highest transition-shadow duration-300 motion-safe:hover:shadow-lg motion-safe:hover:shadow-primary/10 focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2 focus-within:ring-offset-surface_container_lowest animate-fade-in-up">
                   {project.image ? (
                     <div className="relative aspect-video overflow-hidden bg-surface_container_low">
                       <Image
