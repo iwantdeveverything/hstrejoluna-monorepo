@@ -236,6 +236,33 @@ describe("ProjectsGrid — SSR semantic rendering", () => {
 
     expect(motionSafeElements.length).toBeGreaterThan(0);
   });
+
+  it("applies glassmorphism classes to article cards", async () => {
+    const { container } = render(
+      await ProjectsGrid({ projects: MOCK_PROJECTS, locale: "en" }),
+    );
+
+    const cards = Array.from(container.querySelectorAll("article"));
+    expect(cards).toHaveLength(2);
+    
+    cards.forEach((card) => {
+      expect(card.className).toMatch(/backdrop-blur/);
+      expect(card.className).toMatch(/bg-surface_container_lowest\//); // bg with opacity
+    });
+  });
+
+  it("applies CSS-only scroll-driven animation classes", async () => {
+    const { container } = render(
+      await ProjectsGrid({ projects: MOCK_PROJECTS, locale: "en" }),
+    );
+
+    const cards = Array.from(container.querySelectorAll("article"));
+    expect(cards).toHaveLength(2);
+    
+    cards.forEach((card) => {
+      expect(card.className).toMatch(/animate-fade-in-up/);
+    });
+  });
 });
 
 describe("ProjectsGrid — link behavior", () => {
