@@ -4,14 +4,24 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import type { HeroTier, HeroTierResult } from "@hstrejoluna/ui";
 
 /**
- * HeroBackdrop is a pure function of the mocked gate (design §2 / §3):
- *  - tier `static`     → renders null (poster already SSR'd upstream)
- *  - tier `css-only`   → renders the video layer (+ css glass seam)
- *  - tier `css+webgl`  → renders the video layer (+ webgl glass seam)
- *  - NO hardcoded `canRender`; output follows whatever the gate reports.
+ * HeroBackdrop is a pure function of the mocked gate AND the build-time
+ * refraction flag `NEXT_PUBLIC_HERO_REFRACTION` (design #765):
  *
- * For slice 3 the css/webgl glass layers do not exist yet (slices 4–5); the
- * tier→layer mapping and the `null` static branch are what this slice locks.
+ *  - tier `static`     → renders null (poster already SSR'd upstream), for
+ *                        BOTH flag states.
+ *  - refraction OFF (default: flag unset/empty/other):
+ *      css-only / css+webgl → RAW HeroVideoLayer only. NO HeroGlassCss wrap,
+ *      NO HeroGlassWebGL mount (even after canplay). Physics hook is still
+ *      called (Rules of Hooks) but with `enabled: false` so its listeners go
+ *      inert; the burst store + onVideoReady canplay latch still fire (a
+ *      harmless no-op with no shader consuming them).
+ *  - refraction ON (`NEXT_PUBLIC_HERO_REFRACTION==="true"`):
+ *      css-only wraps HeroGlassCss (SVG refraction); css+webgl mounts
+ *      HeroGlassWebGL after canplay; physics refs forwarded. Prior behavior
+ *      preserved exactly.
+ *
+ * The flag is read INSIDE the component render, so `vi.stubEnv` per-test flips
+ * the branch without a module reload. Default (no stub) = OFF.
  */
 
 const reportWebglFailure = vi.fn();
@@ -119,9 +129,16 @@ const renderAtTier = (tier: HeroTier) => {
   return render(<HeroBackdrop />);
 };
 
+/** Opt a test into the refraction-ON branch (build flag === "true"). */
+const enableRefraction = () => {
+  vi.stubEnv("NEXT_PUBLIC_HERO_REFRACTION", "true");
+  vi.stubEnv("NEXT_PUBLIC_HERO_LIQUID", "true");
+};
+
 afterEach(() => {
   cleanup();
   vi.clearAllMocks();
+  vi.unstubAllEnvs();
   fireVideoReady = undefined;
   webglVideoEl = null;
   webglProps = null;
@@ -135,27 +152,84 @@ afterEach(() => {
   physicsRefs.burstRef.current = 0;
 });
 
-describe("HeroBackdrop — tier mapping", () => {
-  it("renders null at the static tier", () => {
+describe("HeroBackdrop — tier mapping (flag-independent static)", () => {
+  it("renders null at the static tier (refraction OFF)", () => {
     const { container } = renderAtTier("static");
     expect(container).toBeEmptyDOMElement();
-    expect(container.querySelector("[data-testid='hero-video-layer']")).toBeNull();
+    expect(
+      container.querySelector("[data-testid='hero-video-layer']"),
+    ).toBeNull();
   });
 
+  it("renders null at the static tier (refraction ON)", () => {
+    enableRefraction();
+    const { container } = renderAtTier("static");
+    expect(container).toBeEmptyDOMElement();
+  });
+});
+
+describe("HeroBackdrop — refraction OFF (default): raw video, no glass", () => {
+  it("css-only renders exactly one raw video layer and NO css glass", () => {
+    const { container, queryByTestId } = renderAtTier("css-only");
+    expect(
+      container.querySelectorAll("[data-testid='hero-video-layer']").length,
+    ).toBe(1);
+    expect(queryByTestId("hero-glass-css")).toBeNull();
+  });
+
+  it("css+webgl renders exactly one raw video layer and NO webgl after canplay", () => {
+    const { container, queryByTestId } = renderAtTier("css+webgl");
+    expect(
+      container.querySelectorAll("[data-testid='hero-video-layer']").length,
+    ).toBe(1);
+    act(() => {
+      fireVideoReady?.(document.createElement("video"));
+    });
+    // Even after the canplay latch fires, no WebGL glass mounts when off.
+    expect(queryByTestId("hero-glass-webgl")).toBeNull();
+    expect(webglVideoEl).toBeNull();
+  });
+
+  it("disables the physics hook when refraction is off (motion allowed)", () => {
+    mockReduceMotion = false;
+    renderAtTier("css+webgl");
+    expect(lastPhysicsOptions?.enabled).toBe(false);
+  });
+
+  it("still fires the entrance burst once on video-ready (harmless latch)", () => {
+    renderAtTier("css+webgl");
+    act(() => {
+      fireVideoReady?.(document.createElement("video"));
+    });
+    expect(triggerBurst).toHaveBeenCalledTimes(1);
+  });
+
+  it("is a pure function of the gate — flipping the mocked tier flips output", () => {
+    const first = renderAtTier("static");
+    expect(first.container).toBeEmptyDOMElement();
+    first.unmount();
+
+    const second = renderAtTier("css-only");
+    expect(second.queryByTestId("hero-video-layer")).not.toBeNull();
+    expect(second.queryByTestId("hero-glass-css")).toBeNull();
+  });
+});
+
+describe("HeroBackdrop — refraction ON: tier mapping", () => {
   it("renders the video layer at the css-only tier", () => {
+    enableRefraction();
     const { queryByTestId } = renderAtTier("css-only");
     expect(queryByTestId("hero-video-layer")).not.toBeNull();
   });
 
   it("renders the video layer at the css+webgl tier", () => {
+    enableRefraction();
     const { queryByTestId } = renderAtTier("css+webgl");
     expect(queryByTestId("hero-video-layer")).not.toBeNull();
   });
-});
 
-describe("HeroBackdrop — exactly one tier path", () => {
   it("renders exactly the tier-mandated number of video layers", () => {
-    // static → 0 (poster SSR'd upstream); css-only / css+webgl → exactly 1.
+    enableRefraction();
     const expectedLayers: Record<HeroTier, number> = {
       static: 0,
       "css-only": 1,
@@ -170,28 +244,18 @@ describe("HeroBackdrop — exactly one tier path", () => {
       unmount();
     }
   });
-
-  it("is a pure function of the gate — flipping the mocked tier flips output", () => {
-    const first = renderAtTier("static");
-    expect(first.container).toBeEmptyDOMElement();
-    first.unmount();
-
-    const second = renderAtTier("css-only");
-    expect(
-      second.queryByTestId("hero-video-layer"),
-    ).not.toBeNull();
-  });
 });
 
-describe("HeroBackdrop — css+webgl tier WebGL wiring", () => {
+describe("HeroBackdrop — refraction ON: css+webgl WebGL wiring", () => {
   it("does not mount HeroGlassWebGL before the video is ready", () => {
+    enableRefraction();
     const { queryByTestId } = renderAtTier("css+webgl");
-    // Video layer is present, but the WebGL glass waits for onVideoReady.
     expect(queryByTestId("hero-video-layer")).not.toBeNull();
     expect(queryByTestId("hero-glass-webgl")).toBeNull();
   });
 
   it("mounts HeroGlassWebGL with the live video element after canplay", () => {
+    enableRefraction();
     const { queryByTestId } = renderAtTier("css+webgl");
     const videoEl = document.createElement("video");
 
@@ -204,6 +268,7 @@ describe("HeroBackdrop — css+webgl tier WebGL wiring", () => {
   });
 
   it("does not mount HeroGlassWebGL in the css-only tier", () => {
+    enableRefraction();
     const { queryByTestId } = renderAtTier("css-only");
     const videoEl = document.createElement("video");
     act(() => {
@@ -213,8 +278,9 @@ describe("HeroBackdrop — css+webgl tier WebGL wiring", () => {
   });
 });
 
-describe("HeroBackdrop — Phase 6 physics wiring", () => {
+describe("HeroBackdrop — refraction ON: Phase 6 physics wiring", () => {
   it("forwards the physics signal refs into HeroGlassWebGL after canplay", () => {
+    enableRefraction();
     renderAtTier("css+webgl");
     act(() => {
       fireVideoReady?.(document.createElement("video"));
@@ -225,6 +291,7 @@ describe("HeroBackdrop — Phase 6 physics wiring", () => {
   });
 
   it("feeds the css tier live refraction refs + burst seed from the physics hook", () => {
+    enableRefraction();
     mockBurst = 0.6;
     renderAtTier("css-only");
     // Rest-state seed.
@@ -238,18 +305,21 @@ describe("HeroBackdrop — Phase 6 physics wiring", () => {
   });
 
   it("enables the pointer hook when motion is allowed", () => {
+    enableRefraction();
     mockReduceMotion = false;
     renderAtTier("css+webgl");
     expect(lastPhysicsOptions?.enabled).toBe(true);
   });
 
   it("disables the pointer hook under reduce-motion", () => {
+    enableRefraction();
     mockReduceMotion = true;
     renderAtTier("css-only");
     expect(lastPhysicsOptions?.enabled).toBe(false);
   });
 
   it("fires the entrance burst once on video-ready", () => {
+    enableRefraction();
     renderAtTier("css+webgl");
     act(() => {
       fireVideoReady?.(document.createElement("video"));
@@ -258,12 +328,13 @@ describe("HeroBackdrop — Phase 6 physics wiring", () => {
   });
 });
 
-describe("HeroBackdrop — WebGL chunk-load resilience", () => {
+describe("HeroBackdrop — refraction ON: WebGL chunk-load resilience", () => {
   it("absorbs a chunk-load failure, keeps the video layer, and demotes the tier", () => {
     // A next/dynamic chunk-load failure throws BEFORE HeroGlassWebGL's own
     // WebGLErrorBoundary can mount, so the parent island must own the boundary.
     // Failure must NOT crash the hero tree: the css video layer stays painted
     // and reportWebglFailure latches the demotion to css-only.
+    enableRefraction();
     webglShouldThrow = true;
     const { queryByTestId } = renderAtTier("css+webgl");
 

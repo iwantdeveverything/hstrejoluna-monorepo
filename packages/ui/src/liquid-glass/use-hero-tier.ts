@@ -34,7 +34,7 @@ export interface HeroTierResult {
 }
 
 /** Hero HD viewport — distinct from the 480px floor inside the gates hook. */
-const HD_QUERY = "(min-width: 1024px)";
+const hdQuery = "(min-width: 1024px)";
 
 /* ------------------------------------------------------------------ */
 /* WebGL2 probe — run once per page load, memoized at module scope.    */
@@ -85,7 +85,7 @@ const subscribeHdViewport = (notify: () => void): (() => void) => {
   if (!isBrowser() || typeof window.matchMedia !== "function") {
     return () => undefined;
   }
-  const list = window.matchMedia(HD_QUERY);
+  const list = window.matchMedia(hdQuery);
   const handler = () => notify();
   if (typeof list.addEventListener === "function") {
     list.addEventListener("change", handler);
@@ -102,7 +102,7 @@ const subscribeHdViewport = (notify: () => void): (() => void) => {
 const getHdViewportSnapshot = (): boolean => {
   if (!isBrowser() || typeof window.matchMedia !== "function") return false;
   try {
-    return window.matchMedia(HD_QUERY).matches;
+    return window.matchMedia(hdQuery).matches;
   } catch {
     return false;
   }
@@ -144,9 +144,7 @@ export function useHeroTier(): HeroTierResult {
   }, []);
 
   const tier = useMemo<HeroTier>(() => {
-    // 1. Kill switch (also enforced server-side in HeroText — ADR-3).
-    if (killSwitchOff()) return "static";
-    // 2. Preference gates (reactive via useLiquidGlassGates).
+    // 1. Preference gates (reactive via useLiquidGlassGates).
     if (
       gates.reduceMotion ||
       gates.reduceData ||
@@ -155,8 +153,10 @@ export function useHeroTier(): HeroTierResult {
     ) {
       return "static";
     }
-    // 3. SSR / pre-hydration snapshot.
+    // 2. SSR / pre-hydration snapshot.
     if (!hydrated) return "static";
+    // 3. Kill switch (no longer forces static, but if off, caps at css-only).
+    if (killSwitchOff()) return "css-only";
     // 4. Mobile viewport cap.
     if (!hdViewport) return "css-only";
     // 5. WebGL2 probe failure or latched runtime failure.

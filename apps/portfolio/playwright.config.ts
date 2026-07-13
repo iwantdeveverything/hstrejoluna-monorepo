@@ -73,11 +73,21 @@ export default defineConfig({
     env: {
       NEXT_PUBLIC_SKIP_BOOT_SEQUENCE: "1",
       // Phase 7 (e2e): build the hero with the liquid-glass kill switch ON so
-      // the live DOM renders the video + (desktop) WebGL canvas + SVG filter.
-      // Build-time inlined: a stale server started without this flag renders
-      // the static poster only — every open-gate spec asserts a backdrop
-      // sentinel first so that misconfig fails loud, not vacuously.
+      // the live DOM renders the video. Build-time inlined: a stale server
+      // started without this flag renders the static poster only — every
+      // open-gate spec asserts a backdrop sentinel first so that misconfig
+      // fails loud, not vacuously.
       NEXT_PUBLIC_HERO_LIQUID: "true",
+      // Refraction flag (design #765). DEFAULT OFF: intentionally left UNSET so
+      // the default e2e lane renders the RAW video with no SVG/WebGL refraction
+      // (the product default). To exercise the refraction-on smoke lane, rebuild
+      // with NEXT_PUBLIC_HERO_REFRACTION=true and run with HERO_REFRACTION_SMOKE=1
+      // (see hero.tiers.spec.ts). We forward the flag through so an outer
+      // `NEXT_PUBLIC_HERO_REFRACTION=true` invocation reaches the build; when
+      // unset it stays off.
+      ...(process.env.NEXT_PUBLIC_HERO_REFRACTION
+        ? { NEXT_PUBLIC_HERO_REFRACTION: process.env.NEXT_PUBLIC_HERO_REFRACTION }
+        : {}),
     },
   },
   projects,
