@@ -5,16 +5,18 @@ import { expect, test } from "@playwright/test";
 // Hero — Self-Hosted Video Layer Contract (open gate)
 //
 // The e2e build runs with NEXT_PUBLIC_HERO_LIQUID="true" (playwright.config.ts
-// webServer.env), so the liquid-glass <HeroBackdrop/> mounts live. These specs
-// pin the LIVE DOM contract of the video layer:
+// webServer.env) and refraction OFF by default (NEXT_PUBLIC_HERO_REFRACTION
+// unset), so the <HeroBackdrop/> mounts the RAW video (no refraction glass).
+// These specs pin the LIVE DOM contract of the video layer — which is
+// INDEPENDENT of the refraction flag:
 //   - <video> attrs (autoplay muted loop playsinline preload=none poster aria-hidden)
 //   - poster-first: ZERO video media requests before idle, proven by capturing
 //     (not running) requestIdleCallback, asserting the negative end-state, then
 //     releasing idle and asserting the rendition request fires.
 //
-// DOM contract (verified): <HeroBackdrop/> (video + canvas + SVG filter) is a
-// SIBLING of section#hero, NOT a descendant. All media locators are
-// PAGE-scoped (page.locator("video"), never heroSection.locator(...)).
+// DOM contract (verified): <HeroBackdrop/> (the raw video layer) is a SIBLING
+// of section#hero, NOT a descendant. All media locators are PAGE-scoped
+// (page.locator("video"), never heroSection.locator(...)).
 //
 // Architecture note: useHeroTier() pins the SSR tier to `static` via a
 // hydration sentinel, so the <video> is NOT in the initial HTML — it mounts

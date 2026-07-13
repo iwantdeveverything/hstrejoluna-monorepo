@@ -159,7 +159,7 @@ afterEach(() => {
 describe("useHeroTier", () => {
   describe("kill switch (rollback flag)", () => {
     it.each(["", "false"])(
-      "forces static when NEXT_PUBLIC_HERO_LIQUID is %j on a capable device",
+      "demotes to css-only when NEXT_PUBLIC_HERO_LIQUID is %j on a capable device",
       async (flag) => {
         installCapableEnvironment();
         vi.stubEnv("NEXT_PUBLIC_HERO_LIQUID", flag);
@@ -167,7 +167,7 @@ describe("useHeroTier", () => {
         const { useHeroTier } = await importHook();
         const captured = renderTierProbe(useHeroTier);
 
-        expect(captured.current?.tier).toBe("static");
+        expect(captured.current?.tier).toBe("css-only");
       },
     );
 

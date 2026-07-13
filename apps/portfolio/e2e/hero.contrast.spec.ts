@@ -1,17 +1,19 @@
 import { expect, test } from "@playwright/test";
 
 // ═══════════════════════════════════════════════════════════════════════════
-// Hero — Contrast over the refracted video (WCAG AA ≥ 4.5:1)
+// Hero — Text contrast over the RAW video (default: refraction OFF, design #765)
 //
 // Method: pixel sampling of a real screenshot — the only valid measurement.
-// A computed-style proxy sees NONE of the composited video + feDisplacementMap
-// refraction + grain overlay.
+// A computed-style proxy sees NONE of the composited video + grain overlay.
 //
-// Tier: this runs in the `css-only` tier (sub-1024 viewport). In css+webgl the
-// R3F canvas sits above a PAUSED video and THREE.VideoTexture uploads only NEW
-// frames, so a screenshot of a seeked-then-paused frame samples a stale/black
-// canvas. css-only paints the seeked frame directly through feDisplacementMap.
-// This also measures the worst-case path (the webgl scrim is equal-or-darker).
+// Refraction is OFF by default (NEXT_PUBLIC_HERO_REFRACTION unset), so the hero
+// renders the RAW <video> with NO feDisplacementMap and NO WebGL canvas. The
+// contrast guarantee comes from the PURE-CSS .hero-text-scrim (frame- and
+// refraction-independent): feDisplacementMap only warped pixels SPATIALLY,
+// never changing luminance, so removing it does not raise brightest-frame
+// luminance behind the glyphs. We sample the sub-1024 css-only viewport where
+// the raw <video> paints directly (no R3F canvas that would upload only NEW
+// frames of a seeked-then-paused video → stale/black sample).
 //
 // Determinism: pause the video FIRST, set currentTime, await `seeked`, then 2
 // rAF before the screenshot — seeking a still-playing loop keeps advancing.
@@ -20,8 +22,9 @@ import { expect, test } from "@playwright/test";
 // disabled, so it is included in the measurement as required.
 //
 // Timestamps are pinned against the CURRENT real loop asset (hero-loop-1080,
-// 8s placeholder: dark void with drifting ember/copper glows lower-right).
-// Re-pin both timestamps if the asset is replaced.
+// 8s placeholder: dark void with drifting ember/copper glows lower-right):
+// t=0.4s (brightest early frame) + t=6.0s (darkest late frame). Re-pin both if
+// the asset is replaced.
 // ═══════════════════════════════════════════════════════════════════════════
 
 const CSS_ONLY_VIEWPORT = { width: 900, height: 1200 }; // < 1024 → css-only tier
@@ -37,17 +40,20 @@ const TEXT_LUMINANCE_FLOOR = 0.55;
 // radius (device px) of a glyph edge — the actual surface the text reads against.
 const GLYPH_PROXIMITY_RADIUS = 6;
 
-test.describe("Hero — text contrast over refracted video (css-only tier)", () => {
+test.describe("Hero — text contrast over raw video (refraction OFF default)", () => {
   for (const t of TIMESTAMPS) {
-    test(`h1 contrast ≥ 4.5:1 at video frame t=${t}s`, async ({ page }) => {
+    test(`h1 contrast ≥ ${MIN_CONTRAST}:1 at video frame t=${t}s`, async ({
+      page,
+    }) => {
       await page.setViewportSize(CSS_ONLY_VIEWPORT);
       await page.goto("/");
 
-      // Sentinel + css-only tier confirmation.
+      // Sentinel: the raw video mounts. Refraction is off by default, so the
+      // SVG-refraction target and WebGL canvas must NOT be present.
       const video = page.locator("video");
       await expect(video).toHaveCount(1);
       await expect(page.locator("[data-hero-refraction-target]")).toHaveCount(
-        1,
+        0,
       );
       await expect(page.locator("[data-hero-glass-webgl]")).toHaveCount(0);
 
@@ -79,7 +85,7 @@ test.describe("Hero — text contrast over refracted video (css-only tier)", () 
         await new Promise((r) => requestAnimationFrame(() => r(null)));
       }, t);
 
-      // Screenshot the composited h1 region (video + refraction + grain + text).
+      // Screenshot the composited h1 region (raw video + grain + scrim + text).
       const shot = await h1.screenshot();
       const dataUrl = `data:image/png;base64,${shot.toString("base64")}`;
 

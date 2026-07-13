@@ -11,10 +11,12 @@ import { expect, test } from "@playwright/test";
 // ═══════════════════════════════════════════════════════════════════════════
 
 const DESKTOP = { width: 1440, height: 900 };
+const REFRACTION_ON = process.env.HERO_REFRACTION_SMOKE === "1";
 
 test("routing away from the live WebGL hero logs no console errors", async ({
   page,
 }) => {
+  test.skip(!REFRACTION_ON, "Requires a refraction-on build (HERO_REFRACTION_SMOKE=1)");
   // Third-party analytics (GTM / Meta Pixel) trip a Report-Only CSP directive
   // that Firefox surfaces as a console error on every page. It is environmental
   // noise unrelated to hero teardown, so it is filtered out — we assert only on

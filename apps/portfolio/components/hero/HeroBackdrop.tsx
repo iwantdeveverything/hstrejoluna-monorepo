@@ -34,9 +34,25 @@ import { triggerBurst, triggerClickBurst } from "./hero-burst-store";
 import { useHeroPhysics } from "./use-hero-physics";
 
 const HeroGlassWebGL = dynamic(
-  () => import("./HeroGlassWebGL").then((mod) => mod.HeroGlassWebGL),
+  () =>
+    import(
+      /* webpackChunkName: "hero-webgl-chunk" */ "./HeroGlassWebGL"
+    ).then((mod) => mod.HeroGlassWebGL),
   { ssr: false },
 );
+
+/**
+ * Build-time refraction flag (design #765, ADR-A). DEFAULT OFF: when the flag
+ * is not exactly "true", every non-`static` tier renders the RAW video with no
+ * SVG/WebGL refraction. `NEXT_PUBLIC_` inlines at build so this collapses to a
+ * static literal in the client bundle — no runtime cost. Read ONLY here (the
+ * presentation seam), never in `useHeroTier` (which stays a pure capability
+ * detector). Independent of the `NEXT_PUBLIC_HERO_LIQUID` kill switch: liquid
+ * off still forces the static poster; refraction off only strips the glass.
+ */
+const refractionEnabled = (): boolean =>
+  process.env.NEXT_PUBLIC_HERO_REFRACTION === "true" &&
+  process.env.NEXT_PUBLIC_HERO_LIQUID === "true";
 
 /**
  * Chunk-load boundary for the lazy WebGL glass. `next/dynamic` exposes no
@@ -72,14 +88,22 @@ export const HeroBackdrop = () => {
 
   // Phase 6 physics orchestrator. Motion prefs are centralized in the gate
   // (design §3): the pointer hook is disabled under reduce-motion. The hook is
-  // always called (Rules of Hooks) — the early `static` return is below it.
+  // ALWAYS called (Rules of Hooks) — the early `static` return is below it.
+  // When refraction is off nothing consumes the pointer/scroll uniforms, so we
+  // pass `enabled: false` to keep the listeners inert (design ADR-B); the hook
+  // itself must still be invoked to preserve hook order across flag states.
+  const refractionOn = refractionEnabled();
   const motionEnabled = !gates.reduceMotion;
+  const physicsEnabled = motionEnabled && refractionOn;
   const { heroRef, pointerRef, scrollRef, burstRef, burst, setInView } =
-    useHeroPhysics({ enabled: motionEnabled });
+    useHeroPhysics({ enabled: physicsEnabled });
 
   // Fire the entrance burst once on video-ready (design §4.4; the store latches
-  // so remounts never replay). Capture the live <video> for the WebGL tier.
-  const isWebgl = tier === "css+webgl";
+  // so remounts never replay). The burst latch stays wired even with refraction
+  // off (harmless no-op — no shader consumes it — but preserves the video
+  // contract). Capture the live <video> for the WebGL tier ONLY when refraction
+  // is on; otherwise no WebGL glass mounts.
+  const isWebgl = tier === "css+webgl" && refractionOn;
   const onVideoReady = useCallback(
     (el: HTMLVideoElement) => {
       triggerBurst();
@@ -117,11 +141,13 @@ export const HeroBackdrop = () => {
       // handler is cheap and idempotent against the latched entrance burst.
       onClick={motionEnabled ? () => triggerClickBurst() : undefined}
     >
-      {tier === "css-only" ? (
-        // css-only tier: the SVG feDisplacementMap refracts the video element.
-        // The rAF bridge reads the physics refs each frame (refs don't
-        // re-render) and drives the live scale + `--mx/--my` CSS vars. `signals`
-        // seeds the rest-state scale before the first frame / when disabled.
+      {tier === "css-only" && refractionOn ? (
+        // css-only tier (refraction ON): the SVG feDisplacementMap refracts the
+        // video element. The rAF bridge reads the physics refs each frame (refs
+        // don't re-render) and drives the live scale + `--mx/--my` CSS vars.
+        // `signals` seeds the rest-state scale before the first frame / when
+        // disabled. When refraction is OFF this branch is skipped and the raw
+        // videoLayer renders instead (no HeroGlassCss wrap, no SVG filter).
         <HeroGlassCss
           signals={{ burst }}
           refraction={{

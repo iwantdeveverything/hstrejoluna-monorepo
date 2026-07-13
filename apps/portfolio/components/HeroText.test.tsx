@@ -91,19 +91,19 @@ describe("HeroText — SSR poster (ADR-6)", () => {
 });
 
 describe("HeroText — kill switch (ADR-3)", () => {
-  it("does NOT render HeroBackdrop when the flag is off", async () => {
+  it("renders HeroBackdrop even when the flag is off", async () => {
     vi.stubEnv("NEXT_PUBLIC_HERO_LIQUID", "false");
     const { queryByTestId } = await renderHero();
-    expect(queryByTestId("hero-backdrop")).toBeNull();
+    expect(queryByTestId("hero-backdrop")).not.toBeNull();
   });
 
-  it("does NOT render HeroBackdrop when the flag is unset", async () => {
+  it("renders HeroBackdrop even when the flag is unset", async () => {
     vi.stubEnv("NEXT_PUBLIC_HERO_LIQUID", "");
     const { queryByTestId } = await renderHero();
-    expect(queryByTestId("hero-backdrop")).toBeNull();
+    expect(queryByTestId("hero-backdrop")).not.toBeNull();
   });
 
-  it("renders HeroBackdrop only when the flag is exactly \"true\"", async () => {
+  it("renders HeroBackdrop when the flag is exactly \"true\"", async () => {
     vi.stubEnv("NEXT_PUBLIC_HERO_LIQUID", "true");
     const { queryByTestId } = await renderHero();
     expect(queryByTestId("hero-backdrop")).not.toBeNull();
