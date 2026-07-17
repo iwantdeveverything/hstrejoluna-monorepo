@@ -8,10 +8,10 @@ vi.mock("next-intl/middleware", () => ({
   default: mockCreateMiddleware,
 }));
 
-describe("middleware.ts", () => {
+describe("proxy.ts", () => {
   describe("createMiddleware configuration", () => {
     it("passes the routing config to createMiddleware", async () => {
-      await import("./middleware");
+      await import("./proxy");
       const calls = (mockCreateMiddleware as any).mock.calls;
       const config = calls[0][0];
       expect(config).toHaveProperty("locales", ["en", "es"]);
@@ -19,15 +19,15 @@ describe("middleware.ts", () => {
       expect(config).toHaveProperty("localePrefix", "always");
     });
 
-    it("exports the middleware handler as default", async () => {
-      const mod = await import("./middleware");
+    it("exports the proxy handler as default", async () => {
+      const mod = await import("./proxy");
       expect(mod.default).toBe(mockMiddlewareHandler);
     });
   });
 
   describe("matcher config", () => {
     it("exports a config object with a matcher pattern", async () => {
-      const mod = await import("./middleware");
+      const mod = await import("./proxy");
       expect(mod.config).toBeDefined();
       expect(mod.config.matcher).toBeDefined();
       expect(Array.isArray(mod.config.matcher)).toBe(true);
@@ -35,7 +35,7 @@ describe("middleware.ts", () => {
     });
 
     it("matcher pattern excludes api paths via negative lookahead", async () => {
-      const mod = await import("./middleware");
+      const mod = await import("./proxy");
       const pattern = mod.config.matcher[0] as string;
       expect(pattern).toContain("api");
       // Verify it's in a negative lookahead group
@@ -43,28 +43,28 @@ describe("middleware.ts", () => {
     });
 
     it("matcher pattern excludes _next paths via negative lookahead", async () => {
-      const mod = await import("./middleware");
+      const mod = await import("./proxy");
       const pattern = mod.config.matcher[0] as string;
       expect(pattern).toContain("_next");
       expect(pattern).toMatch(/\(\?!.*_next/);
     });
 
     it("matcher pattern excludes maestros-del-salmon paths via negative lookahead", async () => {
-      const mod = await import("./middleware");
+      const mod = await import("./proxy");
       const pattern = mod.config.matcher[0] as string;
       expect(pattern).toContain("maestros-del-salmon");
       expect(pattern).toMatch(/\(\?!.*maestros-del-salmon/);
     });
 
     it("matcher pattern excludes static files with extensions via negative lookahead", async () => {
-      const mod = await import("./middleware");
+      const mod = await import("./proxy");
       const pattern = mod.config.matcher[0] as string;
       // The .*\\.* segment matches files with extensions (e.g., favicon.ico, image.png)
       expect(pattern).toMatch(/\\\./);
     });
 
     it("matcher pattern wraps exclusions in Next.js path-to-regexp format", async () => {
-      const mod = await import("./middleware");
+      const mod = await import("./proxy");
       const pattern = mod.config.matcher[0] as string;
       // Standard next-intl matcher: /((?!excluded1|excluded2|...).*)
       expect(pattern).toMatch(/^\/\(\(\?!/);
