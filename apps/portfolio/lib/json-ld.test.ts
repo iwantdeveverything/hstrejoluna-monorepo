@@ -15,7 +15,7 @@ const DEFAULT_PROFILE = {
   },
   socials: [
     { platform: "github", url: "https://github.com/htrejoluna" },
-    { platform: "linkedin", url: "https://linkedin.com/in/htrejoluna" },
+    { platform: "linkedin", url: "https://linkedin.com/in/hstrejoluna" },
   ],
 };
 
@@ -76,7 +76,7 @@ describe("buildPersonJsonLd", () => {
       });
 
       expect(result.sameAs).toContain("https://github.com/htrejoluna");
-      expect(result.sameAs).toContain("https://linkedin.com/in/htrejoluna");
+      expect(result.sameAs).toContain("https://linkedin.com/in/hstrejoluna");
     });
 
     it("includes knowsAbout from skills", () => {
